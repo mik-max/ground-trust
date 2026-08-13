@@ -8,6 +8,7 @@ import Browse from './pages/Browse';
 import RaffleDetail from './pages/RaffleDetail';
 import ParticipantDashboard from './pages/ParticipantDashboard';
 import BusinessDashboard from './pages/BusinessDashboard';
+import Landing from './pages/Landing';
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -16,7 +17,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public */}
-        <Route path="/" element={<div>Landing page (coming soon)</div>} />
+        <Route path="/" element={<Landing />} />
         <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to={user?.role === 'BUSINESS' ? '/business/dashboard' : '/browse'} replace />} />
         <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" replace />} />
         <Route path="/register/participant" element={!isAuthenticated ? <RegisterParticipant /> : <Navigate to="/browse" replace />} />
