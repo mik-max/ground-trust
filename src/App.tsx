@@ -9,6 +9,7 @@ import RaffleDetail from './pages/RaffleDetail';
 import ParticipantDashboard from './pages/ParticipantDashboard';
 import BusinessDashboard from './pages/BusinessDashboard';
 import Landing from './pages/Landing';
+import Verify from './pages/Verify';
 
 function App() {
   const { isAuthenticated, user } = useAuthStore();
@@ -22,6 +23,10 @@ function App() {
         <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" replace />} />
         <Route path="/register/participant" element={!isAuthenticated ? <RegisterParticipant /> : <Navigate to="/browse" replace />} />
         <Route path="/register/business" element={!isAuthenticated ? <RegisterBusiness /> : <Navigate to="/business/dashboard" replace />} />
+
+        {/* Public */}
+        <Route path="/verify" element={<Verify />} />
+        <Route path="/verify/:id" element={<Verify />} />
 
         {/* Participant */}
         <Route path="/browse" element={isAuthenticated ? <Browse /> : <Navigate to="/login" replace />} />

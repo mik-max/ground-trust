@@ -305,9 +305,13 @@ export default function Landing() {
       <footer style={{ borderTop: '1px solid var(--border-default)', padding: '32px 24px' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--brand-primary)' }}>RaffleTrust</span>
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-            Final year project — Michael Chinye · Miva Open University · 2026
-          </p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+            <Link to="/verify" style={{ fontSize: '13px', color: 'var(--text-secondary)', textDecoration: 'none' }}>Verify a draw</Link>
+            <Link to="/browse" style={{ fontSize: '13px', color: 'var(--text-secondary)', textDecoration: 'none' }}>Browse raffles</Link>
+            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
+              Final year project — Michael Chinye · Miva Open University · 2026
+            </p>
+          </div>
         </div>
       </footer>
     </div>

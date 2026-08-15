@@ -305,16 +305,13 @@ export default function RaffleDetail() {
               )}
 
               {raffle.status === 'ENDED' && (
-                <div style={{
-                  backgroundColor: 'var(--bg-track)',
-                  borderRadius: '8px',
-                  padding: '13px',
-                  textAlign: 'center',
-                  fontSize: '15px',
-                  fontWeight: 500,
-                  color: 'var(--text-secondary)',
-                }}>
-                  This raffle has ended
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ backgroundColor: 'var(--bg-track)', borderRadius: '8px', padding: '13px', textAlign: 'center', fontSize: '15px', fontWeight: 500, color: 'var(--text-secondary)' }}>
+                    This raffle has ended
+                  </div>
+                  <Link to={`/verify/${raffle.id}`} style={{ textAlign: 'center', fontSize: '13px', color: 'var(--brand-primary)', textDecoration: 'none', fontWeight: 500 }}>
+                    Verify the draw result →
+                  </Link>
                 </div>
               )}
             </div>
