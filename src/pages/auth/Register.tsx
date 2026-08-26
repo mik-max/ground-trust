@@ -24,7 +24,10 @@ export function Register() {
     try {
       const { token, user } = await signup({ fullName, email, password, role });
       setAuth(token, user);
-      navigate("/");
+      // Residents see the residency-sampling consent screen once, right
+      // after signup — not on every login. Newcomers have nothing to
+      // consent to, so they go straight in.
+      navigate(role === "resident" ? "/onboarding/consent" : "/");
     } catch {
       setError("Couldn't create your account — that email may already be registered.");
     }

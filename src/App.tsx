@@ -8,6 +8,7 @@ import { MyContributions } from "./pages/MyContributions";
 import { Login } from "./pages/auth/Login";
 import { Register } from "./pages/auth/Register";
 import { GovDashboard } from "./pages/gov/Dashboard";
+import { ResidencyConsent } from "./pages/onboarding/ResidencyConsent";
 
 export default function App() {
   return (
@@ -18,6 +19,14 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route
+            path="/onboarding/consent"
+            element={
+              <ProtectedRoute allow={["resident"]}>
+                <ResidencyConsent />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/areas/:id" element={<AreaProfile />} />
           <Route
             path="/areas/:id/review"
