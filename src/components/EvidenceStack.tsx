@@ -4,6 +4,8 @@ import { ScoreBandBadge } from "./ScoreBandBadge";
 import { AspectRow } from "./AspectRow";
 import { ConfidenceStrip } from "./ConfidenceStrip";
 import { ASPECT_ORDER } from "./aspectMeta";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
 
 interface EvidenceStackProps {
   overall: AreaEvidenceStack["overall"];
@@ -23,15 +25,15 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
 
   if (overall.score === null || overall.band === null) {
     return (
-      <div className="rounded-md border border-line bg-white p-5 shadow-card">
+      <Card padding="lg">
         <p className="text-body-lg text-ink">Be the first to review this area</p>
         <p className="text-caption text-mute">No reviews yet — share your experience to get started.</p>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="rounded-md border border-line bg-white p-5 shadow-card">
+    <Card padding="lg">
       <ScoreBandBadge band={overall.band} />
       <p className="mt-2 text-data-lg tabular-nums text-ink">{overall.score.toFixed(1)}</p>
       <p className="text-caption text-mute">
@@ -45,13 +47,9 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
       <div className="my-4 border-t border-line" />
 
       {size === "compact" && !expanded ? (
-        <button
-          type="button"
-          onClick={() => setExpanded(true)}
-          className="text-body text-steel underline"
-        >
+        <Button type="button" variant="link" className="text-body" onClick={() => setExpanded(true)}>
           Show breakdown
-        </button>
+        </Button>
       ) : (
         <div className="flex flex-col gap-3">
           {orderedAspects.map((a) => (
@@ -59,6 +57,6 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
           ))}
         </div>
       )}
-    </div>
+    </Card>
   );
 }

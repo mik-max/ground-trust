@@ -2,6 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login as loginRequest } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
+import { Button } from "../../components/ui/Button";
+import { TextInput } from "../../components/ui/TextInput";
+import { text } from "../../styles/typography";
 
 export function Login() {
   const navigate = useNavigate();
@@ -24,28 +27,24 @@ export function Login() {
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto flex max-w-sm flex-col gap-4">
-      <h1 className="text-display-md font-display font-bold text-ink">Log in</h1>
-      <input
+      <h1 className={text.displayMd}>Log in</h1>
+      <TextInput
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="Email"
         required
-        className="rounded-md border border-line px-4 py-3 text-body-lg"
       />
-      <input
+      <TextInput
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
         required
-        className="rounded-md border border-line px-4 py-3 text-body-lg"
       />
       {error && <p className="text-caption text-band-poor">{error}</p>}
-      <button type="submit" className="rounded-md bg-ink px-6 py-3 text-body-lg text-white">
-        Log in
-      </button>
-      <p className="text-body text-mute">
+      <Button type="submit">Log in</Button>
+      <p className={`${text.body} text-mute`}>
         No account?{" "}
         <Link to="/register" className="text-steel">
           Register

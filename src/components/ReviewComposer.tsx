@@ -3,6 +3,8 @@ import { Mic, Star } from "lucide-react";
 import type { Aspect } from "../types";
 import { ASPECT_ORDER, ASPECT_META } from "./aspectMeta";
 import { submitReview } from "../services/area.service";
+import { Button } from "./ui/Button";
+import { Textarea } from "./ui/TextInput";
 
 interface ReviewComposerProps {
   areaId: string;
@@ -15,7 +17,7 @@ interface ReviewComposerProps {
 // wired.
 export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
   const [activeTab, setActiveTab] = useState<"voice" | "text">("voice");
-  const [text, setText] = useState("");
+  const [reviewText, setReviewText] = useState("");
   const [ratings, setRatings] = useState<Partial<Record<Aspect, number>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +28,7 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
     setError(null);
     setSubmitting(true);
     try {
-      await submitReview(areaId, { originalText: text || undefined, ratings });
+      await submitReview(areaId, { originalText: reviewText || undefined, ratings });
       onSubmitted?.();
     } catch {
       setError("Couldn't submit your review — please try again.");
@@ -38,20 +40,12 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex gap-2 border-b border-line">
-        <button
-          type="button"
-          onClick={() => setActiveTab("voice")}
-          className={`px-4 py-2 text-body ${activeTab === "voice" ? "border-b-2 border-ink text-ink" : "text-mute"}`}
-        >
+        <Button type="button" variant="tab" active={activeTab === "voice"} onClick={() => setActiveTab("voice")}>
           Voice
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab("text")}
-          className={`px-4 py-2 text-body ${activeTab === "text" ? "border-b-2 border-ink text-ink" : "text-mute"}`}
-        >
+        </Button>
+        <Button type="button" variant="tab" active={activeTab === "text"} onClick={() => setActiveTab("text")}>
           Text
-        </button>
+        </Button>
       </div>
 
       {activeTab === "voice" ? (
@@ -67,11 +61,10 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
           <p className="text-caption text-mute">Voice review is coming soon — use the Text tab for now.</p>
         </div>
       ) : (
-        <textarea
-          value={text}
-          onChange={(e) => setText(e.target.value)}
+        <Textarea
+          value={reviewText}
+          onChange={(e) => setReviewText(e.target.value)}
           placeholder="Share what it's like living here (optional)..."
-          className="min-h-24 rounded-md border border-line p-3 text-body-lg"
         />
       )}
 
@@ -100,14 +93,9 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
 
       {error && <p className="text-caption text-band-poor">{error}</p>}
 
-      <button
-        type="button"
-        disabled={!allRated || submitting}
-        onClick={handleSubmit}
-        className="rounded-md bg-ink px-6 py-3 text-body-lg text-white disabled:opacity-40"
-      >
+      <Button type="button" disabled={!allRated || submitting} onClick={handleSubmit}>
         {submitting ? "Sharing..." : "Share your experience"}
-      </button>
+      </Button>
     </div>
   );
 }

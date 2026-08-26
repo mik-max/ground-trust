@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { Aspect, Review } from "../types";
 import { VerificationTierBadge } from "./VerificationTierBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
+import { Card } from "./ui/Card";
+import { Button } from "./ui/Button";
 
 const RATING_BY_ASPECT: Record<Aspect, keyof Review> = {
   power: "ratingPower",
@@ -28,32 +30,30 @@ export function ReviewCard({ review }: { review: Review }) {
   const bodyText = review.translatedText ?? review.originalText;
 
   return (
-    <li className="rounded-md border border-line bg-white p-4 shadow-card">
-      <div className="flex items-center justify-between">
-        <VerificationTierBadge tier={review.tierAtSubmission} />
-        <span className="text-caption text-mute">{formatDate(review.submittedAt)}</span>
-      </div>
-
-      {bodyText && <p className="mt-3 text-body text-ink">{showOriginal ? review.originalText : bodyText}</p>}
-
-      {ratedAspects.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-2">
-          {ratedAspects.map((aspect) => (
-            <span key={aspect} className="rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
-              {ASPECT_META[aspect].label}
-            </span>
-          ))}
-          {hasTranslation && (
-            <button
-              type="button"
-              onClick={() => setShowOriginal((v) => !v)}
-              className="text-caption text-steel underline"
-            >
-              {showOriginal ? "View translation" : "View original"}
-            </button>
-          )}
+    <li>
+      <Card>
+        <div className="flex items-center justify-between">
+          <VerificationTierBadge tier={review.tierAtSubmission} />
+          <span className="text-caption text-mute">{formatDate(review.submittedAt)}</span>
         </div>
-      )}
+
+        {bodyText && <p className="mt-3 text-body text-ink">{showOriginal ? review.originalText : bodyText}</p>}
+
+        {ratedAspects.length > 0 && (
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {ratedAspects.map((aspect) => (
+              <span key={aspect} className="rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
+                {ASPECT_META[aspect].label}
+              </span>
+            ))}
+            {hasTranslation && (
+              <Button type="button" variant="link" className="text-caption" onClick={() => setShowOriginal((v) => !v)}>
+                {showOriginal ? "View translation" : "View original"}
+              </Button>
+            )}
+          </div>
+        )}
+      </Card>
     </li>
   );
 }

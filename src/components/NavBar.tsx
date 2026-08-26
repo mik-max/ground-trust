@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
+import { text } from "../styles/typography";
 
 export function NavBar() {
   const { user, logout } = useAuthStore();
@@ -7,7 +8,7 @@ export function NavBar() {
 
   return (
     <nav className="flex items-center justify-between border-b border-line bg-white px-6 py-4">
-      <Link to="/" className="text-heading font-display font-bold text-ink">
+      <Link to="/" className={text.heading}>
         Environmental Intelligence
       </Link>
       <div className="flex items-center gap-4 text-body">
