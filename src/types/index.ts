@@ -40,6 +40,7 @@ export interface Review {
   user?: { id: string; fullName: string };
   originalText: string | null;
   originalLanguage: string | null;
+  originalAudioRef: string | null;
   translatedText: string | null;
   submittedAt: string;
   ratingPower: number | null;

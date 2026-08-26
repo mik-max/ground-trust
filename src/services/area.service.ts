@@ -21,7 +21,12 @@ export async function getAreaReviews(id: string, page = 1) {
 
 export async function submitReview(
   areaId: string,
-  input: { originalText?: string; originalLanguage?: string; ratings: Partial<Record<Aspect, number>> }
+  input: {
+    originalText?: string;
+    originalLanguage?: string;
+    originalAudioRef?: string;
+    ratings: Partial<Record<Aspect, number>>;
+  }
 ) {
   const { data } = await api.post<{ review: Review }>(`/areas/${areaId}/reviews`, input);
   return data.review;

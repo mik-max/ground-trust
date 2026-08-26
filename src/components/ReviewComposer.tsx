@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Mic, Star } from "lucide-react";
+import { Mic, RotateCcw, Square, Star } from "lucide-react";
 import type { Aspect } from "../types";
 import { ASPECT_ORDER, ASPECT_META } from "./aspectMeta";
 import { submitReview } from "../services/area.service";
+import { uploadAudio } from "../services/upload.service";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { Button } from "./ui/Button";
 import { Textarea } from "./ui/TextInput";
 
@@ -11,16 +13,17 @@ interface ReviewComposerProps {
   onSubmitted?: () => void;
 }
 
-// files/DESIGN_SYSTEM.md §5.6. Voice input is out of scope for this pass
-// (no STT pipeline yet — see files/HANDOFF.md §3), so the voice tab renders
-// per spec but recording is disabled; text and structured ratings are fully
-// wired.
+// files/DESIGN_SYSTEM.md §5.6. Recording + upload is wired (this pass);
+// transcription/translation isn't — the NLP pipeline (files/HANDOFF.md §3)
+// is still on BACKLOG.md, so a voice review is stored and playable but not
+// yet turned into text.
 export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
   const [activeTab, setActiveTab] = useState<"voice" | "text">("voice");
   const [reviewText, setReviewText] = useState("");
   const [ratings, setRatings] = useState<Partial<Record<Aspect, number>>>({});
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const recorder = useAudioRecorder();
 
   const allRated = ASPECT_ORDER.every((a) => ratings[a]);
 
@@ -28,7 +31,11 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
     setError(null);
     setSubmitting(true);
     try {
-      await submitReview(areaId, { originalText: reviewText || undefined, ratings });
+      let originalAudioRef: string | undefined;
+      if (recorder.audioBlob) {
+        originalAudioRef = await uploadAudio(recorder.audioBlob);
+      }
+      await submitReview(areaId, { originalText: reviewText || undefined, originalAudioRef, ratings });
       onSubmitted?.();
     } catch {
       setError("Couldn't submit your review — please try again.");
@@ -49,16 +56,37 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
       </div>
 
       {activeTab === "voice" ? (
-        <div className="flex flex-col items-center gap-2 py-6">
-          <button
-            type="button"
-            disabled
-            title="Voice review is coming soon"
-            className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-white opacity-50"
-          >
-            <Mic size={28} />
-          </button>
-          <p className="text-caption text-mute">Voice review is coming soon — use the Text tab for now.</p>
+        <div className="flex flex-col items-center gap-3 py-6">
+          {recorder.status === "recorded" && recorder.audioUrl ? (
+            <>
+              <audio controls src={recorder.audioUrl} className="w-full max-w-sm" />
+              <Button type="button" variant="outline" onClick={recorder.reset} className="flex items-center gap-2">
+                <RotateCcw size={16} />
+                Re-record
+              </Button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={recorder.status === "recording" ? recorder.stop : recorder.start}
+                disabled={recorder.status === "requesting"}
+                className={`flex h-16 w-16 items-center justify-center rounded-full text-white disabled:opacity-50 ${
+                  recorder.status === "recording" ? "bg-band-poor" : "bg-ink"
+                }`}
+              >
+                {recorder.status === "recording" ? <Square size={24} /> : <Mic size={28} />}
+              </button>
+              <p className="text-caption text-mute">
+                {recorder.status === "recording"
+                  ? "Recording — tap to stop"
+                  : recorder.status === "requesting"
+                    ? "Requesting microphone access..."
+                    : "Tap to record your review"}
+              </p>
+            </>
+          )}
+          {recorder.errorMessage && <p className="text-caption text-band-poor">{recorder.errorMessage}</p>}
         </div>
       ) : (
         <Textarea

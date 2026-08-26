@@ -37,6 +37,12 @@ export function ReviewCard({ review }: { review: Review }) {
           <span className="text-caption text-mute">{formatDate(review.submittedAt)}</span>
         </div>
 
+        {review.originalAudioRef && (
+          // No transcript yet — the NLP pipeline (files/HANDOFF.md §3) isn't
+          // built, so playback is the only way to hear a voice review for now.
+          <audio controls src={review.originalAudioRef} className="mt-3 w-full" />
+        )}
+
         {bodyText && <p className="mt-3 text-body text-ink">{showOriginal ? review.originalText : bodyText}</p>}
 
         {ratedAspects.length > 0 && (
