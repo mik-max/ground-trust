@@ -1,11 +1,13 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { ReviewComposer } from "../components/ReviewComposer";
+import { useGpsPresenceSample } from "../hooks/useGpsPresenceSample";
 import { text } from "../styles/typography";
 
 // files/DESIGN_SYSTEM.md §6.5.
 export function SubmitReview() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  useGpsPresenceSample(id ? [id] : []);
 
   if (!id) return null;
 
