@@ -22,6 +22,11 @@ export function NavBar() {
             Government Dashboard
           </Link>
         )}
+        {user?.role === "admin" && (
+          <Link to="/admin/government-accounts" className="text-steel">
+            Government Accounts
+          </Link>
+        )}
         {user ? (
           <button
             type="button"

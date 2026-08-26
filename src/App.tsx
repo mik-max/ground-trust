@@ -10,6 +10,7 @@ import { Login } from "./pages/auth/Login";
 import { Register } from "./pages/auth/Register";
 import { GovDashboard } from "./pages/gov/Dashboard";
 import { ResidencyConsent } from "./pages/onboarding/ResidencyConsent";
+import { AdminGovernmentAccounts } from "./pages/admin/GovernmentAccounts";
 
 export default function App() {
   return (
@@ -51,6 +52,14 @@ export default function App() {
             element={
               <ProtectedRoute allow={["government"]}>
                 <GovDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/government-accounts"
+            element={
+              <ProtectedRoute allow={["admin"]}>
+                <AdminGovernmentAccounts />
               </ProtectedRoute>
             }
           />

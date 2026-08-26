@@ -67,3 +67,10 @@ export interface AuthUser {
   email: string;
   role: Role;
 }
+
+export interface GovernmentAccount {
+  id: string;
+  fullName: string;
+  email: string;
+  createdAt: string;
+}
