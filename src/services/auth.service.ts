@@ -1,20 +1,17 @@
-import api from './api';
-import type { AuthResponse } from '../types';
+import api from "./api";
+import type { AuthUser, Role } from "../types";
 
-export const registerParticipant = (data: {
-  name: string;
-  email: string;
-  password: string;
-}) => api.post<AuthResponse>('/auth/register', { ...data, role: 'PARTICIPANT' });
+interface AuthResponse {
+  token: string;
+  user: AuthUser;
+}
 
-export const registerBusiness = (data: {
-  name: string;
-  email: string;
-  password: string;
-  businessName: string;
-}) => api.post<AuthResponse>('/auth/register', { ...data, role: 'BUSINESS' });
+export async function signup(input: { fullName: string; email: string; password: string; role: Role }) {
+  const { data } = await api.post<AuthResponse>("/auth/signup", input);
+  return data;
+}
 
-export const login = (data: { email: string; password: string }) =>
-  api.post<AuthResponse>('/auth/login', data);
-
-export const getMe = () => api.get<{ user: AuthResponse['user'] }>('/auth/me');
+export async function login(input: { email: string; password: string }) {
+  const { data } = await api.post<AuthResponse>("/auth/login", input);
+  return data;
+}

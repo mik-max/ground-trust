@@ -1,45 +1,50 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import useAuthStore from './store/auth.store';
-import Login from './pages/auth/Login';
-import Register from './pages/auth/Register';
-import RegisterParticipant from './pages/auth/RegisterParticipant';
-import RegisterBusiness from './pages/auth/RegisterBusiness';
-import Browse from './pages/Browse';
-import RaffleDetail from './pages/RaffleDetail';
-import ParticipantDashboard from './pages/ParticipantDashboard';
-import BusinessDashboard from './pages/BusinessDashboard';
-import Landing from './pages/Landing';
-import Verify from './pages/Verify';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { NavBar } from "./components/NavBar";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { Home } from "./pages/Home";
+import { AreaProfile } from "./pages/AreaProfile";
+import { SubmitReview } from "./pages/SubmitReview";
+import { MyContributions } from "./pages/MyContributions";
+import { Login } from "./pages/auth/Login";
+import { Register } from "./pages/auth/Register";
+import { GovDashboard } from "./pages/gov/Dashboard";
 
-function App() {
-  const { isAuthenticated, user } = useAuthStore();
-
+export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to={user?.role === 'BUSINESS' ? '/business/dashboard' : '/browse'} replace />} />
-        <Route path="/register" element={!isAuthenticated ? <Register /> : <Navigate to="/" replace />} />
-        <Route path="/register/participant" element={!isAuthenticated ? <RegisterParticipant /> : <Navigate to="/browse" replace />} />
-        <Route path="/register/business" element={!isAuthenticated ? <RegisterBusiness /> : <Navigate to="/business/dashboard" replace />} />
-
-        {/* Public */}
-        <Route path="/verify" element={<Verify />} />
-        <Route path="/verify/:id" element={<Verify />} />
-
-        {/* Participant */}
-        <Route path="/browse" element={isAuthenticated ? <Browse /> : <Navigate to="/login" replace />} />
-        <Route path="/raffle/:id" element={isAuthenticated ? <RaffleDetail /> : <Navigate to="/login" replace />} />
-        <Route path="/dashboard" element={isAuthenticated ? <ParticipantDashboard /> : <Navigate to="/login" replace />} />
-
-        {/* Business */}
-        <Route path="/business/dashboard" element={isAuthenticated ? <BusinessDashboard /> : <Navigate to="/login" replace />} />
-
-        <Route path="*" element={<div>404 — Page not found</div>} />
-      </Routes>
+      <NavBar />
+      <main className="mx-auto max-w-4xl px-6 py-8">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/areas/:id" element={<AreaProfile />} />
+          <Route
+            path="/areas/:id/review"
+            element={
+              <ProtectedRoute allow={["resident"]}>
+                <SubmitReview />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-contributions"
+            element={
+              <ProtectedRoute allow={["resident"]}>
+                <MyContributions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gov"
+            element={
+              <ProtectedRoute allow={["government"]}>
+                <GovDashboard />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </main>
     </BrowserRouter>
   );
 }
-
-export default App;

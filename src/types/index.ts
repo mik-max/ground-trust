@@ -1,69 +1,68 @@
-export type Role = 'PARTICIPANT' | 'BUSINESS';
-export type RaffleStatus = 'DRAFT' | 'ACTIVE' | 'ENDED' | 'CANCELLED';
-export type DrawAlgorithm = 'UNIFORM' | 'WEIGHTED';
+export type Aspect = "power" | "water" | "security" | "roads_flooding" | "accessibility";
+export type Band = "poor" | "fair" | "good" | "excellent";
+export type ConfidenceLevel = "low" | "medium" | "high";
+export type Role = "resident" | "newcomer" | "government" | "admin";
+export type VerificationTier = "tier0" | "tier1" | "tier2" | "tier3";
 
-export interface RaffleCreator {
+export interface Area {
   id: string;
   name: string;
-  businessName: string | null;
+  city: string;
+  state: string;
+  geoCentroidLat: number;
+  geoCentroidLng: number;
+  geoRadiusMeters: number;
 }
 
-export interface Raffle {
-  id: string;
-  name: string;
-  description: string;
-  prize: string;
-  status: RaffleStatus;
-  startDate: string;
-  endDate: string;
-  drawDate: string;
-  maxParticipants: number | null;
-  winnersCount: number;
-  algorithm: DrawAlgorithm;
-  entriesCount: number;
-  createdAt: string;
-  createdBy: RaffleCreator;
+export interface AspectScore {
+  aspect: Aspect;
+  score: number | null;
+  band: Band | null;
+  N: number;
+  confidence: ConfidenceLevel;
 }
 
-export interface AuditLog {
-  id: string;
-  drawExecutedAt: string;
-  participantCount: number;
-  randomSeed: string;
-  algorithm: DrawAlgorithm;
-  winnerIds: string[];
-  createdAt: string;
-}
-
-export interface RaffleDetail extends Raffle {
-  auditLog: AuditLog | null;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
+export interface AreaEvidenceStack {
+  area: Area;
+  overall: {
+    score: number | null;
+    band: Band | null;
+    N: number;
+    confidence: ConfidenceLevel;
   };
+  aspects: AspectScore[];
 }
 
-export interface User {
+export interface Review {
   id: string;
-  name: string;
+  areaId: string;
+  userId: string;
+  user?: { id: string; fullName: string };
+  originalText: string | null;
+  originalLanguage: string | null;
+  translatedText: string | null;
+  submittedAt: string;
+  ratingPower: number | null;
+  ratingWater: number | null;
+  ratingSecurity: number | null;
+  ratingRoadsFlooding: number | null;
+  ratingAccessibility: number | null;
+  tierAtSubmission: VerificationTier;
+}
+
+export interface Flag {
+  id: string;
+  areaId: string;
+  area?: Area;
+  aspect: Aspect;
+  triggeredAt: string;
+  consecutiveWeeksBelowThreshold: number;
+  resolved: boolean;
+}
+
+export interface AuthUser {
+  id: string;
+  fullName: string;
   email: string;
   role: Role;
-  businessName: string | null;
-  createdAt: string;
-}
-
-export interface AuthResponse {
-  user: User;
-  token: string;
-}
-
-export interface ApiError {
-  message: string;
-  errors?: { msg: string; path: string }[];
 }
