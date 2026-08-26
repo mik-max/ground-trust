@@ -3,6 +3,7 @@ import { NavBar } from "./components/NavBar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./pages/Home";
 import { AreaProfile } from "./pages/AreaProfile";
+import { CompareAreas } from "./pages/CompareAreas";
 import { SubmitReview } from "./pages/SubmitReview";
 import { MyContributions } from "./pages/MyContributions";
 import { Login } from "./pages/auth/Login";
@@ -28,6 +29,7 @@ export default function App() {
             }
           />
           <Route path="/areas/:id" element={<AreaProfile />} />
+          <Route path="/compare" element={<CompareAreas />} />
           <Route
             path="/areas/:id/review"
             element={

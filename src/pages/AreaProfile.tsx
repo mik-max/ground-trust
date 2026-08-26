@@ -5,16 +5,14 @@ import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
 import { ReviewCard } from "../components/ReviewCard";
 import { useAuthStore } from "../store/auth.store";
-import { Button, buttonClassName } from "../components/ui/Button";
+import { buttonClassName } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { text } from "../styles/typography";
 
 // GroundTruth_Design_Implementation_Guide.md §7.3 — eyebrow kicker, two-column
 // layout (Evidence Stack + Compare CTA on the left; explanatory info cards on
-// the right), paginated review list below. "Compare with another area" is
-// styled per spec but disabled — the Compare Areas screen itself is still a
-// later pass.
+// the right), paginated review list below.
 export function AreaProfile() {
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((s) => s.user);
@@ -47,9 +45,9 @@ export function AreaProfile() {
         <div className="flex flex-col gap-4">
           <EvidenceStack overall={data.overall} aspects={data.aspects} size="full" />
 
-          <Button variant="accent" disabled title="Compare Areas is coming soon" className="w-fit">
+          <Link to={`/compare?areas=${id}`} className={buttonClassName({ variant: "accent" }, "w-fit")}>
             Compare with another area
-          </Button>
+          </Link>
 
           {user?.role === "resident" && (
             <Link to={`/areas/${id}/review`} className={buttonClassName({ variant: "primary" }, "w-fit")}>
