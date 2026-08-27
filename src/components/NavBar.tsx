@@ -23,9 +23,14 @@ export function NavBar() {
           </Link>
         )}
         {user?.role === "admin" && (
-          <Link to="/admin/government-accounts" className="text-steel">
-            Government Accounts
-          </Link>
+          <>
+            <Link to="/admin/government-accounts" className="text-steel">
+              Government Accounts
+            </Link>
+            <Link to="/admin/moderation" className="text-steel">
+              Moderation Queue
+            </Link>
+          </>
         )}
         {user ? (
           <button

@@ -11,6 +11,7 @@ import { Register } from "./pages/auth/Register";
 import { GovDashboard } from "./pages/gov/Dashboard";
 import { ResidencyConsent } from "./pages/onboarding/ResidencyConsent";
 import { AdminGovernmentAccounts } from "./pages/admin/GovernmentAccounts";
+import { ModerationQueue } from "./pages/admin/ModerationQueue";
 
 export default function App() {
   return (
@@ -60,6 +61,14 @@ export default function App() {
             element={
               <ProtectedRoute allow={["admin"]}>
                 <AdminGovernmentAccounts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/moderation"
+            element={
+              <ProtectedRoute allow={["admin"]}>
+                <ModerationQueue />
               </ProtectedRoute>
             }
           />
