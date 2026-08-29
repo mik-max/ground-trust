@@ -46,7 +46,7 @@ export function AreaProfile() {
         <div className="flex flex-col gap-4">
           <EvidenceStack overall={data.overall} aspects={data.aspects} size="full" />
 
-          <Link to={`/compare?areas=${id}`} className={buttonClassName({ variant: "accent" }, "w-fit")}>
+          <Link to={`/compare?areas=${id}`} className={buttonClassName({ variant: "outline" }, "w-fit")}>
             Compare with another area
           </Link>
 

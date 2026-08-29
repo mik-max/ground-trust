@@ -93,7 +93,7 @@ export function Register() {
       <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
       <p className={`${text.body} text-mute`}>
         Already have an account?{" "}
-        <Link to="/login" className="text-steel">
+        <Link to="/login" className="text-brand">
           Log in
         </Link>
       </p>

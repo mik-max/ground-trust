@@ -13,21 +13,21 @@ export function NavBar() {
       </Link>
       <div className="flex items-center gap-4 text-body">
         {user?.role === "resident" && (
-          <Link to="/my-contributions" className="text-steel">
+          <Link to="/my-contributions" className="text-brand">
             My Contributions
           </Link>
         )}
         {user?.role === "government" && (
-          <Link to="/gov" className="text-steel">
+          <Link to="/gov" className="text-brand">
             Government Dashboard
           </Link>
         )}
         {user?.role === "admin" && (
           <>
-            <Link to="/admin/government-accounts" className="text-steel">
+            <Link to="/admin/government-accounts" className="text-brand">
               Government Accounts
             </Link>
-            <Link to="/admin/moderation" className="text-steel">
+            <Link to="/admin/moderation" className="text-brand">
               Moderation Queue
             </Link>
           </>
@@ -44,7 +44,7 @@ export function NavBar() {
             Log out
           </button>
         ) : (
-          <Link to="/login" className="text-steel">
+          <Link to="/login" className="text-brand">
             Log in
           </Link>
         )}

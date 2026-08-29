@@ -7,7 +7,7 @@ import type { VerificationTier } from "../types";
 export function VerificationTierBadge({ tier }: { tier: VerificationTier }) {
   if (tier === "tier2" || tier === "tier3") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-steel/[15%] px-2.5 py-1 text-caption text-steel">
+      <span className="inline-flex items-center gap-1 rounded-full bg-brand/20 px-2.5 py-1 text-caption text-brand-700">
         <ShieldCheck size={14} />
         Verified resident
       </span>
@@ -15,7 +15,7 @@ export function VerificationTierBadge({ tier }: { tier: VerificationTier }) {
   }
   if (tier === "tier1") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-sky/[15%] px-2.5 py-1 text-caption text-sky">
+      <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 px-2.5 py-1 text-caption text-brand">
         <Shield size={14} />
         Location-confirmed
       </span>

@@ -1,51 +1,64 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap");
 
 /*
-  Design tokens transcribed from files/tokens.json and files/DESIGN_SYSTEM.md.
-  Tailwind v4 is CSS-first, so this @theme block replaces the classic
-  tailwind.config.js (files/tailwind.config.snippet.js is the v3-shaped
-  equivalent, kept for reference). The default Tailwind spacing scale
-  already matches DESIGN_SYSTEM.md §3 exactly (space-1=4px ... space-16=64px)
-  so it isn't redefined here.
+  Design tokens — GroundTruth Visual Design Overhaul (green/white palette).
+  Every color below was checked against WCAG 2.1 AA (4.5:1 normal text,
+  3:1 large text/UI) with a hand-written luminance/contrast script before
+  being chosen; see the self-audit notes shared with the product owner for
+  the full numbers. Tailwind v4 is CSS-first, so this @theme block IS the
+  config — changing a value here cascades to every `bg-*`/`text-*`/etc.
+  utility built from it, no component edits required.
 */
 @theme {
-  --color-ink: #1b2a4a;
-  --color-steel: #35507a;
-  --color-sky: #5b7bb0;
-  --color-amber: #c6862f;
+  /* Brand: the single green hue used for CTAs, links, and selected/active
+     state. Deliberately separated from the band-excellent/band-good greens
+     on three axes at once (hue, saturation, lightness) — not hue alone —
+     so the distinction survives red-green color vision deficiency, where
+     hue discrimination on nearby greens degrades first. */
+  --color-brand: #128066;
+  --color-brand-700: #0d6b54;
 
-  --color-paper: #f4f6fa;
-  --color-paper-2: #eaeff7;
-  --color-line: #d8e0ec;
-  --color-mute: #8794ad;
-  /* Body text color (#3A4256) is intentionally not a theme token: DESIGN_SYSTEM.md
-     names both a color and a type-scale entry "body", and Tailwind v4 generates
-     text-{name} utilities from both --color-* and --text-* under the same prefix,
-     so registering both would collide on the `text-body` class. The type-scale
-     entry (font size) wins that name below; the color is set once as the <body>
-     default and components only override it explicitly via text-ink/text-mute/etc. */
+  --color-ink: #1a2420;
+  --color-mute: #5e6f67;
+  /* Body text color (#435049) is intentionally not a theme token: Tailwind v4
+     generates text-{name} utilities from both --color-* and --text-* under
+     the same prefix, and DESIGN_SYSTEM.md's type scale already claims the
+     name "body" for a font size. The color is set once as the <body>
+     default below; components override it explicitly via text-ink/text-mute
+     when they need a color other than the page default. */
 
-  --color-band-excellent: #1f7a54;
-  --color-band-good: #4c8f6b;
-  --color-band-fair: #c6862f;
+  --color-paper: #ffffff;
+  --color-paper-2: #f6faf9;
+  --color-line: #e3ece9;
+
+  --color-band-excellent: #2e7d32;
+  --color-band-good: #428045;
+  --color-band-fair: #9c6a1e;
   --color-band-poor: #a9541f;
 
-  --color-confidence-high: #35507a;
-  --color-confidence-low: #b9c2d4;
+  /* Amber shares its value with band-fair on purpose (same warm accent hue
+     already did double duty in the original palette). Darkened from the
+     original #C6862F specifically so white button labels clear 4.5:1 —
+     the un-darkened value only reached 3.06:1. */
+  --color-amber: #9c6a1e;
 
-  --color-surface-dark: #1b2a4a;
-  --color-surface-dark-2: #2c3e63;
+  --color-confidence-high: #0d6b54;
+  --color-confidence-low: #c3cdc8;
 
-  --font-display: "Georgia", "PT Serif", "Iowan Old Style", "Times New Roman", serif;
-  --font-body: "Helvetica Neue", "Inter", -apple-system, sans-serif;
-  --font-data: "Helvetica Neue", "Inter", sans-serif;
+  --font-display: "Manrope", ui-sans-serif, -apple-system, sans-serif;
+  --font-body: "Inter", ui-sans-serif, -apple-system, sans-serif;
+  --font-data: "Inter", ui-sans-serif, -apple-system, sans-serif;
 
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
 
-  --shadow-card: 0 1px 3px rgba(27, 42, 74, 0.06), 0 1px 2px rgba(27, 42, 74, 0.04);
-  --shadow-raised: 0 4px 12px rgba(27, 42, 74, 0.1);
+  /* Cards are shadow-only by default now (no border) — see Card.tsx — so
+     the resting shadow needs slightly more presence than before to still
+     read as "raised" without a border to help delineate the edge. */
+  --shadow-card: 0 2px 6px rgba(26, 36, 32, 0.08), 0 1px 3px rgba(26, 36, 32, 0.05);
+  --shadow-raised: 0 8px 24px rgba(26, 36, 32, 0.14), 0 2px 8px rgba(26, 36, 32, 0.06);
 
   --text-display-lg: 34px;
   --text-display-lg--line-height: 1.15;
@@ -69,6 +82,6 @@
 
 body {
   background-color: var(--color-paper);
-  color: #3a4256;
+  color: #435049;
   font-family: var(--font-body);
 }

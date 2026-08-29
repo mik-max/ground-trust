@@ -22,7 +22,7 @@ export function AspectRow({ aspect, score, n, confidence }: AspectRowProps) {
       <span className="w-32 shrink-0 text-body">{label}</span>
       <div className="h-2 flex-1 rounded-full bg-paper-2">
         <div
-          className={`h-2 rounded-full ${lowConfidence ? "bg-confidence-low" : "bg-steel"}`}
+          className={`h-2 rounded-full ${lowConfidence ? "bg-confidence-low" : "bg-confidence-high"}`}
           style={{ width: `${fillPercent}%` }}
         />
       </div>

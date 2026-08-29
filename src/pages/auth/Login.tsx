@@ -61,7 +61,7 @@ export function Login() {
       <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
       <p className={`${text.body} text-mute`}>
         No account?{" "}
-        <Link to="/register" className="text-steel">
+        <Link to="/register" className="text-brand">
           Register
         </Link>
       </p>

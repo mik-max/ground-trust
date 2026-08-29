@@ -1,16 +1,20 @@
 import type { HTMLAttributes } from "react";
 
 const PADDING = {
-  sm: "p-3",
-  md: "p-4",
-  lg: "p-5",
+  sm: "p-4",
+  md: "p-6",
+  lg: "p-8",
 } as const;
 
 // Same-specificity Tailwind utilities (e.g. two border-color classes) race on
 // generation order, not className/JSX order — so border treatment is a fixed
-// variant, not something callers bolt on via className.
+// variant, not something callers bolt on via className. Cards carry elevation
+// through shadow alone (default has no border — a border AND a shadow doing
+// the same "this is a distinct surface" job is redundant); "accent" adds a
+// single categorization edge, a different job from elevation, so it can
+// coexist with the shadow.
 const BORDER = {
-  default: "border border-line",
+  default: "",
   accent: "border-l-4 border-amber",
 } as const;
 
@@ -26,7 +30,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export function Card({ padding = "md", border = "default", className = "", ...props }: CardProps) {
   return (
     <div
-      className={`rounded-md bg-white shadow-card ${BORDER[border]} ${PADDING[padding]} ${className}`.trim()}
+      className={`rounded-lg bg-white shadow-card ${BORDER[border]} ${PADDING[padding]} ${className}`.trim()}
       {...props}
     />
   );

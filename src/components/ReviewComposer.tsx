@@ -72,7 +72,7 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
                 onClick={recorder.status === "recording" ? recorder.stop : recorder.start}
                 disabled={recorder.status === "requesting"}
                 className={`flex h-16 w-16 items-center justify-center rounded-full text-white disabled:opacity-50 ${
-                  recorder.status === "recording" ? "bg-band-poor" : "bg-ink"
+                  recorder.status === "recording" ? "bg-band-poor" : "bg-brand"
                 }`}
               >
                 {recorder.status === "recording" ? <Square size={24} /> : <Mic size={28} />}

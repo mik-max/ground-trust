@@ -1,5 +1,6 @@
 import { Circle, MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import type { Area } from "../../types";
+import { areaMarkerIcon } from "./areaMarkerIcon";
 
 const OSM_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -10,7 +11,7 @@ interface AreaLocationMapProps {
 }
 
 // files/ADDENDUM.md §4 — centroid + radius only, no polygon (explicitly
-// deferred as future work). --steel matches the app's palette rather than
+// deferred as future work). --brand matches the app's palette rather than
 // Leaflet's default blue.
 //
 // Bounds are computed from the radius rather than using a fixed zoom level:
@@ -34,9 +35,9 @@ export function AreaLocationMap({ area }: AreaLocationMapProps) {
       <Circle
         center={center}
         radius={area.geoRadiusMeters}
-        pathOptions={{ color: "#35507A", fillColor: "#35507A", fillOpacity: 0.15 }}
+        pathOptions={{ color: "#128066", fillColor: "#128066", fillOpacity: 0.15 }}
       />
-      <Marker position={center}>
+      <Marker position={center} icon={areaMarkerIcon}>
         <Popup>{area.name}</Popup>
       </Marker>
     </MapContainer>

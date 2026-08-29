@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import type { AreaEvidenceStack } from "../../types";
+import { areaMarkerIcon } from "./areaMarkerIcon";
 
 const OSM_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -24,6 +25,7 @@ export function AreasOverviewMap({ areas }: { areas: AreaEvidenceStack[] }) {
         <Marker
           key={area.id}
           position={[area.geoCentroidLat, area.geoCentroidLng]}
+          icon={areaMarkerIcon}
           eventHandlers={{ click: () => navigate(`/areas/${area.id}`) }}
         >
           <Popup>
