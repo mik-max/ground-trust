@@ -11,12 +11,13 @@ import { TextInput } from "../components/ui/TextInput";
 import { BackLink } from "../components/ui/BackLink";
 import { text } from "../styles/typography";
 
-// Each AspectRow needs real room (fixed-width label, a bar, a score, an N,
-// an info icon) — squeezing it into an equal-fraction column that shrinks
-// as more areas are added is what caused columns to overlap at 3 areas.
-// Fixing each column to this width and letting the row scroll horizontally
-// instead keeps every column readable regardless of how many are compared.
-const COLUMN_WIDTH = 300;
+// Each AspectRow needs real room (fixed-width label, a bar, a score, an N)
+// to stay readable — a plain equal-fraction column shrinks without limit as
+// areas are added, which is what caused columns to overlap at 3 areas. This
+// floor keeps one area at full width and lets columns shrink normally down
+// to it; only once N columns can no longer fit at this width does the row
+// scroll horizontally instead of squeezing further.
+const MIN_COLUMN_WIDTH = 300;
 
 const MAX_AREAS = 3;
 
@@ -71,7 +72,7 @@ export function CompareAreas() {
     setSearchParams({ areas: ids.filter((x) => x !== id).join(",") });
   }
 
-  const gridStyle = { gridTemplateColumns: `repeat(${areas.length}, ${COLUMN_WIDTH}px)` };
+  const gridStyle = { gridTemplateColumns: `repeat(${areas.length}, minmax(${MIN_COLUMN_WIDTH}px, 1fr))` };
 
   return (
     <div className="flex flex-col gap-6">

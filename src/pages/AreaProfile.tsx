@@ -7,7 +7,7 @@ import { EvidenceStack } from "../components/EvidenceStack";
 import { ReviewCard } from "../components/ReviewCard";
 import { AreaLocationMap } from "../components/map/AreaLocationMap";
 import { useAuthStore } from "../store/auth.store";
-import { buttonClassName } from "../components/ui/Button";
+import { buttonClassName, Button } from "../components/ui/Button";
 import { BackLink } from "../components/ui/BackLink";
 import { Card } from "../components/ui/Card";
 import { Eyebrow } from "../components/ui/Eyebrow";
@@ -32,14 +32,33 @@ export function AreaProfile() {
   const user = useAuthStore((s) => s.user);
   const [data, setData] = useState<AreaEvidenceStack | null>(null);
   const [reviews, setReviews] = useState<Review[] | null>(null);
+  const [page, setPage] = useState(1);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     setData(null);
     setReviews(null);
+    setPage(1);
     getArea(id).then(setData);
-    getAreaReviews(id).then((r) => setReviews(r.reviews));
+    getAreaReviews(id, 1).then((r) => {
+      setReviews(r.reviews);
+      setTotalReviews(r.total);
+    });
   }, [id]);
+
+  function loadMoreReviews() {
+    if (!id) return;
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    getAreaReviews(id, nextPage)
+      .then((r) => {
+        setReviews((prev) => [...(prev ?? []), ...r.reviews]);
+        setPage(nextPage);
+      })
+      .finally(() => setLoadingMore(false));
+  }
 
   if (!data) {
     return <p className={`${text.body} text-mute`}>Loading...</p>;
@@ -102,11 +121,24 @@ export function AreaProfile() {
         ) : reviews.length === 0 ? (
           <p className={`${text.body} text-mute`}>No reviews yet.</p>
         ) : (
-          <ul className="mt-4 flex flex-col gap-4">
-            {reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
-            ))}
-          </ul>
+          <>
+            <ul className="mt-4 flex flex-col gap-4">
+              {reviews.map((review) => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
+            </ul>
+            {reviews.length < totalReviews && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={loadMoreReviews}
+                disabled={loadingMore}
+                className="mt-4 w-fit"
+              >
+                {loadingMore ? "Loading..." : `Load more (${totalReviews - reviews.length} remaining)`}
+              </Button>
+            )}
+          </>
         )}
       </div>
     </div>

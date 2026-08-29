@@ -50,53 +50,59 @@ export function Register() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto flex max-w-sm flex-col gap-4">
-      <h1 className={text.displayMd}>Create an account</h1>
+    <div className="flex min-h-[70vh] items-center justify-center">
+      <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
+        <h1 className={text.displayMd}>Create an account</h1>
 
-      <div className="flex gap-2">
-        {(["resident", "newcomer"] as const).map((r) => (
-          <Button
-            key={r}
-            type="button"
-            variant="outline"
-            active={role === r}
-            onClick={() => setRole(r)}
-            className="flex-1 capitalize"
-          >
-            {r}
-          </Button>
-        ))}
-      </div>
+        <div className="flex gap-2">
+          {(["resident", "newcomer"] as const).map((r) => (
+            <Button
+              key={r}
+              type="button"
+              variant="outline"
+              active={role === r}
+              onClick={() => setRole(r)}
+              className="flex-1 capitalize"
+            >
+              {r}
+            </Button>
+          ))}
+        </div>
 
-      <TextInput
-        value={fullName}
-        onChange={(e) => setFullName(e.target.value)}
-        placeholder="Full name"
-        required
-      />
-      <TextInput
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <TextInput
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      {error && <p className="text-caption text-band-poor">{error}</p>}
-      <Button type="submit">Create account</Button>
-      <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
-      <p className={`${text.body} text-mute`}>
-        Already have an account?{" "}
-        <Link to="/login" className="text-brand">
-          Log in
-        </Link>
-      </p>
-    </form>
+        <TextInput
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Full name"
+          required
+        />
+        <TextInput
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+        />
+        <TextInput
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        {error && <p className="text-caption text-band-poor">{error}</p>}
+        <Button type="submit">Create account</Button>
+        <GoogleAuthButton
+          text="signup_with"
+          onCredential={handleGoogle}
+          onError={() => setError("Google sign-in failed.")}
+        />
+        <p className={`${text.body} text-mute`}>
+          Already have an account?{" "}
+          <Link to="/login" className="text-brand">
+            Log in
+          </Link>
+        </p>
+      </form>
+    </div>
   );
 }

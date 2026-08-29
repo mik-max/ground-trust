@@ -40,31 +40,33 @@ export function Login() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto flex max-w-sm flex-col gap-4">
-      <h1 className={text.displayMd}>Log in</h1>
-      <TextInput
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        required
-      />
-      <TextInput
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
-        required
-      />
-      {error && <p className="text-caption text-band-poor">{error}</p>}
-      <Button type="submit">Log in</Button>
-      <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
-      <p className={`${text.body} text-mute`}>
-        No account?{" "}
-        <Link to="/register" className="text-brand">
-          Register
-        </Link>
-      </p>
-    </form>
+    <div className="flex min-h-[70vh] items-center justify-center">
+      <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
+        <h1 className={text.displayMd}>Log in</h1>
+        <TextInput
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+          required
+        />
+        <TextInput
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="Password"
+          required
+        />
+        {error && <p className="text-caption text-band-poor">{error}</p>}
+        <Button type="submit">Log in</Button>
+        <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
+        <p className={`${text.body} text-mute`}>
+          No account?{" "}
+          <Link to="/register" className="text-brand">
+            Register
+          </Link>
+        </p>
+      </form>
+    </div>
   );
 }
