@@ -19,6 +19,20 @@ export async function getAreaReviews(id: string, page = 1) {
   return data;
 }
 
+// Proposes a new area — starts "pending" until an admin approves it (see
+// admin.service.ts's moderateArea), so it won't show up in listAreas or
+// findNearestArea until then.
+export async function createArea(input: {
+  name: string;
+  city: string;
+  state: string;
+  geoCentroidLat: number;
+  geoCentroidLng: number;
+}) {
+  const { data } = await api.post<{ area: Area }>("/areas", input);
+  return data.area;
+}
+
 // Given a real-world point (from a geocode suggestion), finds the seeded
 // Area whose geofence actually contains it, if any — see
 // backend/src/controllers/area.controller.ts's findNearestArea.

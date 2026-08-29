@@ -2,13 +2,29 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MapPin, Search } from "lucide-react";
 import type { Area } from "../types";
-import { findNearestArea, listAreas } from "../services/area.service";
+import { createArea, findNearestArea, listAreas } from "../services/area.service";
 import { searchLocations, type GeocodeSuggestion } from "../services/geocode.service";
+import { useAuthStore } from "../store/auth.store";
+import { Button } from "./ui/Button";
+import { TextInput } from "./ui/TextInput";
 
 interface LocationSearchInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+}
+
+// Nominatim's display_name is a plain comma-separated string with no fixed
+// shape ("Ikeja, Lagos State, Nigeria" vs a much longer address) — this is
+// only ever a starting guess for the add-area form below, which stays fully
+// editable, so getting it slightly wrong for an unusual result is fine.
+function guessNameCityState(label: string): { name: string; city: string; state: string } {
+  const parts = label.split(",").map((s) => s.trim());
+  const name = parts[0] ?? "";
+  const stateIndex = parts.findIndex((p) => /state/i.test(p));
+  const state = stateIndex >= 0 ? parts[stateIndex].replace(/\s*state$/i, "") : "";
+  const city = parts.length > 2 ? parts[1] : state || name;
+  return { name, city, state };
 }
 
 // Two result sources live in one dropdown: areas we already have data for
@@ -19,12 +35,16 @@ interface LocationSearchInputProps {
 // component only owns the dropdown's open/suggestions state.
 export function LocationSearchInput({ value, onChange, placeholder }: LocationSearchInputProps) {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState(false);
   const [ownMatches, setOwnMatches] = useState<Area[]>([]);
   const [geoMatches, setGeoMatches] = useState<GeocodeSuggestion[]>([]);
-  const [notCovered, setNotCovered] = useState<string | null>(null);
+  const [uncovered, setUncovered] = useState<GeocodeSuggestion | null>(null);
+  const [addForm, setAddForm] = useState<{ name: string; city: string; state: string } | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const query = value.trim();
@@ -50,20 +70,43 @@ export function LocationSearchInput({ value, onChange, placeholder }: LocationSe
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  function resetUncoveredState() {
+    setUncovered(null);
+    setAddForm(null);
+    setSubmitted(false);
+  }
+
   function selectOwnArea(area: Area) {
     setOpen(false);
     navigate(`/areas/${area.id}`);
   }
 
   async function selectGeoSuggestion(suggestion: GeocodeSuggestion) {
-    setNotCovered(null);
+    resetUncoveredState();
     const area = await findNearestArea(suggestion.lat, suggestion.lng);
     if (area) {
       setOpen(false);
       navigate(`/areas/${area.id}`);
     } else {
-      const shortLabel = suggestion.label.split(",").slice(0, 2).join(",");
-      setNotCovered(`No resident data yet for ${shortLabel}.`);
+      setUncovered(suggestion);
+    }
+  }
+
+  async function submitNewArea() {
+    if (!uncovered || !addForm) return;
+    setSubmitting(true);
+    try {
+      await createArea({
+        name: addForm.name.trim(),
+        city: addForm.city.trim(),
+        state: addForm.state.trim(),
+        geoCentroidLat: uncovered.lat,
+        geoCentroidLng: uncovered.lng,
+      });
+      setAddForm(null);
+      setSubmitted(true);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -77,7 +120,7 @@ export function LocationSearchInput({ value, onChange, placeholder }: LocationSe
           value={value}
           onChange={(e) => {
             onChange(e.target.value);
-            setNotCovered(null);
+            resetUncoveredState();
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
@@ -86,7 +129,7 @@ export function LocationSearchInput({ value, onChange, placeholder }: LocationSe
         />
       </div>
 
-      {open && (hasResults || notCovered) && (
+      {open && (hasResults || uncovered) && (
         <ul className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-line bg-white shadow-raised">
           {ownMatches.length > 0 && (
             <li>
@@ -122,7 +165,60 @@ export function LocationSearchInput({ value, onChange, placeholder }: LocationSe
             </li>
           )}
 
-          {notCovered && <p className="border-t border-line px-4 py-3 text-caption text-mute">{notCovered}</p>}
+          {uncovered && (
+            <li className="border-t border-line p-4">
+              {submitted ? (
+                <p className="text-caption text-mute">
+                  Thanks — submitted for review. An admin will approve it before it appears publicly.
+                </p>
+              ) : addForm ? (
+                <div className="flex flex-col gap-2">
+                  <p className="text-caption text-mute">A few details before we submit it for review:</p>
+                  <TextInput
+                    value={addForm.name}
+                    onChange={(e) => setAddForm({ ...addForm, name: e.target.value })}
+                    placeholder="Area name"
+                  />
+                  <div className="flex gap-2">
+                    <TextInput
+                      value={addForm.city}
+                      onChange={(e) => setAddForm({ ...addForm, city: e.target.value })}
+                      placeholder="City"
+                      className="flex-1"
+                    />
+                    <TextInput
+                      value={addForm.state}
+                      onChange={(e) => setAddForm({ ...addForm, state: e.target.value })}
+                      placeholder="State"
+                      className="flex-1"
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={submitNewArea}
+                    disabled={submitting || !addForm.name.trim() || !addForm.city.trim() || !addForm.state.trim()}
+                    className="mt-1 w-fit"
+                  >
+                    {submitting ? "Submitting..." : "Submit for review"}
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <p className="text-caption text-mute">No resident data yet for {uncovered.label.split(",").slice(0, 2).join(",")}.</p>
+                  {user?.role === "resident" && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setAddForm(guessNameCityState(uncovered.label))}
+                      className="w-fit"
+                    >
+                      + Add this area
+                    </Button>
+                  )}
+                </div>
+              )}
+            </li>
+          )}
         </ul>
       )}
     </div>

@@ -9,7 +9,7 @@ export function NavBar() {
   return (
     <nav className="flex items-center justify-between border-b border-line bg-white px-6 py-4">
       <Link to="/" className={text.heading}>
-        Environmental Intelligence
+        GroundTrust
       </Link>
       <div className="flex items-center gap-4 text-body">
         {user?.role === "resident" && (
@@ -31,6 +31,11 @@ export function NavBar() {
               Moderation Queue
             </Link>
           </>
+        )}
+        {user && (
+          <Link to="/profile" className="text-mute">
+            Profile
+          </Link>
         )}
         {user ? (
           <button

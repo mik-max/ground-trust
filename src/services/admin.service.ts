@@ -24,3 +24,17 @@ export async function moderateReview(reviewId: string, decision: "approved" | "r
   const { data } = await api.post<{ review: PendingReview }>(`/admin/reviews/${reviewId}/moderate`, { decision });
   return data.review;
 }
+
+export type PendingArea = Area & {
+  createdBy: { id: string; fullName: string; email: string } | null;
+};
+
+export async function listPendingAreas() {
+  const { data } = await api.get<{ areas: PendingArea[] }>("/admin/areas/pending");
+  return data.areas;
+}
+
+export async function moderateArea(areaId: string, decision: "approved" | "rejected") {
+  const { data } = await api.post<{ area: PendingArea }>(`/admin/areas/${areaId}/moderate`, { decision });
+  return data.area;
+}

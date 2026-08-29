@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./pages/Home";
+import { Profile } from "./pages/Profile";
 import { AreaProfile } from "./pages/AreaProfile";
 import { CompareAreas } from "./pages/CompareAreas";
 import { SubmitReview } from "./pages/SubmitReview";
@@ -31,6 +32,14 @@ export default function App() {
             }
           />
           <Route path="/areas/:id" element={<AreaProfile />} />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute allow={["resident", "newcomer", "government", "admin"]}>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/compare" element={<CompareAreas />} />
           <Route
             path="/areas/:id/review"

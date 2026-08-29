@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Aspect } from "../../types";
-import { listPendingReviews, moderateReview, type PendingReview } from "../../services/admin.service";
+import {
+  listPendingAreas,
+  listPendingReviews,
+  moderateArea,
+  moderateReview,
+  type PendingArea,
+  type PendingReview,
+} from "../../services/admin.service";
 import { ASPECT_META, ASPECT_ORDER } from "../../components/aspectMeta";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
@@ -26,10 +33,12 @@ function formatDate(iso: string) {
 // spec — no assignment, no filters, just approve/reject.
 export function ModerationQueue() {
   const [reviews, setReviews] = useState<PendingReview[] | null>(null);
+  const [areas, setAreas] = useState<PendingArea[] | null>(null);
   const [actingOn, setActingOn] = useState<string | null>(null);
 
   function refresh() {
     listPendingReviews().then(setReviews);
+    listPendingAreas().then(setAreas);
   }
 
   useEffect(refresh, []);
@@ -44,10 +53,60 @@ export function ModerationQueue() {
     }
   }
 
+  async function handleAreaDecision(areaId: string, decision: "approved" | "rejected") {
+    setActingOn(areaId);
+    try {
+      await moderateArea(areaId, decision);
+      setAreas((prev) => prev?.filter((a) => a.id !== areaId) ?? null);
+    } finally {
+      setActingOn(null);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <h1 className={text.displayMd}>Moderation Queue</h1>
 
+      <div>
+        <h2 className={text.heading}>Proposed areas</h2>
+        {areas === null ? (
+          <p className={`${text.body} text-mute`}>Loading...</p>
+        ) : areas.length === 0 ? (
+          <p className={`${text.body} text-mute`}>No area proposals pending.</p>
+        ) : (
+          <ul className="mt-3 flex flex-col gap-3">
+            {areas.map((a) => (
+              <li key={a.id}>
+                <Card className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-body-lg text-ink">
+                      {a.name} <span className="text-mute">· {a.city}, {a.state}</span>
+                    </p>
+                    <p className="text-caption text-mute">
+                      Proposed by {a.createdBy?.fullName ?? "Unknown resident"}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 gap-2">
+                    <Button type="button" disabled={actingOn === a.id} onClick={() => handleAreaDecision(a.id, "approved")}>
+                      Approve
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={actingOn === a.id}
+                      onClick={() => handleAreaDecision(a.id, "rejected")}
+                    >
+                      Reject
+                    </Button>
+                  </div>
+                </Card>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <h2 className={text.heading}>Pending reviews</h2>
       {reviews === null ? (
         <p className={`${text.body} text-mute`}>Loading...</p>
       ) : reviews.length === 0 ? (

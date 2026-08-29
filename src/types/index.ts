@@ -4,6 +4,8 @@ export type ConfidenceLevel = "low" | "medium" | "high";
 export type Role = "resident" | "newcomer" | "government" | "admin";
 export type VerificationTier = "tier0" | "tier1" | "tier2" | "tier3";
 
+export type AreaStatus = "approved" | "pending" | "rejected";
+
 export interface Area {
   id: string;
   name: string;
@@ -12,6 +14,8 @@ export interface Area {
   geoCentroidLat: number;
   geoCentroidLng: number;
   geoRadiusMeters: number;
+  status: AreaStatus;
+  createdByUserId: string | null;
 }
 
 export interface AspectScore {
