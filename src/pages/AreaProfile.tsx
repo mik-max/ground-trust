@@ -4,6 +4,7 @@ import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
 import { ReviewCard } from "../components/ReviewCard";
+import { AreaLocationMap } from "../components/map/AreaLocationMap";
 import { useAuthStore } from "../store/auth.store";
 import { buttonClassName } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -70,6 +71,14 @@ export function AreaProfile() {
               Residents earn more influence over time — Registered counts least, Location-confirmed
               counts more, and Verified residents (60+ days confirmed) count most.
             </p>
+          </Card>
+          <Card>
+            <h2 className={text.heading}>Location</h2>
+            <p className="mt-1 mb-3 text-caption text-mute">
+              Approximate area boundary ({data.area.geoRadiusMeters.toLocaleString()}m radius) — not a
+              precise boundary.
+            </p>
+            <AreaLocationMap area={data.area} />
           </Card>
         </div>
       </div>

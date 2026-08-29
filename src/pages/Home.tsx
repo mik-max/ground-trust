@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { AreaEvidenceStack } from "../types";
 import { listAreas } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
+import { AreasOverviewMap } from "../components/map/AreasOverviewMap";
 import { TextInput } from "../components/ui/TextInput";
 import { text } from "../styles/typography";
 
@@ -38,6 +39,7 @@ export function Home() {
         <p className={`${text.body} text-mute`}>No areas reviewed near you yet — be the first.</p>
       ) : (
         <div className="flex flex-col gap-4">
+          <AreasOverviewMap areas={areas} />
           {areas.map(({ area, overall, aspects }) => (
             <Link key={area.id} to={`/areas/${area.id}`} className="flex flex-col gap-2">
               <span className={text.heading}>
