@@ -41,6 +41,7 @@ export interface Review {
   originalText: string | null;
   originalLanguage: string | null;
   originalAudioRef: string | null;
+  hasVoiceRecording: boolean;
   translatedText: string | null;
   submittedAt: string;
   ratingPower: number | null;

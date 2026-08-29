@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Mic } from "lucide-react";
 import type { Aspect, Review } from "../types";
 import { VerificationTierBadge } from "./VerificationTierBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
@@ -20,9 +21,14 @@ function formatDate(iso: string) {
 // GroundTruth_Design_Implementation_Guide.md §3.9. The translated English
 // text is the default body copy — the original is a "View original" toggle,
 // not the primary text, so non-English contributions read naturally for
-// most viewers. (Both fields are currently the same since the NLP
-// translation pipeline isn't built yet — see files/HANDOFF.md §3 — but the
-// toggle only appears once the two actually diverge.)
+// most viewers.
+//
+// Privacy: a voice review's raw recording is only ever sent to government
+// viewers (backend strips it for everyone else — see
+// area.controller.ts's getAreaReviews) — residents/visitors always get the
+// transcribed text instead. `hasVoiceRecording` survives that stripping so
+// non-government viewers still see an honest "this was spoken" indicator,
+// just never the recording itself.
 export function ReviewCard({ review }: { review: Review }) {
   const [showOriginal, setShowOriginal] = useState(false);
   const ratedAspects = ASPECT_ORDER.filter((a) => review[RATING_BY_ASPECT[a]] !== null);
@@ -37,10 +43,16 @@ export function ReviewCard({ review }: { review: Review }) {
           <span className="text-caption text-mute">{formatDate(review.submittedAt)}</span>
         </div>
 
-        {review.originalAudioRef && (
-          // No transcript yet — the NLP pipeline (files/HANDOFF.md §3) isn't
-          // built, so playback is the only way to hear a voice review for now.
+        {review.originalAudioRef ? (
+          // Only ever present for government viewers — see the privacy note above.
           <audio controls src={review.originalAudioRef} className="mt-3 w-full" />
+        ) : (
+          review.hasVoiceRecording && (
+            <span className="mt-3 inline-flex w-fit items-center gap-1.5 text-caption text-mute">
+              <Mic size={13} />
+              Originally a voice review — shown here as text to protect the resident's privacy.
+            </span>
+          )
         )}
 
         {bodyText && <p className="mt-3 text-body text-ink">{showOriginal ? review.originalText : bodyText}</p>}
