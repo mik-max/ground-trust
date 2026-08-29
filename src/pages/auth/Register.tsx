@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signup } from "../../services/auth.service";
+import { googleAuth, signup } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
 import type { Role } from "../../types";
 import { Button } from "../../components/ui/Button";
 import { TextInput } from "../../components/ui/TextInput";
+import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { text } from "../../styles/typography";
 
 // Role choice is resident/newcomer only — Government is invite-only, per
@@ -18,18 +19,33 @@ export function Register() {
   const [role, setRole] = useState<Role>("resident");
   const [error, setError] = useState<string | null>(null);
 
+  // Residents see the residency-sampling consent screen once, right after
+  // a real signup — not on every login. Newcomers have nothing to consent
+  // to, so they go straight in either way.
+  function afterAuth(role: Role, isNewSignup: boolean) {
+    navigate(role === "resident" && isNewSignup ? "/onboarding/consent" : "/");
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     try {
       const { token, user } = await signup({ fullName, email, password, role });
       setAuth(token, user);
-      // Residents see the residency-sampling consent screen once, right
-      // after signup — not on every login. Newcomers have nothing to
-      // consent to, so they go straight in.
-      navigate(role === "resident" ? "/onboarding/consent" : "/");
+      afterAuth(role, true);
     } catch {
       setError("Couldn't create your account — that email may already be registered.");
+    }
+  }
+
+  async function handleGoogle(credential: string) {
+    setError(null);
+    try {
+      const { token, user, isNewUser } = await googleAuth(credential, role);
+      setAuth(token, user);
+      afterAuth(user.role, isNewUser);
+    } catch {
+      setError("Couldn't sign up with Google — please try again.");
     }
   }
 
@@ -74,6 +90,7 @@ export function Register() {
       />
       {error && <p className="text-caption text-band-poor">{error}</p>}
       <Button type="submit">Create account</Button>
+      <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
       <p className={`${text.body} text-mute`}>
         Already have an account?{" "}
         <Link to="/login" className="text-steel">
