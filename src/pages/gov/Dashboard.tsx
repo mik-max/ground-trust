@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Flag } from "../../types";
 import { listFlags } from "../../services/gov.service";
 import { GovernmentFlagCard } from "../../components/GovernmentFlagCard";
+import { BackLink } from "../../components/ui/BackLink";
 import { text } from "../../styles/typography";
 
 // files/DESIGN_SYSTEM.md §6.7. Filter-by-aspect UI and drill-into-Area-Profile
@@ -15,6 +16,7 @@ export function GovDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
+      <BackLink to="/" label="All areas" />
       <h1 className={text.displayMd}>Flagged Areas</h1>
 
       {flags === null ? (

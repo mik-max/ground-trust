@@ -1,11 +1,11 @@
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import type { AreaEvidenceStack } from "../types";
 import { ScoreBandBadge } from "./ScoreBandBadge";
 import { AspectRow } from "./AspectRow";
 import { ConfidenceStrip } from "./ConfidenceStrip";
 import { ASPECT_ORDER } from "./aspectMeta";
 import { Card } from "./ui/Card";
-import { Button } from "./ui/Button";
 
 interface EvidenceStackProps {
   overall: AreaEvidenceStack["overall"];
@@ -47,9 +47,14 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
       <div className="my-4 border-t border-line" />
 
       {size === "compact" && !expanded ? (
-        <Button type="button" variant="link" className="text-body" onClick={() => setExpanded(true)}>
+        <button
+          type="button"
+          onClick={() => setExpanded(true)}
+          className="flex w-fit items-center gap-1.5 text-body text-mute transition-colors hover:text-ink"
+        >
           Show breakdown
-        </Button>
+          <ChevronDown size={16} />
+        </button>
       ) : (
         <div className="flex flex-col gap-3">
           {orderedAspects.map((a) => (

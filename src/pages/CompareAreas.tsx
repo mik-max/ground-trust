@@ -8,7 +8,15 @@ import { AspectRow } from "../components/AspectRow";
 import { ConfidenceStrip } from "../components/ConfidenceStrip";
 import { ASPECT_ORDER } from "../components/aspectMeta";
 import { TextInput } from "../components/ui/TextInput";
+import { BackLink } from "../components/ui/BackLink";
 import { text } from "../styles/typography";
+
+// Each AspectRow needs real room (fixed-width label, a bar, a score, an N,
+// an info icon) — squeezing it into an equal-fraction column that shrinks
+// as more areas are added is what caused columns to overlap at 3 areas.
+// Fixing each column to this width and letting the row scroll horizontally
+// instead keeps every column readable regardless of how many are compared.
+const COLUMN_WIDTH = 300;
 
 const MAX_AREAS = 3;
 
@@ -63,10 +71,11 @@ export function CompareAreas() {
     setSearchParams({ areas: ids.filter((x) => x !== id).join(",") });
   }
 
-  const gridStyle = { gridTemplateColumns: `repeat(${areas.length}, minmax(0, 1fr))` };
+  const gridStyle = { gridTemplateColumns: `repeat(${areas.length}, ${COLUMN_WIDTH}px)` };
 
   return (
     <div className="flex flex-col gap-6">
+      <BackLink to="/" label="All areas" />
       <h1 className={text.displayMd}>Compare Areas</h1>
 
       {areas.length < MAX_AREAS && (
@@ -98,7 +107,7 @@ export function CompareAreas() {
       {areas.length === 0 ? (
         <p className="text-body text-mute">Search above to start comparing areas.</p>
       ) : (
-        <div className="grid gap-x-6" style={gridStyle}>
+        <div className="grid gap-x-8 overflow-x-auto pb-2" style={gridStyle}>
           {areas.map((a) => (
             <div key={a.area.id} className="flex items-start justify-between border-b border-line pb-3">
               <div>

@@ -17,7 +17,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <NavBar />
-      <main className="mx-auto max-w-4xl px-6 py-8">
+      <main className="mx-auto max-w-6xl px-6 py-8">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

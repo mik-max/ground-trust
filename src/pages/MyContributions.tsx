@@ -4,6 +4,7 @@ import { getVerificationStatus, type Residency, type TierProgress } from "../ser
 import { VerificationTierBadge } from "../components/VerificationTierBadge";
 import { useGpsPresenceSample } from "../hooks/useGpsPresenceSample";
 import { Card } from "../components/ui/Card";
+import { BackLink } from "../components/ui/BackLink";
 import { text } from "../styles/typography";
 
 function formatProgress(progress: TierProgress): string | null {
@@ -31,6 +32,7 @@ export function MyContributions() {
 
   return (
     <div className="flex flex-col gap-6">
+      <BackLink to="/" label="All areas" />
       <h1 className={text.displayMd}>My Contributions</h1>
 
       {residencies === null ? (

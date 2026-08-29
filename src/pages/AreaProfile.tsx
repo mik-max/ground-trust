@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { UserCheck, Scale, ShieldCheck, Shield, User } from "lucide-react";
 import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
@@ -7,9 +8,21 @@ import { ReviewCard } from "../components/ReviewCard";
 import { AreaLocationMap } from "../components/map/AreaLocationMap";
 import { useAuthStore } from "../store/auth.store";
 import { buttonClassName } from "../components/ui/Button";
+import { BackLink } from "../components/ui/BackLink";
 import { Card } from "../components/ui/Card";
 import { Eyebrow } from "../components/ui/Eyebrow";
 import { text } from "../styles/typography";
+
+function InfoRow({ icon: Icon, children }: { icon: typeof UserCheck; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-paper-2 text-brand">
+        <Icon size={16} />
+      </div>
+      <p className="text-body text-ink">{children}</p>
+    </div>
+  );
+}
 
 // GroundTruth_Design_Implementation_Guide.md §7.3 — eyebrow kicker, two-column
 // layout (Evidence Stack + Compare CTA on the left; explanatory info cards on
@@ -34,6 +47,8 @@ export function AreaProfile() {
 
   return (
     <div className="flex flex-col gap-8">
+      <BackLink to="/" label="All areas" />
+
       <div>
         <Eyebrow>Area Profile</Eyebrow>
         <h1 className={text.displayLg}>{data.area.name}</h1>
@@ -58,19 +73,16 @@ export function AreaProfile() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <Card>
+          <Card className="flex flex-col gap-3">
             <h2 className={text.heading}>How this score is calculated</h2>
-            <p className="mt-1 text-body text-mute">
-              Each score is a weighted average of ratings from verified residents. Longer-verified
-              residents carry more weight, so the score reflects lived experience, not just volume.
-            </p>
+            <InfoRow icon={UserCheck}>Only counts verified residents</InfoRow>
+            <InfoRow icon={Scale}>Longer residency carries more weight</InfoRow>
           </Card>
-          <Card>
+          <Card className="flex flex-col gap-3">
             <h2 className={text.heading}>Verification tiers</h2>
-            <p className="mt-1 text-body text-mute">
-              Residents earn more influence over time — Registered counts least, Location-confirmed
-              counts more, and Verified residents (60+ days confirmed) count most.
-            </p>
+            <InfoRow icon={User}>Registered — counts least</InfoRow>
+            <InfoRow icon={Shield}>Location-confirmed — counts more</InfoRow>
+            <InfoRow icon={ShieldCheck}>Verified resident (60+ days) — counts most</InfoRow>
           </Card>
           <Card>
             <h2 className={text.heading}>Location</h2>
