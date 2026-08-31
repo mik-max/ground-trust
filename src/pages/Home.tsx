@@ -40,12 +40,12 @@ export function Home() {
       </div>
 
       {user?.role === "resident" && (
-        <Card className="flex items-center justify-between gap-4">
+        <Card className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <MessageCircle size={20} className="shrink-0 text-brand" />
             <p className="text-body text-ink">Lived experience is what makes GroundTrust real.</p>
           </div>
-          <Link to="/share" className={buttonClassName({ variant: "primary" }, "shrink-0")}>
+          <Link to="/share" className={buttonClassName({ variant: "primary" }, "w-full text-center sm:w-auto")}>
             Talk about your environment
           </Link>
         </Card>
