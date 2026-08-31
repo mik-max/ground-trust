@@ -26,7 +26,7 @@ export function AreaCard({ area, overall, aspects, spotlight = false }: AreaCard
         className="flex h-full flex-col gap-3 transition-shadow hover:shadow-raised"
       >
         {spotlight && (
-          <span className="w-fit rounded-full bg-brand/10 px-2.5 py-1 text-eyebrow font-bold uppercase tracking-[2px] text-brand">
+          <span className="w-fit rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[1px] text-brand">
             Most reviewed
           </span>
         )}
@@ -46,7 +46,7 @@ export function AreaCard({ area, overall, aspects, spotlight = false }: AreaCard
               <p className={`tabular-nums text-ink ${spotlight ? "text-data-xl" : "text-data-lg"}`}>
                 {overall.score.toFixed(1)}
               </p>
-              {overall.band && <ScoreBandBadge band={overall.band} />}
+              {overall.band && <ScoreBandBadge band={overall.band} size="sm" />}
             </div>
             <p className="text-caption text-mute">
               Based on {overall.N} verified resident{overall.N === 1 ? "" : "s"}

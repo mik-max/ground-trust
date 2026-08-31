@@ -14,12 +14,20 @@ const BAND_COLOR_CLASS: Record<Band, string> = {
   poor: "bg-band-poor/[12%] text-band-poor",
 };
 
+// "sm" is for dense card contexts (AreaCard) where the default --text-eyebrow
+// size reads as too heavy next to a compact score — not a global change, since
+// the default size is correct on Area Profile's hero and Compare Areas.
+const SIZE_CLASS = {
+  md: "px-3 py-1 text-eyebrow tracking-[2px]",
+  sm: "px-2 py-0.5 text-[10px] tracking-[1px]",
+} as const;
+
 // files/DESIGN_SYSTEM.md §5.1 — label only, never the numeric score.
 // Always render alongside a contributor count (see EvidenceStack).
-export function ScoreBandBadge({ band }: { band: Band }) {
+export function ScoreBandBadge({ band, size = "md" }: { band: Band; size?: keyof typeof SIZE_CLASS }) {
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3 py-1 text-eyebrow font-bold uppercase tracking-[2px] ${BAND_COLOR_CLASS[band]}`}
+      className={`inline-flex items-center rounded-full font-bold uppercase ${SIZE_CLASS[size]} ${BAND_COLOR_CLASS[band]}`}
     >
       {BAND_LABEL[band]}
     </span>

@@ -33,18 +33,26 @@ export function Home() {
   // The single most-reviewed area gets the spotlight treatment — but only
   // on the default, unfiltered view. Spotlighting one of two or three
   // active search results doesn't mean anything; the point is surfacing
-  // the most-trusted area when someone's just browsing.
+  // the most-trusted area when someone's just browsing. Moved to the front
+  // of the grid (not just flagged in place) so its 2-column span doesn't
+  // leave a gap wherever it happened to fall alphabetically — the rest
+  // keep their original relative order.
   const spotlightId =
     !query && areas.length > 1
       ? [...areas].sort((a, b) => b.overall.N - a.overall.N)[0].area.id
       : null;
+  const orderedAreas = spotlightId
+    ? [areas.find((a) => a.area.id === spotlightId)!, ...areas.filter((a) => a.area.id !== spotlightId)]
+    : areas;
 
   return (
     <div className="flex flex-col gap-10">
-      <div className="flex flex-col gap-6 rounded-xl bg-paper-2 px-6 py-16 sm:px-10 sm:py-20">
+      <div className="flex flex-col gap-6 rounded-xl bg-brand-700 px-6 py-16 sm:px-10 sm:py-20">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-          <h1 className={text.displayLg}>Find out what an area is really like</h1>
-          <p className={`${text.bodyLg} text-mute`}>Rated by the residents who live there.</p>
+          <h1 className="text-display-lg font-display font-bold text-white">
+            Find out what an area is really like
+          </h1>
+          <p className="text-body-lg text-white/80">Rated by the residents who live there.</p>
         </div>
         <div className="mx-auto w-full max-w-xl">
           <LocationSearchInput value={query} onChange={setQuery} />
@@ -77,7 +85,7 @@ export function Home() {
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {areas.map((a) => (
+          {orderedAreas.map((a) => (
             <AreaCard key={a.area.id} {...a} spotlight={a.area.id === spotlightId} />
           ))}
         </div>
