@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { googleAuth, login as loginRequest } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
+import { AuthLayout } from "../../components/auth/AuthLayout";
 import { Button } from "../../components/ui/Button";
+import { Field } from "../../components/ui/Field";
 import { TextInput } from "../../components/ui/TextInput";
 import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { text } from "../../styles/typography";
@@ -40,33 +42,46 @@ export function Login() {
   }
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center">
-      <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
-        <h1 className={text.displayMd}>Log in</h1>
-        <TextInput
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <TextInput
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
+    <AuthLayout>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <div>
+          <h1 className={text.displayMd}>Log in</h1>
+          <p className={`mt-1 ${text.body} text-mute`}>Welcome back to GroundTrust</p>
+        </div>
+
+        <Field label="Your e-mail">
+          <TextInput
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="email@domain.com"
+            className="w-full"
+            required
+          />
+        </Field>
+        <Field label="Password">
+          <TextInput
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••••••"
+            className="w-full"
+            required
+          />
+        </Field>
+
         {error && <p className="text-caption text-band-poor">{error}</p>}
-        <Button type="submit">Log in</Button>
+        <Button type="submit" className="w-full">
+          Log in
+        </Button>
         <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
         <p className={`${text.body} text-mute`}>
           No account?{" "}
-          <Link to="/register" className="text-brand">
+          <Link to="/register" className="font-medium text-brand">
             Register
           </Link>
         </p>
       </form>
-    </div>
+    </AuthLayout>
   );
 }

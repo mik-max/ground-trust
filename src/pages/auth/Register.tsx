@@ -2,7 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { googleAuth, signup } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
+import { AuthLayout } from "../../components/auth/AuthLayout";
 import { Button } from "../../components/ui/Button";
+import { Field } from "../../components/ui/Field";
 import { TextInput } from "../../components/ui/TextInput";
 import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { text } from "../../styles/typography";
@@ -51,32 +53,47 @@ export function Register() {
   }
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center">
-      <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
-        <h1 className={text.displayMd}>Create an account</h1>
+    <AuthLayout>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <div>
+          <h1 className={text.displayMd}>Sign up</h1>
+          <p className={`mt-1 ${text.body} text-mute`}>Create your account for free</p>
+        </div>
 
-        <TextInput
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Full name"
-          required
-        />
-        <TextInput
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <TextInput
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
+        <Field label="Your name">
+          <TextInput
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Name lastname"
+            className="w-full"
+            required
+          />
+        </Field>
+        <Field label="Your e-mail">
+          <TextInput
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="email@domain.com"
+            className="w-full"
+            required
+          />
+        </Field>
+        <Field label="Password">
+          <TextInput
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••••••"
+            className="w-full"
+            required
+          />
+        </Field>
+
         {error && <p className="text-caption text-band-poor">{error}</p>}
-        <Button type="submit">Create account</Button>
+        <Button type="submit" className="w-full">
+          Create account
+        </Button>
         <GoogleAuthButton
           text="signup_with"
           onCredential={handleGoogle}
@@ -84,11 +101,11 @@ export function Register() {
         />
         <p className={`${text.body} text-mute`}>
           Already have an account?{" "}
-          <Link to="/login" className="text-brand">
+          <Link to="/login" className="font-medium text-brand">
             Log in
           </Link>
         </p>
       </form>
-    </div>
+    </AuthLayout>
   );
 }

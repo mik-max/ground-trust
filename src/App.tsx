@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./pages/Home";
@@ -16,15 +16,30 @@ import { ResidencyConsent } from "./pages/onboarding/ResidencyConsent";
 import { AdminGovernmentAccounts } from "./pages/admin/GovernmentAccounts";
 import { ModerationQueue } from "./pages/admin/ModerationQueue";
 
-export default function App() {
+const CHROMELESS_PATHS = new Set(["/login", "/register"]);
+
+// Login/Register render full-viewport (see AuthLayout) with no NavBar and
+// none of the centered max-w-6xl column every other page sits inside — a
+// single useLocation check here, rather than nested <Routes> trees, keeps
+// the routing itself unambiguous.
+function AppShell() {
+  const location = useLocation();
+
+  if (CHROMELESS_PATHS.has(location.pathname)) {
+    return (
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    );
+  }
+
   return (
-    <BrowserRouter>
+    <>
       <NavBar />
       <main className="mx-auto max-w-6xl px-6 py-8">
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route
             path="/onboarding/consent"
             element={
@@ -101,6 +116,14 @@ export default function App() {
           />
         </Routes>
       </main>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppShell />
     </BrowserRouter>
   );
 }
