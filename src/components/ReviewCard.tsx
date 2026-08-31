@@ -59,11 +59,18 @@ export function ReviewCard({ review }: { review: Review }) {
 
         {ratedAspects.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            {ratedAspects.map((aspect) => (
-              <span key={aspect} className="rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
-                {ASPECT_META[aspect].label}: {review[RATING_BY_ASPECT[aspect]] as number}/5
-              </span>
-            ))}
+            {ratedAspects.map((aspect) => {
+              const Icon = ASPECT_META[aspect].icon;
+              return (
+                <span
+                  key={aspect}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute"
+                >
+                  <Icon size={12} />
+                  {ASPECT_META[aspect].label}: {review[RATING_BY_ASPECT[aspect]] as number}/5
+                </span>
+              );
+            })}
             {hasTranslation && (
               <Button type="button" variant="link" className="text-caption" onClick={() => setShowOriginal((v) => !v)}>
                 {showOriginal ? "View translation" : "View original"}
