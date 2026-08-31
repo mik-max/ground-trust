@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { TriangleAlert } from "lucide-react";
 import type { Aspect } from "../../types";
 import {
   listPendingAreas,
@@ -10,6 +11,7 @@ import {
   type PendingReview,
 } from "../../services/admin.service";
 import { ASPECT_META, ASPECT_ORDER } from "../../components/aspectMeta";
+import { AreaLocationMap } from "../../components/map/AreaLocationMap";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { text } from "../../styles/typography";
@@ -74,19 +76,55 @@ export function ModerationQueue() {
         ) : areas.length === 0 ? (
           <p className={`${text.body} text-mute`}>No area proposals pending.</p>
         ) : (
-          <ul className="mt-3 flex flex-col gap-3">
+          <ul className="mt-3 flex flex-col gap-4">
             {areas.map((a) => (
               <li key={a.id}>
-                <Card className="flex items-center justify-between gap-4">
-                  <div>
-                    <p className="text-body-lg text-ink">
-                      {a.name} <span className="text-mute">· {a.city}, {a.state}</span>
-                    </p>
-                    <p className="text-caption text-mute">
-                      Proposed by {a.createdBy?.fullName ?? "Unknown resident"}
-                    </p>
+                <Card border={a.possibleDuplicate ? "accent" : "default"} className="flex flex-col gap-3">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr]">
+                    <div className="flex flex-col gap-2">
+                      <div>
+                        <p className="text-body-lg text-ink">
+                          {a.name} <span className="text-mute">· {a.city}, {a.state}</span>
+                        </p>
+                        <p className="text-caption text-mute">
+                          Proposed by {a.createdBy?.fullName ?? "Unknown resident"}
+                          {a.createdBy?.email ? ` (${a.createdBy.email})` : ""}
+                        </p>
+                        <p className="text-caption text-mute">
+                          {a.geoCentroidLat.toFixed(4)}, {a.geoCentroidLng.toFixed(4)} · {a.geoRadiusMeters.toLocaleString()}m radius
+                        </p>
+                      </div>
+
+                      {a.possibleDuplicate && a.nearestOtherArea && (
+                        <div className="flex items-start gap-2 rounded-md bg-paper-2 p-3">
+                          <TriangleAlert size={16} className="mt-0.5 shrink-0 text-amber" />
+                          <p className="text-caption text-ink">
+                            Only {Math.round(a.nearestOtherArea.distanceMeters).toLocaleString()}m from{" "}
+                            <span className="font-bold">{a.nearestOtherArea.name}</span> (
+                            {a.nearestOtherArea.status}) — check this isn't the same place proposed again.
+                          </p>
+                        </div>
+                      )}
+
+                      {!a.possibleDuplicate && a.nearestOtherArea && (
+                        <p className="text-caption text-mute">
+                          Nearest other area: {a.nearestOtherArea.name} (
+                          {Math.round(a.nearestOtherArea.distanceMeters / 1000)}km away)
+                        </p>
+                      )}
+
+                      {a.otherPendingFromSameUser > 0 && (
+                        <p className="text-caption text-mute">
+                          This resident has {a.otherPendingFromSameUser} other area proposal
+                          {a.otherPendingFromSameUser === 1 ? "" : "s"} pending too.
+                        </p>
+                      )}
+                    </div>
+
+                    <AreaLocationMap area={a} />
                   </div>
-                  <div className="flex shrink-0 gap-2">
+
+                  <div className="flex gap-2">
                     <Button type="button" disabled={actingOn === a.id} onClick={() => handleAreaDecision(a.id, "approved")}>
                       Approve
                     </Button>

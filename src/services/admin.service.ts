@@ -27,6 +27,12 @@ export async function moderateReview(reviewId: string, decision: "approved" | "r
 
 export type PendingArea = Area & {
   createdBy: { id: string; fullName: string; email: string } | null;
+  // Computed server-side (see admin.controller.ts's listPendingAreas) —
+  // the closest other area of any status, and whether that's close enough
+  // to plausibly be the same real place proposed again.
+  nearestOtherArea: { name: string; status: string; distanceMeters: number } | null;
+  possibleDuplicate: boolean;
+  otherPendingFromSameUser: number;
 };
 
 export async function listPendingAreas() {
