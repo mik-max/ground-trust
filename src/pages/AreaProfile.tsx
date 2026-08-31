@@ -76,6 +76,16 @@ export function AreaProfile() {
         </p>
       </div>
 
+      {data.area.status === "pending" && (
+        <Card border="accent">
+          <p className="text-body text-ink">Awaiting admin approval</p>
+          <p className="text-caption text-mute">
+            You're seeing this because you proposed it. It isn't visible to anyone else yet — an admin
+            checks new areas before they go public, to keep out spam and duplicates.
+          </p>
+        </Card>
+      )}
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-[2fr_1fr]">
         <div className="flex flex-col gap-4">
           <EvidenceStack overall={data.overall} aspects={data.aspects} size="full" />

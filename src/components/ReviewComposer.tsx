@@ -2,22 +2,31 @@ import { useState } from "react";
 import { Mic, RotateCcw, Square, Star } from "lucide-react";
 import type { Aspect } from "../types";
 import { ASPECT_ORDER, ASPECT_META } from "./aspectMeta";
-import { submitReview } from "../services/area.service";
 import { uploadAudio } from "../services/upload.service";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { Button } from "./ui/Button";
 import { Textarea } from "./ui/TextInput";
 
+export interface ReviewInput {
+  originalText?: string;
+  originalAudioRef?: string;
+  ratings: Partial<Record<Aspect, number>>;
+}
+
 interface ReviewComposerProps {
-  areaId: string;
+  // Decoupled from a specific area/endpoint — SubmitReview posts straight to
+  // an existing area, ProposeArea bundles it into a new-area proposal
+  // instead. This component only collects the input.
+  onSubmit: (input: ReviewInput) => Promise<void>;
   onSubmitted?: () => void;
+  submitLabel?: string;
 }
 
 // files/DESIGN_SYSTEM.md §5.6. Recording + upload is wired (this pass);
 // transcription/translation isn't — the NLP pipeline (files/HANDOFF.md §3)
 // is still on BACKLOG.md, so a voice review is stored and playable but not
 // yet turned into text.
-export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
+export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewComposerProps) {
   const [activeTab, setActiveTab] = useState<"voice" | "text">("voice");
   const [reviewText, setReviewText] = useState("");
   const [ratings, setRatings] = useState<Partial<Record<Aspect, number>>>({});
@@ -35,10 +44,10 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
       if (recorder.audioBlob) {
         originalAudioRef = await uploadAudio(recorder.audioBlob);
       }
-      await submitReview(areaId, { originalText: reviewText || undefined, originalAudioRef, ratings });
+      await onSubmit({ originalText: reviewText || undefined, originalAudioRef, ratings });
       onSubmitted?.();
-    } catch {
-      setError("Couldn't submit your review — please try again.");
+    } catch (err) {
+      setError(err instanceof Error && err.message ? err.message : "Couldn't submit your review — please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -122,7 +131,7 @@ export function ReviewComposer({ areaId, onSubmitted }: ReviewComposerProps) {
       {error && <p className="text-caption text-band-poor">{error}</p>}
 
       <Button type="button" disabled={!allRated || submitting} onClick={handleSubmit}>
-        {submitting ? "Sharing..." : "Share your experience"}
+        {submitting ? "Sharing..." : (submitLabel ?? "Share your experience")}
       </Button>
     </div>
   );

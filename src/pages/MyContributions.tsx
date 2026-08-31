@@ -41,21 +41,36 @@ export function MyContributions() {
         <p className={`${text.body} text-mute`}>You haven't reviewed any areas yet.</p>
       ) : (
         <ul className="flex flex-col gap-3">
-          {residencies.map((r) => (
-            <li key={r.areaId}>
-              <Card className="flex flex-col gap-1">
-                <div className="flex items-center justify-between">
-                  <Link to={`/areas/${r.areaId}`} className="text-body-lg text-ink">
-                    {r.area.name}
-                  </Link>
-                  <VerificationTierBadge tier={r.verificationTier} />
-                </div>
-                {formatProgress(r.progress) && (
-                  <p className="text-caption text-mute">{formatProgress(r.progress)}</p>
-                )}
-              </Card>
-            </li>
-          ))}
+          {residencies.map((r) => {
+            const isPending = r.area.status === "pending";
+            return (
+              <li key={r.areaId}>
+                <Card className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between">
+                    <Link to={`/areas/${r.areaId}`} className="text-body-lg text-ink">
+                      {r.area.name}
+                    </Link>
+                    {isPending ? (
+                      <span className="rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
+                        Awaiting admin approval
+                      </span>
+                    ) : (
+                      <VerificationTierBadge tier={r.verificationTier} />
+                    )}
+                  </div>
+                  {isPending ? (
+                    <p className="text-caption text-mute">
+                      You proposed this area — it'll appear publicly once approved.
+                    </p>
+                  ) : (
+                    formatProgress(r.progress) && (
+                      <p className="text-caption text-mute">{formatProgress(r.progress)}</p>
+                    )
+                  )}
+                </Card>
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

@@ -3,6 +3,7 @@ import { NavBar } from "./components/NavBar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./pages/Home";
 import { Profile } from "./pages/Profile";
+import { ProposeArea } from "./pages/ProposeArea";
 import { AreaProfile } from "./pages/AreaProfile";
 import { CompareAreas } from "./pages/CompareAreas";
 import { SubmitReview } from "./pages/SubmitReview";
@@ -28,6 +29,14 @@ export default function App() {
             element={
               <ProtectedRoute allow={["resident"]}>
                 <ResidencyConsent />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/areas/propose"
+            element={
+              <ProtectedRoute allow={["resident"]}>
+                <ProposeArea />
               </ProtectedRoute>
             }
           />

@@ -12,7 +12,7 @@ export interface Residency {
   verificationTier: VerificationTier;
   confirmedSince: string | null;
   trustWeight: number;
-  area: Pick<Area, "id" | "name" | "city" | "state">;
+  area: Pick<Area, "id" | "name" | "city" | "state" | "status">;
   progress: TierProgress;
 }
 
