@@ -59,7 +59,7 @@ export function ResidencyConsent() {
           type="checkbox"
           checked={acknowledged}
           onChange={(e) => setAcknowledged(e.target.checked)}
-          className="mt-1"
+          className="mt-1 accent-brand"
         />
         I understand how my location is used to verify residency, and that it isn't stored as a
         history.

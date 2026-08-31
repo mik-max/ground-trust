@@ -36,7 +36,9 @@ export function ProposeArea() {
       <div className="flex flex-col gap-6">
         <BackLink to="/" label="All areas" />
         <Card className="flex max-w-md flex-col items-start gap-3">
-          <CheckCircle2 size={28} className="text-brand" />
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand/10 text-brand">
+            <CheckCircle2 size={24} />
+          </div>
           <h1 className={text.heading}>Submitted for review</h1>
           <p className="text-body text-mute">
             {fields.name} and your review have been submitted together. An admin — the same team that
