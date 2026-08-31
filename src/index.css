@@ -53,12 +53,20 @@
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
+  /* Formalizes the large-panel radius the auth page's map panel already
+     used ad hoc (rounded-[32px]) — one named token instead of a magic
+     number, for every "hero" surface that needs more presence than a card. */
+  --radius-xl: 32px;
 
   /* Cards are shadow-only by default now (no border) — see Card.tsx — so
      the resting shadow needs slightly more presence than before to still
      read as "raised" without a border to help delineate the edge. */
   --shadow-card: 0 2px 6px rgba(26, 36, 32, 0.08), 0 1px 3px rgba(26, 36, 32, 0.05);
   --shadow-raised: 0 8px 24px rgba(26, 36, 32, 0.14), 0 2px 8px rgba(26, 36, 32, 0.06);
+  /* One tier up from --shadow-raised, for the single "spotlight" moment per
+     screen (e.g. Home's featured area) — not meant to be used more than
+     once or twice per page, or nothing would read as elevated anymore. */
+  --shadow-hero: 0 16px 40px rgba(26, 36, 32, 0.16), 0 4px 12px rgba(26, 36, 32, 0.08);
 
   --text-display-lg: 34px;
   --text-display-lg--line-height: 1.15;
@@ -72,6 +80,12 @@
   --text-body--line-height: 1.5;
   --text-caption: 12.5px;
   --text-caption--line-height: 1.4;
+  /* One step up from --text-data-lg — reserved for the single dominant
+     score moment on Area Profile, the "hero number" everything else on the
+     page supports. Not used for compact/list contexts (AreaCard, Compare),
+     which keep --text-data-lg, or the hierarchy flattens. */
+  --text-data-xl: 56px;
+  --text-data-xl--line-height: 1;
   --text-data-lg: 40px;
   --text-data-lg--line-height: 1;
   --text-data-md: 20px;
@@ -84,4 +98,16 @@ body {
   background-color: var(--color-paper);
   color: #435049;
   font-family: var(--font-body);
+}
+
+/* A deliberate, on-brand focus-visible ring — every interactive element in
+   the app previously fell back to the browser's raw default outline (blue
+   in Chrome), which clashed with an otherwise all-green UI. Global rather
+   than per-component so nothing has to opt in, and :focus-visible (not
+   :focus) so it only shows for keyboard/assistive-tech navigation, not
+   every mouse click. */
+:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 2px;
 }

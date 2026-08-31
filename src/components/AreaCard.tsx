@@ -4,18 +4,36 @@ import { ScoreBandBadge } from "./ScoreBandBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
 import { Card } from "./ui/Card";
 
+interface AreaCardProps extends AreaEvidenceStack {
+  // The single most-reviewed area on Home renders larger and more present
+  // than the rest of the grid — visual hierarchy following data hierarchy,
+  // instead of every card (a 15-resident area and a 1-resident cold-start
+  // one) reading as equally weighted. Never more than one per grid.
+  spotlight?: boolean;
+}
+
 // The Home page's actual structural departure from the old design: a
 // browsable grid of areas rather than a stacked list of full Evidence
 // Stacks. Each card is deliberately lighter than EvidenceStack — band,
 // score, N, and which aspects have data at a glance (icons, not a full
 // breakdown) — full detail lives one click away on Area Profile.
-export function AreaCard({ area, overall, aspects }: AreaEvidenceStack) {
+export function AreaCard({ area, overall, aspects, spotlight = false }: AreaCardProps) {
   return (
-    <Link to={`/areas/${area.id}`} className="block h-full">
-      <Card className="flex h-full flex-col gap-3 transition-shadow hover:shadow-raised">
+    <Link to={`/areas/${area.id}`} className={`block h-full ${spotlight ? "sm:col-span-2" : ""}`}>
+      <Card
+        padding={spotlight ? "lg" : "md"}
+        elevation={spotlight ? "hero" : "card"}
+        className="flex h-full flex-col gap-3 transition-shadow hover:shadow-raised"
+      >
+        {spotlight && (
+          <span className="w-fit rounded-full bg-brand/10 px-2.5 py-1 text-eyebrow font-bold uppercase tracking-[2px] text-brand">
+            Most reviewed
+          </span>
+        )}
+
         <div>
-          <p className="text-heading text-ink">{area.name}</p>
-          <p className="text-caption text-mute">
+          <p className={spotlight ? "text-display-md text-ink" : "text-heading text-ink"}>{area.name}</p>
+          <p className={spotlight ? "text-body text-mute" : "text-caption text-mute"}>
             {area.city}, {area.state}
           </p>
         </div>
@@ -25,7 +43,9 @@ export function AreaCard({ area, overall, aspects }: AreaEvidenceStack) {
         ) : (
           <>
             <div className="flex items-end justify-between">
-              <p className="text-data-lg tabular-nums text-ink">{overall.score.toFixed(1)}</p>
+              <p className={`tabular-nums text-ink ${spotlight ? "text-data-xl" : "text-data-lg"}`}>
+                {overall.score.toFixed(1)}
+              </p>
               {overall.band && <ScoreBandBadge band={overall.band} />}
             </div>
             <p className="text-caption text-mute">

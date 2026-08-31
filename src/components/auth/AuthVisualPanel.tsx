@@ -28,7 +28,7 @@ export function AuthVisualPanel() {
   const featured = areas?.filter((a) => a.overall.score !== null).sort((a, b) => (b.overall.N ?? 0) - (a.overall.N ?? 0))[0];
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-[32px] bg-ink">
+    <div className="relative h-full w-full overflow-hidden rounded-xl bg-ink">
       <MapContainer
         center={[9.082, 8.6753]}
         zoom={6}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { UserCheck, Scale, ShieldCheck, Shield, User } from "lucide-react";
+import { UserCheck, Scale, ShieldCheck, Shield, User, MessageSquareOff } from "lucide-react";
 import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
@@ -11,6 +11,8 @@ import { buttonClassName, Button } from "../components/ui/Button";
 import { BackLink } from "../components/ui/BackLink";
 import { Card } from "../components/ui/Card";
 import { Eyebrow } from "../components/ui/Eyebrow";
+import { EvidenceStackSkeleton, ReviewCardSkeleton } from "../components/ui/Skeleton";
+import { EmptyState } from "../components/ui/EmptyState";
 import { text } from "../styles/typography";
 
 function InfoRow({ icon: Icon, children }: { icon: typeof UserCheck; children: React.ReactNode }) {
@@ -61,7 +63,23 @@ export function AreaProfile() {
   }
 
   if (!data) {
-    return <p className={`${text.body} text-mute`}>Loading...</p>;
+    return (
+      <div className="flex flex-col gap-8">
+        <BackLink to="/" label="All areas" />
+        <div className="flex flex-col gap-2">
+          <div className="h-3.5 w-24 animate-pulse rounded-md bg-paper-2" />
+          <div className="h-9 w-64 animate-pulse rounded-md bg-paper-2" />
+          <div className="h-4 w-40 animate-pulse rounded-md bg-paper-2" />
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-[2fr_1fr]">
+          <EvidenceStackSkeleton />
+          <div className="flex flex-col gap-4">
+            <div className="h-32 animate-pulse rounded-lg bg-paper-2" />
+            <div className="h-40 animate-pulse rounded-lg bg-paper-2" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -127,9 +145,17 @@ export function AreaProfile() {
       <div>
         <h2 className={text.displayMd}>Reviews</h2>
         {reviews === null ? (
-          <p className={`${text.body} text-mute`}>Loading reviews...</p>
+          <ul className="mt-4 flex flex-col gap-4">
+            {Array.from({ length: 3 }, (_, i) => (
+              <ReviewCardSkeleton key={i} />
+            ))}
+          </ul>
         ) : reviews.length === 0 ? (
-          <p className={`${text.body} text-mute`}>No reviews yet.</p>
+          <EmptyState
+            icon={MessageSquareOff}
+            title="No reviews yet"
+            description="Be the first resident to share what this area is really like."
+          />
         ) : (
           <>
             <ul className="mt-4 flex flex-col gap-4">

@@ -33,9 +33,13 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
   }
 
   return (
-    <Card padding="lg">
+    <Card padding="lg" elevation={size === "full" ? "hero" : "card"}>
       <ScoreBandBadge band={overall.band} />
-      <p className="mt-2 text-data-lg tabular-nums text-ink">{overall.score.toFixed(1)}</p>
+      <p
+        className={`mt-2 tabular-nums text-ink ${size === "full" ? "text-data-xl" : "text-data-lg"}`}
+      >
+        {overall.score.toFixed(1)}
+      </p>
       <p className="text-caption text-mute">
         Based on {overall.N} verified resident{overall.N === 1 ? "" : "s"}
       </p>

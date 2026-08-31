@@ -18,19 +18,28 @@ const BORDER = {
   accent: "border-l-4 border-amber",
 } as const;
 
+// "hero" is deliberately not the default — it's for the single spotlight
+// moment per screen (Home's most-reviewed area). If every card used it,
+// nothing would read as elevated anymore.
+const ELEVATION = {
+  card: "shadow-card",
+  hero: "shadow-hero",
+} as const;
+
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   padding?: keyof typeof PADDING;
   border?: keyof typeof BORDER;
+  elevation?: keyof typeof ELEVATION;
 }
 
 // Base surface used by Evidence Stack, review items, info cards, contribution
 // rows, etc. A future design pass (different radius/elevation/fill) only
 // edits this one component. `className` is for layout additions (flex,
 // justify-between, ...), not for overriding radius/border/shadow/fill.
-export function Card({ padding = "md", border = "default", className = "", ...props }: CardProps) {
+export function Card({ padding = "md", border = "default", elevation = "card", className = "", ...props }: CardProps) {
   return (
     <div
-      className={`rounded-lg bg-white shadow-card ${BORDER[border]} ${PADDING[padding]} ${className}`.trim()}
+      className={`rounded-lg bg-white ${ELEVATION[elevation]} ${BORDER[border]} ${PADDING[padding]} ${className}`.trim()}
       {...props}
     />
   );
