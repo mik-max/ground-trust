@@ -24,10 +24,28 @@ const SIZE_CLASS = {
 
 // files/DESIGN_SYSTEM.md §5.1 — label only, never the numeric score.
 // Always render alongside a contributor count (see EvidenceStack).
-export function ScoreBandBadge({ band, size = "md" }: { band: Band; size?: keyof typeof SIZE_CLASS }) {
+//
+// `onDark` (Area Profile's hero, which sits on a brand-700 background):
+// deliberately neutral (white on translucent white), not a band color —
+// band-good's tinted green rendered on the brand-green hero would be
+// exactly the brand-vs-band-green collision the palette was built to
+// avoid. The word itself ("Good", "Poor") still carries the meaning
+// without needing color here; every other render context keeps the
+// color-coded version.
+export function ScoreBandBadge({
+  band,
+  size = "md",
+  onDark = false,
+}: {
+  band: Band;
+  size?: keyof typeof SIZE_CLASS;
+  onDark?: boolean;
+}) {
   return (
     <span
-      className={`inline-flex items-center rounded-full font-bold uppercase ${SIZE_CLASS[size]} ${BAND_COLOR_CLASS[band]}`}
+      className={`inline-flex items-center rounded-full font-bold uppercase ${SIZE_CLASS[size]} ${
+        onDark ? "bg-white/15 text-white" : BAND_COLOR_CLASS[band]
+      }`}
     >
       {BAND_LABEL[band]}
     </span>

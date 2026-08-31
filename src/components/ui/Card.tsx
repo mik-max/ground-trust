@@ -1,6 +1,10 @@
 import type { HTMLAttributes } from "react";
 
+// "none" is for a card composed of multiple internally-padded zones (e.g.
+// EvidenceStack's two-tone hero, dark top / white bottom) rather than one
+// uniform surface — the zones own their own padding instead.
 const PADDING = {
+  none: "",
   sm: "p-4",
   md: "p-6",
   lg: "p-8",

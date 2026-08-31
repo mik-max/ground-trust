@@ -32,14 +32,40 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
     );
   }
 
+  // Full size (Area Profile only) gets a genuine two-tone hero — a dark
+  // brand-700 zone for the band/score/N, a white zone for everything that
+  // supports it. ConfidenceStrip deliberately stays in the white zone, not
+  // the dark one: its "high confidence" color IS brand-700 (same token
+  // reused), so on a brand-700 background the filled segments would
+  // literally vanish into it.
+  if (size === "full") {
+    return (
+      <Card padding="none" elevation="hero" className="overflow-hidden">
+        <div className="bg-brand-700 px-8 py-8">
+          <ScoreBandBadge band={overall.band} onDark />
+          <p className="mt-2 text-data-xl tabular-nums text-white">{overall.score.toFixed(1)}</p>
+          <p className="text-caption text-white/80">
+            Based on {overall.N} verified resident{overall.N === 1 ? "" : "s"}
+          </p>
+        </div>
+
+        <div className="px-8 py-6">
+          <ConfidenceStrip n={overall.N} />
+          <div className="my-4 border-t border-line" />
+          <div className="flex flex-col gap-3">
+            {orderedAspects.map((a) => (
+              <AspectRow key={a.aspect} aspect={a.aspect} score={a.score} n={a.N} confidence={a.confidence} />
+            ))}
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <Card padding="lg" elevation={size === "full" ? "hero" : "card"}>
+    <Card padding="lg">
       <ScoreBandBadge band={overall.band} />
-      <p
-        className={`mt-2 tabular-nums text-ink ${size === "full" ? "text-data-xl" : "text-data-lg"}`}
-      >
-        {overall.score.toFixed(1)}
-      </p>
+      <p className="mt-2 text-data-lg tabular-nums text-ink">{overall.score.toFixed(1)}</p>
       <p className="text-caption text-mute">
         Based on {overall.N} verified resident{overall.N === 1 ? "" : "s"}
       </p>
@@ -50,7 +76,7 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
 
       <div className="my-4 border-t border-line" />
 
-      {size === "compact" && !expanded ? (
+      {!expanded ? (
         <button
           type="button"
           onClick={() => setExpanded(true)}
