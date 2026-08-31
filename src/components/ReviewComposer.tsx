@@ -80,6 +80,8 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
                 type="button"
                 onClick={recorder.status === "recording" ? recorder.stop : recorder.start}
                 disabled={recorder.status === "requesting"}
+                aria-label={recorder.status === "recording" ? "Stop recording" : "Start recording your review"}
+                aria-pressed={recorder.status === "recording"}
                 className={`flex h-16 w-16 items-center justify-center rounded-full text-white disabled:opacity-50 ${
                   recorder.status === "recording" ? "bg-band-poor" : "bg-brand"
                 }`}
