@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Mic, RotateCcw, Square, Star } from "lucide-react";
 import type { Aspect } from "../types";
 import { ASPECT_ORDER, ASPECT_META } from "./aspectMeta";
+import { AspectIconChip } from "./AspectIconChip";
 import { uploadAudio } from "../services/upload.service";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
 import { Button } from "./ui/Button";
+import { Card } from "./ui/Card";
 import { Textarea } from "./ui/TextInput";
 
 export interface ReviewInput {
@@ -34,7 +36,8 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
   const [error, setError] = useState<string | null>(null);
   const recorder = useAudioRecorder();
 
-  const allRated = ASPECT_ORDER.every((a) => ratings[a]);
+  const ratedCount = ASPECT_ORDER.filter((a) => ratings[a]).length;
+  const allRated = ratedCount === ASPECT_ORDER.length;
 
   async function handleSubmit() {
     setError(null);
@@ -54,7 +57,7 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <Card padding="lg" className="flex flex-col gap-6">
       <div className="flex gap-2 border-b border-line">
         <Button type="button" variant="tab" active={activeTab === "voice"} onClick={() => setActiveTab("voice")}>
           Voice
@@ -76,18 +79,23 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
             </>
           ) : (
             <>
-              <button
-                type="button"
-                onClick={recorder.status === "recording" ? recorder.stop : recorder.start}
-                disabled={recorder.status === "requesting"}
-                aria-label={recorder.status === "recording" ? "Stop recording" : "Start recording your review"}
-                aria-pressed={recorder.status === "recording"}
-                className={`flex h-16 w-16 items-center justify-center rounded-full text-white disabled:opacity-50 ${
-                  recorder.status === "recording" ? "bg-band-poor" : "bg-brand"
-                }`}
-              >
-                {recorder.status === "recording" ? <Square size={24} /> : <Mic size={28} />}
-              </button>
+              <div className="relative flex h-16 w-16 items-center justify-center">
+                {recorder.status === "recording" && (
+                  <span className="absolute inset-0 animate-ping rounded-full bg-band-poor/40" />
+                )}
+                <button
+                  type="button"
+                  onClick={recorder.status === "recording" ? recorder.stop : recorder.start}
+                  disabled={recorder.status === "requesting"}
+                  aria-label={recorder.status === "recording" ? "Stop recording" : "Start recording your review"}
+                  aria-pressed={recorder.status === "recording"}
+                  className={`relative flex h-16 w-16 items-center justify-center rounded-full text-white disabled:opacity-50 ${
+                    recorder.status === "recording" ? "bg-band-poor" : "bg-brand"
+                  }`}
+                >
+                  {recorder.status === "recording" ? <Square size={24} /> : <Mic size={28} />}
+                </button>
+              </div>
               <p className="text-caption text-mute">
                 {recorder.status === "recording"
                   ? "Recording — tap to stop"
@@ -108,9 +116,16 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
       )}
 
       <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <span className="text-body font-medium text-ink">Rate each aspect</span>
+          <span className="text-caption text-mute">{ratedCount} of {ASPECT_ORDER.length} rated</span>
+        </div>
         {ASPECT_ORDER.map((aspect) => (
-          <div key={aspect} className="flex items-center justify-between">
-            <span className="text-body text-ink">{ASPECT_META[aspect].label}</span>
+          <div key={aspect} className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <AspectIconChip aspect={aspect} />
+              <span className="text-body text-ink">{ASPECT_META[aspect].label}</span>
+            </div>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((value) => (
                 <button
@@ -133,8 +148,12 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
       {error && <p className="text-caption text-band-poor">{error}</p>}
 
       <Button type="button" disabled={!allRated || submitting} onClick={handleSubmit}>
-        {submitting ? "Sharing..." : (submitLabel ?? "Share your experience")}
+        {submitting
+          ? "Sharing..."
+          : allRated
+            ? (submitLabel ?? "Share your experience")
+            : `Rate all ${ASPECT_ORDER.length} aspects to continue`}
       </Button>
-    </div>
+    </Card>
   );
 }
