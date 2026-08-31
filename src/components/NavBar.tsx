@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/auth.store";
+import { buttonClassName } from "./ui/Button";
 import { text } from "../styles/typography";
 
 export function NavBar() {
@@ -13,9 +14,14 @@ export function NavBar() {
       </Link>
       <div className="flex items-center gap-4 text-body">
         {user?.role === "resident" && (
-          <Link to="/my-contributions" className="text-brand">
-            My Contributions
-          </Link>
+          <>
+            <Link to="/share" className={buttonClassName({ variant: "primary" }, "px-4! py-2!")}>
+              Talk about your environment
+            </Link>
+            <Link to="/my-contributions" className="text-mute">
+              My Contributions
+            </Link>
+          </>
         )}
         {user?.role === "government" && (
           <Link to="/gov" className="text-brand">

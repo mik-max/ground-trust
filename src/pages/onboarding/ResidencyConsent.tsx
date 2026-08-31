@@ -65,7 +65,7 @@ export function ResidencyConsent() {
         history.
       </label>
 
-      <Button type="button" disabled={!acknowledged} onClick={() => navigate("/")} className="w-fit">
+      <Button type="button" disabled={!acknowledged} onClick={() => navigate("/share")} className="w-fit">
         Continue
       </Button>
     </div>

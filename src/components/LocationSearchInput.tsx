@@ -11,6 +11,12 @@ interface LocationSearchInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  // "browse" (default, used on Home): picking an existing area opens its
+  // profile. "review" (used on TalkAboutEnvironment): picking one goes
+  // straight to writing a review of it — the whole point of that flow is
+  // getting a resident from "where do I live" to "review submitted" in one
+  // continuous motion, not through the profile page first.
+  mode?: "browse" | "review";
 }
 
 // Two result sources live in one dropdown: areas we already have data for
@@ -19,7 +25,7 @@ interface LocationSearchInputProps {
 // somewhere we don't cover yet. `value`/`onChange` stay controlled by the
 // caller (Home still filters its own grid off the same text), this
 // component only owns the dropdown's open/suggestions state.
-export function LocationSearchInput({ value, onChange, placeholder }: LocationSearchInputProps) {
+export function LocationSearchInput({ value, onChange, placeholder, mode = "browse" }: LocationSearchInputProps) {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -53,17 +59,20 @@ export function LocationSearchInput({ value, onChange, placeholder }: LocationSe
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  function selectOwnArea(area: Area) {
+  function goToArea(areaId: string) {
     setOpen(false);
-    navigate(`/areas/${area.id}`);
+    navigate(mode === "review" ? `/areas/${areaId}/review` : `/areas/${areaId}`);
+  }
+
+  function selectOwnArea(area: Area) {
+    goToArea(area.id);
   }
 
   async function selectGeoSuggestion(suggestion: GeocodeSuggestion) {
     setUncovered(null);
     const area = await findNearestArea(suggestion.lat, suggestion.lng);
     if (area) {
-      setOpen(false);
-      navigate(`/areas/${area.id}`);
+      goToArea(area.id);
     } else {
       setUncovered(suggestion);
     }

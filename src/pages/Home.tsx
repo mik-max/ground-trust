@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { MessageCircle } from "lucide-react";
 import type { AreaEvidenceStack } from "../types";
 import { listAreas } from "../services/area.service";
+import { useAuthStore } from "../store/auth.store";
 import { AreaCard } from "../components/AreaCard";
 import { AreasOverviewMap } from "../components/map/AreasOverviewMap";
 import { LocationSearchInput } from "../components/LocationSearchInput";
 import { Card } from "../components/ui/Card";
+import { buttonClassName } from "../components/ui/Button";
 import { text } from "../styles/typography";
 
 // A grid of areas is the front door now, not a map — the map is real but
@@ -12,6 +16,7 @@ import { text } from "../styles/typography";
 // a real-world location lookup (LocationSearchInput) on top of filtering
 // this grid, per the "give me something new" structural feedback.
 export function Home() {
+  const user = useAuthStore((s) => s.user);
   const [query, setQuery] = useState("");
   const [areas, setAreas] = useState<AreaEvidenceStack[]>([]);
   const [loading, setLoading] = useState(true);
@@ -33,6 +38,18 @@ export function Home() {
 
         <LocationSearchInput value={query} onChange={setQuery} />
       </div>
+
+      {user?.role === "resident" && (
+        <Card className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <MessageCircle size={20} className="shrink-0 text-brand" />
+            <p className="text-body text-ink">Lived experience is what makes GroundTrust real.</p>
+          </div>
+          <Link to="/share" className={buttonClassName({ variant: "primary" }, "shrink-0")}>
+            Talk about your environment
+          </Link>
+        </Card>
+      )}
 
       {loading ? (
         <p className={`${text.body} text-mute`}>Loading areas...</p>
