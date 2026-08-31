@@ -61,7 +61,7 @@ export function ReviewCard({ review }: { review: Review }) {
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {ratedAspects.map((aspect) => (
               <span key={aspect} className="rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
-                {ASPECT_META[aspect].label}
+                {ASPECT_META[aspect].label}: {review[RATING_BY_ASPECT[aspect]] as number}/5
               </span>
             ))}
             {hasTranslation && (
