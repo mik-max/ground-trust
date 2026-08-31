@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { X } from "lucide-react";
+import { Columns3, X } from "lucide-react";
 import type { Area, AreaEvidenceStack } from "../types";
 import { getArea, listAreas } from "../services/area.service";
 import { ScoreBandBadge } from "../components/ScoreBandBadge";
@@ -9,6 +9,8 @@ import { ConfidenceStrip } from "../components/ConfidenceStrip";
 import { ASPECT_ORDER } from "../components/aspectMeta";
 import { TextInput } from "../components/ui/TextInput";
 import { BackLink } from "../components/ui/BackLink";
+import { Card } from "../components/ui/Card";
+import { EmptyState } from "../components/ui/EmptyState";
 import { text } from "../styles/typography";
 
 // Each AspectRow needs real room (fixed-width label, a bar, a score, an N)
@@ -88,7 +90,7 @@ export function CompareAreas() {
             className="w-full"
           />
           {results.length > 0 && (
-            <ul className="absolute z-10 mt-1 w-full rounded-md border border-line bg-white shadow-raised">
+            <ul className="absolute z-10 mt-1 w-full rounded-lg border border-line bg-white shadow-raised">
               {results.map((a) => (
                 <li key={a.id}>
                   <button
@@ -106,73 +108,79 @@ export function CompareAreas() {
       )}
 
       {areas.length === 0 ? (
-        <p className="text-body text-mute">Search above to start comparing areas.</p>
+        <EmptyState
+          icon={Columns3}
+          title="Start comparing areas"
+          description="Search above to add up to 3 areas side by side."
+        />
       ) : (
-        <div className="grid gap-x-8 overflow-x-auto pb-2" style={gridStyle}>
-          {areas.map((a) => (
-            <div key={a.area.id} className="flex items-start justify-between border-b border-line pb-3">
-              <div>
-                <p className={text.heading}>{a.area.name}</p>
-                <p className="text-caption text-mute">
-                  {a.area.city}, {a.area.state}
-                </p>
-              </div>
-              {areas.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeArea(a.area.id)}
-                  aria-label={`Remove ${a.area.name} from comparison`}
-                  className="text-mute"
-                >
-                  <X size={16} />
-                </button>
-              )}
-            </div>
-          ))}
-
-          {areas.map((a) => (
-            <div key={a.area.id} className="pt-4">
-              {a.overall.band ? (
-                <ScoreBandBadge band={a.overall.band} />
-              ) : (
-                <span className="text-caption text-mute">No reviews yet</span>
-              )}
-            </div>
-          ))}
-
-          {areas.map((a) => (
-            <p key={a.area.id} className="mt-2 text-data-lg tabular-nums text-ink">
-              {a.overall.score !== null ? a.overall.score.toFixed(1) : "—"}
-            </p>
-          ))}
-
-          {areas.map((a) => (
-            <p key={a.area.id} className="text-caption text-mute">
-              Based on {a.overall.N} verified resident{a.overall.N === 1 ? "" : "s"}
-            </p>
-          ))}
-
-          {areas.map((a) => (
-            <div key={a.area.id} className="mt-3">
-              <ConfidenceStrip n={a.overall.N} />
-            </div>
-          ))}
-
-          {areas.map((a) => (
-            <div key={a.area.id} className="my-4 border-t border-line" />
-          ))}
-
-          {ASPECT_ORDER.flatMap((aspect) =>
-            areas.map((a) => {
-              const row = a.aspects.find((x) => x.aspect === aspect);
-              return (
-                <div key={`${a.area.id}-${aspect}`} className="py-1.5">
-                  <AspectRow aspect={aspect} score={row?.score ?? null} n={row?.N ?? 0} confidence={row?.confidence ?? "low"} />
+        <Card padding="lg" className="overflow-x-auto">
+          <div className="grid gap-x-8" style={gridStyle}>
+            {areas.map((a) => (
+              <div key={a.area.id} className="flex items-start justify-between gap-2 border-b border-line pb-3">
+                <div>
+                  <p className={text.heading}>{a.area.name}</p>
+                  <p className="text-caption text-mute">
+                    {a.area.city}, {a.area.state}
+                  </p>
                 </div>
-              );
-            })
-          )}
-        </div>
+                {areas.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeArea(a.area.id)}
+                    aria-label={`Remove ${a.area.name} from comparison`}
+                    className="shrink-0 rounded-sm p-1.5 text-mute transition-colors hover:bg-paper-2 hover:text-ink"
+                  >
+                    <X size={16} />
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {areas.map((a) => (
+              <div key={a.area.id} className="pt-4">
+                {a.overall.band ? (
+                  <ScoreBandBadge band={a.overall.band} size="sm" />
+                ) : (
+                  <span className="text-caption text-mute">No reviews yet</span>
+                )}
+              </div>
+            ))}
+
+            {areas.map((a) => (
+              <p key={a.area.id} className="mt-2 text-data-lg tabular-nums text-ink">
+                {a.overall.score !== null ? a.overall.score.toFixed(1) : "—"}
+              </p>
+            ))}
+
+            {areas.map((a) => (
+              <p key={a.area.id} className="text-caption text-mute">
+                Based on {a.overall.N} verified resident{a.overall.N === 1 ? "" : "s"}
+              </p>
+            ))}
+
+            {areas.map((a) => (
+              <div key={a.area.id} className="mt-3">
+                <ConfidenceStrip n={a.overall.N} />
+              </div>
+            ))}
+
+            {areas.map((a) => (
+              <div key={a.area.id} className="my-4 border-t border-line" />
+            ))}
+
+            {ASPECT_ORDER.flatMap((aspect) =>
+              areas.map((a) => {
+                const row = a.aspects.find((x) => x.aspect === aspect);
+                return (
+                  <div key={`${a.area.id}-${aspect}`} className="py-1.5">
+                    <AspectRow aspect={aspect} score={row?.score ?? null} n={row?.N ?? 0} confidence={row?.confidence ?? "low"} />
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </Card>
       )}
     </div>
   );
