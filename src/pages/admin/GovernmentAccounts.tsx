@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { Landmark } from "lucide-react";
 import type { GovernmentAccount } from "../../types";
 import { createGovernmentAccount, listGovernmentAccounts } from "../../services/admin.service";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { TextInput } from "../../components/ui/TextInput";
+import { Skeleton } from "../../components/ui/Skeleton";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { BackLink } from "../../components/ui/BackLink";
 import { text } from "../../styles/typography";
 
 function formatDate(iso: string) {
@@ -47,42 +51,53 @@ export function AdminGovernmentAccounts() {
 
   return (
     <div className="flex flex-col gap-8">
+      <BackLink to="/" label="All areas" />
       <h1 className={text.displayMd}>Government Accounts</h1>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm">
-        <h2 className={text.heading}>Provision a new account</h2>
-        <TextInput
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          placeholder="Full name"
-          required
-        />
-        <TextInput
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Email"
-          required
-        />
-        <TextInput
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          required
-        />
-        {error && <p className="text-caption text-band-poor">{error}</p>}
-        <Button type="submit" disabled={submitting} className="w-fit">
-          {submitting ? "Creating..." : "Create account"}
-        </Button>
-      </form>
+      <Card className="max-w-sm">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <h2 className={text.heading}>Provision a new account</h2>
+          <TextInput
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Full name"
+            required
+          />
+          <TextInput
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            required
+          />
+          <TextInput
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            required
+          />
+          {error && <p className="text-caption text-band-poor">{error}</p>}
+          <Button type="submit" disabled={submitting} className="w-fit">
+            {submitting ? "Creating..." : "Create account"}
+          </Button>
+        </form>
+      </Card>
 
       <div>
         <h2 className={text.heading}>Existing accounts</h2>
         {accounts === null ? (
-          <p className={`${text.body} text-mute`}>Loading...</p>
+          <div className="mt-3 flex flex-col gap-3">
+            {Array.from({ length: 2 }, (_, i) => (
+              <Skeleton key={i} className="h-16 rounded-lg" />
+            ))}
+          </div>
         ) : accounts.length === 0 ? (
-          <p className={`${text.body} text-mute`}>No government accounts provisioned yet.</p>
+          <EmptyState
+            icon={Landmark}
+            title="No government accounts yet"
+            description="Provisioned accounts will show up here."
+          />
         ) : (
           <ul className="mt-3 flex flex-col gap-3">
             {accounts.map((a) => (

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { TriangleAlert } from "lucide-react";
+import { CircleCheckBig, TriangleAlert } from "lucide-react";
 import type { Aspect } from "../../types";
 import {
   listPendingAreas,
@@ -14,6 +14,9 @@ import { ASPECT_META, ASPECT_ORDER } from "../../components/aspectMeta";
 import { AreaLocationMap } from "../../components/map/AreaLocationMap";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
+import { Skeleton } from "../../components/ui/Skeleton";
+import { EmptyState } from "../../components/ui/EmptyState";
+import { BackLink } from "../../components/ui/BackLink";
 import { text } from "../../styles/typography";
 
 const RATING_BY_ASPECT: Record<Aspect, keyof PendingReview> = {
@@ -67,14 +70,19 @@ export function ModerationQueue() {
 
   return (
     <div className="flex flex-col gap-6">
+      <BackLink to="/" label="All areas" />
       <h1 className={text.displayMd}>Moderation Queue</h1>
 
       <div>
         <h2 className={text.heading}>Proposed areas</h2>
         {areas === null ? (
-          <p className={`${text.body} text-mute`}>Loading...</p>
+          <div className="mt-3 flex flex-col gap-3">
+            {Array.from({ length: 2 }, (_, i) => (
+              <Skeleton key={i} className="h-32 rounded-lg" />
+            ))}
+          </div>
         ) : areas.length === 0 ? (
-          <p className={`${text.body} text-mute`}>No area proposals pending.</p>
+          <EmptyState icon={CircleCheckBig} title="All clear" description="No area proposals pending." />
         ) : (
           <ul className="mt-3 flex flex-col gap-4">
             {areas.map((a) => (
@@ -146,9 +154,13 @@ export function ModerationQueue() {
 
       <h2 className={text.heading}>Pending reviews</h2>
       {reviews === null ? (
-        <p className={`${text.body} text-mute`}>Loading...</p>
+        <div className="mt-3 flex flex-col gap-4">
+          {Array.from({ length: 2 }, (_, i) => (
+            <Skeleton key={i} className="h-40 rounded-lg" />
+          ))}
+        </div>
       ) : reviews.length === 0 ? (
-        <p className={`${text.body} text-mute`}>Nothing pending review.</p>
+        <EmptyState icon={CircleCheckBig} title="All clear" description="Nothing pending review." />
       ) : (
         <ul className="flex flex-col gap-4">
           {reviews.map((r) => {
@@ -179,11 +191,18 @@ export function ModerationQueue() {
 
                   {ratedAspects.length > 0 && (
                     <div className="flex flex-wrap gap-2">
-                      {ratedAspects.map((aspect) => (
-                        <span key={aspect} className="rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
-                          {ASPECT_META[aspect].label}: {r[RATING_BY_ASPECT[aspect]] as number}/5
-                        </span>
-                      ))}
+                      {ratedAspects.map((aspect) => {
+                        const Icon = ASPECT_META[aspect].icon;
+                        return (
+                          <span
+                            key={aspect}
+                            className="inline-flex items-center gap-1.5 rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute"
+                          >
+                            <Icon size={12} />
+                            {ASPECT_META[aspect].label}: {r[RATING_BY_ASPECT[aspect]] as number}/5
+                          </span>
+                        );
+                      })}
                     </div>
                   )}
 

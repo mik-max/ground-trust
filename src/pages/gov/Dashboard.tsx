@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
+import { ShieldCheck } from "lucide-react";
 import type { Flag } from "../../types";
 import { listFlags } from "../../services/gov.service";
 import { GovernmentFlagCard } from "../../components/GovernmentFlagCard";
 import { BackLink } from "../../components/ui/BackLink";
+import { Skeleton } from "../../components/ui/Skeleton";
+import { EmptyState } from "../../components/ui/EmptyState";
 import { text } from "../../styles/typography";
 
 // files/DESIGN_SYSTEM.md §6.7. Filter-by-aspect UI and drill-into-Area-Profile
@@ -20,9 +23,17 @@ export function GovDashboard() {
       <h1 className={text.displayMd}>Flagged Areas</h1>
 
       {flags === null ? (
-        <p className={`${text.body} text-mute`}>Loading...</p>
+        <div className="flex flex-col gap-4">
+          {Array.from({ length: 2 }, (_, i) => (
+            <Skeleton key={i} className="h-28 rounded-lg" />
+          ))}
+        </div>
       ) : flags.length === 0 ? (
-        <p className={`${text.body} text-mute`}>No areas currently meet the flagging threshold.</p>
+        <EmptyState
+          icon={ShieldCheck}
+          title="No areas currently flagged"
+          description="Nothing meets the flagging threshold right now."
+        />
       ) : (
         <div className="flex flex-col gap-4">
           {flags.map((flag) => (
