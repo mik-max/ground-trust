@@ -2,37 +2,38 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { googleAuth, signup } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
-import type { Role } from "../../types";
 import { Button } from "../../components/ui/Button";
 import { TextInput } from "../../components/ui/TextInput";
 import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { text } from "../../styles/typography";
 
-// Role choice is resident/newcomer only — Government is invite-only, per
-// files/DESIGN_SYSTEM.md §6.1.
+// Self-service signup always creates a resident — Government is
+// invite-only (files/DESIGN_SYSTEM.md §6.1), and there's no other
+// self-service role since browsing/comparing/reading is already public
+// with no account needed at all (see auth.service.ts for why the old
+// resident/newcomer role picker is gone).
 export function Register() {
   const navigate = useNavigate();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState<Role>("resident");
   const [error, setError] = useState<string | null>(null);
 
-  // Residents see the residency-sampling consent screen once, right after
-  // a real signup — not on every login. Newcomers have nothing to consent
-  // to, so they go straight in either way.
-  function afterAuth(role: Role, isNewSignup: boolean) {
-    navigate(role === "resident" && isNewSignup ? "/onboarding/consent" : "/");
+  // Every self-signup is a resident, so every self-signup sees the
+  // residency-sampling consent screen once, right after — not on every
+  // subsequent login.
+  function afterAuth(isNewSignup: boolean) {
+    navigate(isNewSignup ? "/onboarding/consent" : "/");
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     try {
-      const { token, user } = await signup({ fullName, email, password, role });
+      const { token, user } = await signup({ fullName, email, password });
       setAuth(token, user);
-      afterAuth(role, true);
+      afterAuth(true);
     } catch {
       setError("Couldn't create your account — that email may already be registered.");
     }
@@ -41,9 +42,9 @@ export function Register() {
   async function handleGoogle(credential: string) {
     setError(null);
     try {
-      const { token, user, isNewUser } = await googleAuth(credential, role);
+      const { token, user, isNewUser } = await googleAuth(credential, true);
       setAuth(token, user);
-      afterAuth(user.role, isNewUser);
+      afterAuth(isNewUser);
     } catch {
       setError("Couldn't sign up with Google — please try again.");
     }
@@ -53,21 +54,6 @@ export function Register() {
     <div className="flex min-h-[70vh] items-center justify-center">
       <form onSubmit={handleSubmit} className="flex w-full max-w-sm flex-col gap-4">
         <h1 className={text.displayMd}>Create an account</h1>
-
-        <div className="flex gap-2">
-          {(["resident", "newcomer"] as const).map((r) => (
-            <Button
-              key={r}
-              type="button"
-              variant="outline"
-              active={role === r}
-              onClick={() => setRole(r)}
-              className="flex-1 capitalize"
-            >
-              {r}
-            </Button>
-          ))}
-        </div>
 
         <TextInput
           value={fullName}

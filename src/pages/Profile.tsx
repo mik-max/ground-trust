@@ -8,7 +8,6 @@ import { text } from "../styles/typography";
 
 const ROLE_LABEL: Record<string, string> = {
   resident: "Resident",
-  newcomer: "Newcomer",
   government: "Government",
   admin: "Admin",
 };

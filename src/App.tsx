@@ -53,7 +53,7 @@ export default function App() {
           <Route
             path="/profile"
             element={
-              <ProtectedRoute allow={["resident", "newcomer", "government", "admin"]}>
+              <ProtectedRoute allow={["resident", "government", "admin"]}>
                 <Profile />
               </ProtectedRoute>
             }

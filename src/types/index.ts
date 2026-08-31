@@ -1,7 +1,7 @@
 export type Aspect = "power" | "water" | "security" | "roads_flooding" | "accessibility";
 export type Band = "poor" | "fair" | "good" | "excellent";
 export type ConfidenceLevel = "low" | "medium" | "high";
-export type Role = "resident" | "newcomer" | "government" | "admin";
+export type Role = "resident" | "government" | "admin";
 export type VerificationTier = "tier0" | "tier1" | "tier2" | "tier3";
 
 export type AreaStatus = "approved" | "pending" | "rejected";
