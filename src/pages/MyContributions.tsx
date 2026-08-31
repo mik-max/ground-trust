@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { MessageCircle } from "lucide-react";
 import { getVerificationStatus, type Residency, type TierProgress } from "../services/verification.service";
 import { VerificationTierBadge } from "../components/VerificationTierBadge";
 import { useGpsPresenceSample } from "../hooks/useGpsPresenceSample";
 import { Card } from "../components/ui/Card";
+import { Skeleton } from "../components/ui/Skeleton";
+import { EmptyState } from "../components/ui/EmptyState";
+import { buttonClassName } from "../components/ui/Button";
 import { BackLink } from "../components/ui/BackLink";
 import { text } from "../styles/typography";
 
@@ -36,38 +40,56 @@ export function MyContributions() {
       <h1 className={text.displayMd}>My Contributions</h1>
 
       {residencies === null ? (
-        <p className={`${text.body} text-mute`}>Loading...</p>
+        <ul className="flex flex-col gap-3">
+          {Array.from({ length: 3 }, (_, i) => (
+            <li key={i}>
+              <Card className="flex items-center justify-between">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-6 w-32 rounded-full" />
+              </Card>
+            </li>
+          ))}
+        </ul>
       ) : residencies.length === 0 ? (
-        <p className={`${text.body} text-mute`}>You haven't reviewed any areas yet.</p>
+        <EmptyState
+          icon={MessageCircle}
+          title="You haven't reviewed any areas yet"
+          description="Talk about your environment to see it show up here."
+          action={
+            <Link to="/share" className={buttonClassName({ variant: "primary" })}>
+              Talk about your environment
+            </Link>
+          }
+        />
       ) : (
         <ul className="flex flex-col gap-3">
           {residencies.map((r) => {
             const isPending = r.area.status === "pending";
             return (
               <li key={r.areaId}>
-                <Card className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <Link to={`/areas/${r.areaId}`} className="text-body-lg text-ink">
-                      {r.area.name}
-                    </Link>
+                <Link to={`/areas/${r.areaId}`} className="block">
+                  <Card className="flex flex-col gap-1 transition-shadow hover:shadow-raised">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-body-lg text-ink">{r.area.name}</span>
+                      {isPending ? (
+                        <span className="shrink-0 rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
+                          Awaiting admin approval
+                        </span>
+                      ) : (
+                        <VerificationTierBadge tier={r.verificationTier} />
+                      )}
+                    </div>
                     {isPending ? (
-                      <span className="rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute">
-                        Awaiting admin approval
-                      </span>
+                      <p className="text-caption text-mute">
+                        You proposed this area — it'll appear publicly once approved.
+                      </p>
                     ) : (
-                      <VerificationTierBadge tier={r.verificationTier} />
+                      formatProgress(r.progress) && (
+                        <p className="text-caption text-mute">{formatProgress(r.progress)}</p>
+                      )
                     )}
-                  </div>
-                  {isPending ? (
-                    <p className="text-caption text-mute">
-                      You proposed this area — it'll appear publicly once approved.
-                    </p>
-                  ) : (
-                    formatProgress(r.progress) && (
-                      <p className="text-caption text-mute">{formatProgress(r.progress)}</p>
-                    )
-                  )}
-                </Card>
+                  </Card>
+                </Link>
               </li>
             );
           })}
