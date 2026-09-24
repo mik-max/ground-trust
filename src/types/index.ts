@@ -64,7 +64,13 @@ export interface Flag {
   triggeredAt: string;
   consecutiveWeeksBelowThreshold: number;
   resolved: boolean;
+  responseStatus: FlagResponseStatus;
+  responseNote: string | null;
+  respondedAt: string | null;
+  respondedBy?: { id: string; fullName: string } | null;
 }
+
+export type FlagResponseStatus = "unacknowledged" | "acknowledged" | "in_progress";
 
 export interface AuthUser {
   id: string;

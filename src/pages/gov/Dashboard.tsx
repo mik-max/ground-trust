@@ -9,7 +9,7 @@ import { EmptyState } from "../../components/ui/EmptyState";
 import { text } from "../../styles/typography";
 
 // files/DESIGN_SYSTEM.md §6.7. Filter-by-aspect UI and drill-into-Area-Profile
-// are deferred to a later pass; this shows the read-only flag list.
+// are deferred to a later pass; each flag can be acknowledged from its card.
 export function GovDashboard() {
   const [flags, setFlags] = useState<Flag[] | null>(null);
 
