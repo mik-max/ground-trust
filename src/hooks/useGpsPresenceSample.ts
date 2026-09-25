@@ -4,8 +4,9 @@ import { useAuthStore } from "../store/auth.store";
 
 // Best-effort, silent background signal for the residency-verification tier
 // system (files/HANDOFF.md §2.1) — the onboarding consent screen already
-// sets this expectation ("the app occasionally checks your device's
-// location while you have it open"). Fires once per areaIds change, tries
+// sets this expectation ("when you open the review or contributions pages,
+// the app may check whether your device is inside the area"). Fires once per
+// areaIds change, tries
 // every listed area against a single position read (the backend geofences
 // each one independently, so only areas the device is actually near will
 // be accepted). Never surfaces an error to the resident: permission denial,

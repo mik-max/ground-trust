@@ -13,9 +13,9 @@ import { text } from "../../styles/typography";
 // ethical commitment made visible, not optional polish — so it requires an
 // affirmative acknowledgement, not just a passive "Continue".
 //
-// The actual GPS-sampling job (files/HANDOFF.md §2.1) isn't built yet — see
-// BACKLOG.md — so this screen only sets expectations; it doesn't request
-// device location permission itself.
+// This screen only sets expectations; it doesn't request device location
+// permission itself. The checks happen in useGpsPresenceSample, on the
+// Submit Review and My Contributions pages.
 export function ResidencyConsent() {
   const navigate = useNavigate();
   const [acknowledged, setAcknowledged] = useState(false);
@@ -28,10 +28,10 @@ export function ResidencyConsent() {
       </div>
 
       <p className="text-body-lg text-ink">
-        Reviews carry more weight when they come from people who actually live in an area. To
-        confirm that without asking you to upload documents, the app occasionally checks your
-        device's location while you have it open — especially overnight, since a device reliably
-        present at an address at night is strong evidence of residency.
+        Reviews count for more when they come from people who live in an area. When you open the
+        review or contributions pages, the app may check whether your device is inside the area.
+        Checks made at night count towards verification, since being in an area at night suggests
+        you live there. Your exact location is never stored.
       </p>
 
       <Card>
