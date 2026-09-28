@@ -63,7 +63,7 @@ export function AuthVisualPanel() {
       <div className="absolute inset-x-6 bottom-6 z-1100 rounded-2xl bg-ink/80 p-5 text-white backdrop-blur-sm sm:inset-x-8 sm:bottom-8">
         <p className="text-eyebrow font-bold uppercase tracking-[2px] text-white/60">Live on GroundTrust</p>
         <p className="mt-1.5 text-heading font-display font-bold text-white">
-          {areas === null ? "Loading..." : `${areas.length} areas · ${totalResidents} verified residents`}
+          {areas === null ? "Loading..." : `${areas.length} areas · ${totalResidents} residents`}
         </p>
         {featured && (
           <div className="mt-3 flex items-center justify-between border-t border-white/15 pt-3">

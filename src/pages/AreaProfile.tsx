@@ -122,7 +122,7 @@ export function AreaProfile() {
         <div className="flex flex-col gap-4">
           <Card className="flex flex-col gap-3">
             <h2 className={text.heading}>How this score is calculated</h2>
-            <InfoRow icon={UserCheck}>Only counts verified residents</InfoRow>
+            <InfoRow icon={UserCheck}>Every resident counts; verified residents count more</InfoRow>
             <InfoRow icon={Scale}>Longer residency carries more weight</InfoRow>
           </Card>
           <Card className="flex flex-col gap-3">

@@ -3,7 +3,7 @@ const SEGMENTS = 10;
 // files/DESIGN_SYSTEM.md §5.8 — makes the cold-start limitation visible: an
 // area with 2 reviews must visibly look thinner than one with 80, not just
 // say so in text.
-export function ConfidenceStrip({ n, suggestedMin = 10 }: { n: number; suggestedMin?: number }) {
+export function ConfidenceStrip({ n, suggestedMin = 15 }: { n: number; suggestedMin?: number }) {
   const filled = Math.min(SEGMENTS, Math.round((n / suggestedMin) * SEGMENTS));
 
   return (

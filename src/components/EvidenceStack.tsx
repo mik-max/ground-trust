@@ -45,7 +45,7 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
           <ScoreBandBadge band={overall.band} onDark />
           <p className="mt-2 text-data-xl tabular-nums text-white">{overall.score.toFixed(1)}</p>
           <p className="text-caption text-white/80">
-            Based on {overall.N} verified resident{overall.N === 1 ? "" : "s"}
+            Based on {overall.N} resident{overall.N === 1 ? "" : "s"}
           </p>
         </div>
 
@@ -67,7 +67,7 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
       <ScoreBandBadge band={overall.band} />
       <p className="mt-2 text-data-lg tabular-nums text-ink">{overall.score.toFixed(1)}</p>
       <p className="text-caption text-mute">
-        Based on {overall.N} verified resident{overall.N === 1 ? "" : "s"}
+        Based on {overall.N} resident{overall.N === 1 ? "" : "s"}
       </p>
 
       <div className="mt-3">
