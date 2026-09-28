@@ -37,7 +37,7 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
   const recorder = useAudioRecorder();
 
   const ratedCount = ASPECT_ORDER.filter((a) => ratings[a]).length;
-  const allRated = ratedCount === ASPECT_ORDER.length;
+  const hasRating = ratedCount > 0;
 
   async function handleSubmit() {
     setError(null);
@@ -147,12 +147,12 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
 
       {error && <p className="text-caption text-band-poor">{error}</p>}
 
-      <Button type="button" disabled={!allRated || submitting} onClick={handleSubmit}>
+      <Button type="button" disabled={!hasRating || submitting} onClick={handleSubmit}>
         {submitting
           ? "Sharing..."
-          : allRated
+          : hasRating
             ? (submitLabel ?? "Share your experience")
-            : `Rate all ${ASPECT_ORDER.length} aspects to continue`}
+            : "Rate at least one aspect to continue"}
       </Button>
     </Card>
   );
