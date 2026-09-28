@@ -49,7 +49,7 @@ export function AreaCard({ area, overall, aspects, spotlight = false }: AreaCard
               {overall.band && <ScoreBandBadge band={overall.band} size="sm" />}
             </div>
             <p className="text-caption text-mute">
-              Based on {overall.N} verified resident{overall.N === 1 ? "" : "s"}
+              Based on {overall.N} resident{overall.N === 1 ? "" : "s"}
             </p>
 
             <div className="mt-auto flex gap-2 border-t border-line pt-3">

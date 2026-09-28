@@ -155,7 +155,7 @@ export function CompareAreas() {
 
             {areas.map((a) => (
               <p key={a.area.id} className="text-caption text-mute">
-                Based on {a.overall.N} verified resident{a.overall.N === 1 ? "" : "s"}
+                Based on {a.overall.N} resident{a.overall.N === 1 ? "" : "s"}
               </p>
             ))}
 
