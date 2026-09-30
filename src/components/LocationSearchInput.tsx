@@ -20,7 +20,7 @@ interface LocationSearchInputProps {
 }
 
 // Two result sources live in one dropdown: areas we already have data for
-// (instant, from our own DB) and real-world Nigerian places (from the
+// (instant, from our own DB) and real-world Lagos places (from the
 // Nominatim geocode proxy — see geocode.service.ts) for discovering
 // somewhere we don't cover yet. `value`/`onChange` stay controlled by the
 // caller (Home still filters its own grid off the same text), this
@@ -100,7 +100,7 @@ export function LocationSearchInput({ value, onChange, placeholder, mode = "brow
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder={placeholder ?? "Search any area or neighbourhood in Nigeria..."}
+          placeholder={placeholder ?? "Search any area or neighbourhood in Lagos..."}
           className="w-full rounded-lg border border-line bg-white py-4 pl-11 pr-4 text-body-lg placeholder:text-mute"
         />
       </div>

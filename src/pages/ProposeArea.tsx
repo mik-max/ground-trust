@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
@@ -90,14 +91,23 @@ export function ProposeArea() {
           if (!fields.name.trim() || !fields.city.trim() || !fields.state.trim()) {
             throw new Error("Please fill in the area name, city, and state above.");
           }
-          await createArea({
-            name: fields.name.trim(),
-            city: fields.city.trim(),
-            state: fields.state.trim(),
-            geoCentroidLat: lat,
-            geoCentroidLng: lng,
-            review: input,
-          });
+          try {
+            await createArea({
+              name: fields.name.trim(),
+              city: fields.city.trim(),
+              state: fields.state.trim(),
+              geoCentroidLat: lat,
+              geoCentroidLng: lng,
+              review: input,
+            });
+          } catch (err) {
+            // Surface the API's reason (e.g. outside Lagos State) rather
+            // than axios's generic "Request failed with status code 400".
+            if (isAxiosError(err) && typeof err.response?.data?.error === "string") {
+              throw new Error(err.response.data.error);
+            }
+            throw err;
+          }
         }}
         onSubmitted={() => setSubmitted(true)}
       />
