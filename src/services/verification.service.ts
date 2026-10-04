@@ -14,6 +14,7 @@ export interface Residency {
   trustWeight: number;
   area: Pick<Area, "id" | "name" | "city" | "state" | "status">;
   progress: TierProgress;
+  lastReviewedAt: string | null;
 }
 
 export async function getVerificationStatus() {
