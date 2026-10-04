@@ -9,6 +9,7 @@ interface AspectRowProps {
   confidence: ConfidenceLevel;
   /** Residents giving each rating 1-5; when given, a small spread chart is shown. */
   distribution?: number[];
+  trend?: "improving" | "declining" | null;
 }
 
 // Residents are split when at least 4 rated and at least 30% gave 1-2 while
@@ -38,7 +39,7 @@ function SpreadChart({ distribution }: { distribution: number[] }) {
 // confidence must look visually distinct" without it. N is spelled out
 // ("N residents") instead of a bare "(N)" so it doesn't read as some
 // unexplained second number next to the score.
-export function AspectRow({ aspect, score, n, confidence, distribution }: AspectRowProps) {
+export function AspectRow({ aspect, score, n, confidence, distribution, trend }: AspectRowProps) {
   const label = ASPECT_META[aspect].label;
   const lowConfidence = confidence === "low";
   const fillPercent = score !== null ? Math.max(0, Math.min(100, (score / 5) * 100)) : 0;
@@ -48,6 +49,8 @@ export function AspectRow({ aspect, score, n, confidence, distribution }: Aspect
       <AspectIconChip aspect={aspect} />
       <span className="flex w-32 shrink-0 flex-col text-body">
         {label}
+        {trend === "improving" && <span className="text-caption text-band-good">Improving recently</span>}
+        {trend === "declining" && <span className="text-caption text-band-poor">Getting worse recently</span>}
         {distribution && isMixed(distribution) && <span className="text-caption text-amber">Mixed views</span>}
       </span>
       <div className="h-2 flex-1 rounded-full bg-paper-2">
