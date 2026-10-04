@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, RefreshCw } from "lucide-react";
 import { getVerificationStatus, type Residency, type TierProgress } from "../services/verification.service";
 import { VerificationTierBadge } from "../components/VerificationTierBadge";
 import { useGpsPresenceSample } from "../hooks/useGpsPresenceSample";
@@ -26,6 +26,14 @@ function formatProgress(progress: TierProgress): string | null {
 // for every area a resident has already engaged with — this is one of the
 // two natural moments (alongside Submit Review) where the app checks
 // device location per the onboarding consent screen's promise.
+// A rating older than this gets a "has anything changed?" prompt: the
+// resident's newest rating replaces their older one in the score.
+const UPDATE_PROMPT_DAYS = 90;
+
+function isOld(iso: string | null) {
+  return iso !== null && Date.now() - new Date(iso).getTime() > UPDATE_PROMPT_DAYS * 24 * 60 * 60 * 1000;
+}
+
 export function MyContributions() {
   const [residencies, setResidencies] = useState<Residency[] | null>(null);
   useGpsPresenceSample(residencies?.map((r) => r.areaId) ?? []);
@@ -90,6 +98,15 @@ export function MyContributions() {
                     )}
                   </Card>
                 </Link>
+                {!isPending && isOld(r.lastReviewedAt) && (
+                  <Link
+                    to={`/areas/${r.areaId}/review`}
+                    className="mt-2 inline-flex items-center gap-1.5 px-1 text-caption text-brand underline"
+                  >
+                    <RefreshCw size={12} />
+                    Has anything changed since your last rating? Update it
+                  </Link>
+                )}
               </li>
             );
           })}
