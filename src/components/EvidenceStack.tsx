@@ -54,7 +54,14 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
           <div className="my-4 border-t border-line" />
           <div className="flex flex-col gap-3">
             {orderedAspects.map((a) => (
-              <AspectRow key={a.aspect} aspect={a.aspect} score={a.score} n={a.N} confidence={a.confidence} />
+              <AspectRow
+                key={a.aspect}
+                aspect={a.aspect}
+                score={a.score}
+                n={a.N}
+                confidence={a.confidence}
+                distribution={a.distribution}
+              />
             ))}
           </div>
         </div>
