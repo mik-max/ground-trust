@@ -42,8 +42,11 @@ export interface AreaEvidenceStack {
 export interface Review {
   id: string;
   areaId: string;
-  userId: string;
+  /** Absent on public review lists, which never identify the reviewer. */
+  userId?: string;
   user?: { id: string; fullName: string };
+  /** Public review lists: whether the signed-in viewer wrote this review. */
+  isOwn?: boolean;
   originalText: string | null;
   originalLanguage: string | null;
   originalAudioRef: string | null;

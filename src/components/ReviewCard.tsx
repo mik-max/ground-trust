@@ -107,7 +107,7 @@ function formatDate(iso: string) {
 export function ReviewCard({ review }: { review: Review }) {
   const [showOriginal, setShowOriginal] = useState(false);
   const user = useAuthStore((s) => s.user);
-  const canReport = Boolean(user && user.id !== review.userId);
+  const canReport = Boolean(user && !review.isOwn);
   const ratedAspects = ASPECT_ORDER.filter((a) => review[RATING_BY_ASPECT[a]] !== null);
   const hasTranslation = Boolean(review.translatedText && review.translatedText !== review.originalText);
   const bodyText = review.translatedText ?? review.originalText;
