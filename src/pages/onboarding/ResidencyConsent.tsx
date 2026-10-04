@@ -43,13 +43,13 @@ export function ResidencyConsent() {
           </li>
           <li>
             <span className="text-ink">What's stored is just your current tier</span> — e.g.
-            "Location-confirmed" — and the date you reached it, visible any time on My
+            "Verified resident" — and the date you reached it, visible any time on My
             Contributions.
           </li>
           <li>
             <span className="text-ink">Verification is progressive, not all-or-nothing.</span>{" "}
-            Registered residents can already contribute reviews; location-confirmed and
-            longer-verified residents simply carry more weight in an area's score.
+            Residents who are not yet verified can already contribute reviews; verified and
+            long-term residents simply carry more weight in an area's score.
           </li>
         </ul>
       </Card>
