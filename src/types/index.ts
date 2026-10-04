@@ -26,6 +26,8 @@ export interface AspectScore {
   confidence: ConfidenceLevel;
   /** Residents giving each rating 1-5 (area profile only). */
   distribution?: number[];
+  /** Recent ratings clearly higher or lower than earlier ones (area profile only). */
+  trend?: "improving" | "declining" | null;
 }
 
 export interface AreaEvidenceStack {

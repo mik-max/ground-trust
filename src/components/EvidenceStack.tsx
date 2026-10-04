@@ -61,6 +61,7 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
                 n={a.N}
                 confidence={a.confidence}
                 distribution={a.distribution}
+                trend={a.trend}
               />
             ))}
           </div>
