@@ -54,6 +54,7 @@ export interface Review {
   ratingRoadsFlooding: number | null;
   ratingAccessibility: number | null;
   tierAtSubmission: VerificationTier;
+  holdReason?: string | null;
 }
 
 export interface Flag {
