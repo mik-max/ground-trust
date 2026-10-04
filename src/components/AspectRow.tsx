@@ -47,13 +47,17 @@ export function AspectRow({ aspect, score, n, confidence, distribution, trend }:
   return (
     <div className="flex items-center gap-3">
       <AspectIconChip aspect={aspect} />
-      <span className="flex w-32 shrink-0 flex-col text-body">
+      <span className="flex min-w-0 flex-1 flex-col text-body sm:w-32 sm:flex-none sm:shrink-0">
         {label}
+        <span className="text-caption text-mute sm:hidden">
+          {n} {n === 1 ? "resident" : "residents"}
+        </span>
         {trend === "improving" && <span className="text-caption text-band-good">Improving recently</span>}
         {trend === "declining" && <span className="text-caption text-band-poor">Getting worse recently</span>}
         {distribution && isMixed(distribution) && <span className="text-caption text-amber">Mixed views</span>}
       </span>
-      <div className="h-2 flex-1 rounded-full bg-paper-2">
+      {/* Hidden on phones, where the score and spread chart already carry it and the row would overflow. */}
+      <div className="hidden h-2 flex-1 rounded-full bg-paper-2 sm:block">
         <div
           className={`h-2 rounded-full ${lowConfidence ? "bg-confidence-low" : "bg-confidence-high"}`}
           style={{ width: `${fillPercent}%` }}
@@ -63,7 +67,7 @@ export function AspectRow({ aspect, score, n, confidence, distribution, trend }:
         {score !== null ? score.toFixed(1) : "—"}
       </span>
       {distribution && <SpreadChart distribution={distribution} />}
-      <span className="w-24 shrink-0 text-caption text-mute">
+      <span className="hidden w-24 shrink-0 text-caption text-mute sm:block">
         {n} {n === 1 ? "resident" : "residents"}
       </span>
     </div>

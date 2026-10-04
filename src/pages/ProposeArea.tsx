@@ -74,13 +74,13 @@ export function ProposeArea() {
             value={fields.city}
             onChange={(e) => setFields({ ...fields, city: e.target.value })}
             placeholder="City"
-            className="flex-1"
+            className="min-w-0 flex-1"
           />
           <TextInput
             value={fields.state}
             onChange={(e) => setFields({ ...fields, state: e.target.value })}
             placeholder="State"
-            className="flex-1"
+            className="min-w-0 flex-1"
           />
         </div>
       </Card>
