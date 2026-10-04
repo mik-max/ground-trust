@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { UserCheck, Scale, ShieldCheck, Shield, User, MessageSquareOff } from "lucide-react";
+import { UserCheck, Scale, ShieldCheck, Shield, User, MessageSquareOff, Clock } from "lucide-react";
 import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
@@ -124,6 +124,7 @@ export function AreaProfile() {
             <h2 className={text.heading}>How this score is calculated</h2>
             <InfoRow icon={UserCheck}>Every resident counts; verified residents count more</InfoRow>
             <InfoRow icon={Scale}>Longer residency carries more weight</InfoRow>
+            <InfoRow icon={Clock}>Recent ratings count more than older ones</InfoRow>
           </Card>
           <Card className="flex flex-col gap-3">
             <h2 className={text.heading}>Verification tiers</h2>
