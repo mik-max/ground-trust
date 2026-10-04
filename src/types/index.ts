@@ -56,6 +56,8 @@ export interface Review {
   tierAtSubmission: VerificationTier;
 }
 
+export type ReviewReportReason = "false_information" | "offensive" | "spam" | "other";
+
 export interface Flag {
   id: string;
   areaId: string;

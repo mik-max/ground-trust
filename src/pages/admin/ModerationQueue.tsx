@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CircleCheckBig, TriangleAlert } from "lucide-react";
+import { CircleCheckBig, Flag, TriangleAlert } from "lucide-react";
 import type { Aspect } from "../../types";
 import {
   listPendingAreas,
   listPendingReviews,
+  listReportedReviews,
   moderateArea,
   moderateReview,
+  resolveReportedReview,
   type PendingArea,
   type PendingReview,
+  type ReportedReview,
 } from "../../services/admin.service";
 import { ASPECT_META, ASPECT_ORDER } from "../../components/aspectMeta";
+import { REPORT_REASON_LABEL } from "../../components/ReviewCard";
 import { AreaLocationMap } from "../../components/map/AreaLocationMap";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
@@ -39,11 +43,13 @@ function formatDate(iso: string) {
 export function ModerationQueue() {
   const [reviews, setReviews] = useState<PendingReview[] | null>(null);
   const [areas, setAreas] = useState<PendingArea[] | null>(null);
+  const [reported, setReported] = useState<ReportedReview[] | null>(null);
   const [actingOn, setActingOn] = useState<string | null>(null);
 
   function refresh() {
     listPendingReviews().then(setReviews);
     listPendingAreas().then(setAreas);
+    listReportedReviews().then(setReported);
   }
 
   useEffect(refresh, []);
@@ -53,6 +59,16 @@ export function ModerationQueue() {
     try {
       await moderateReview(reviewId, decision);
       setReviews((prev) => prev?.filter((r) => r.id !== reviewId) ?? null);
+    } finally {
+      setActingOn(null);
+    }
+  }
+
+  async function handleReportDecision(reviewId: string, decision: "keep" | "remove") {
+    setActingOn(reviewId);
+    try {
+      await resolveReportedReview(reviewId, decision);
+      setReported((prev) => prev?.filter((r) => r.id !== reviewId) ?? null);
     } finally {
       setActingOn(null);
     }
@@ -148,6 +164,83 @@ export function ModerationQueue() {
                 </Card>
               </li>
             ))}
+          </ul>
+        )}
+      </div>
+
+      <div>
+        <h2 className={text.heading}>Reported reviews</h2>
+        {reported === null ? (
+          <div className="mt-3 flex flex-col gap-3">
+            <Skeleton className="h-32 rounded-lg" />
+          </div>
+        ) : reported.length === 0 ? (
+          <EmptyState icon={CircleCheckBig} title="All clear" description="No reviews have been reported." />
+        ) : (
+          <ul className="mt-3 flex flex-col gap-4">
+            {reported.map((r) => {
+              const ratedAspects = ASPECT_ORDER.filter((a) => r[RATING_BY_ASPECT[a]] !== null);
+              const showBothTexts = r.translatedText && r.translatedText !== r.originalText;
+              return (
+                <li key={r.id}>
+                  <Card border="accent" className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <Link to={`/areas/${r.area.id}`} className="text-body-lg text-ink">
+                        {r.area.name} <span className="text-mute">· {r.area.city}</span>
+                      </Link>
+                      <span className="text-caption text-mute">{formatDate(r.submittedAt)}</span>
+                    </div>
+                    <p className="text-caption text-mute">Submitted by {r.user?.fullName ?? "Unknown resident"}</p>
+
+                    {r.originalText && (
+                      <div className="flex flex-col gap-1">
+                        <p className="text-body text-ink">{r.originalText}</p>
+                        {showBothTexts && <p className="text-caption text-mute">Translated: {r.translatedText}</p>}
+                      </div>
+                    )}
+
+                    {ratedAspects.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {ratedAspects.map((aspect) => {
+                          const Icon = ASPECT_META[aspect].icon;
+                          return (
+                            <span
+                              key={aspect}
+                              className="inline-flex items-center gap-1.5 rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute"
+                            >
+                              <Icon size={12} />
+                              {ASPECT_META[aspect].label}: {r[RATING_BY_ASPECT[aspect]] as number}/5
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    <div className="flex flex-col gap-1.5 rounded-md bg-paper-2 p-3">
+                      <p className="inline-flex items-center gap-1.5 text-caption font-bold text-ink">
+                        <Flag size={13} />
+                        Reported {r.reports.length} time{r.reports.length === 1 ? "" : "s"}
+                      </p>
+                      {r.reports.map((rep) => (
+                        <p key={rep.id} className="text-caption text-ink">
+                          {REPORT_REASON_LABEL[rep.reason]}
+                          {rep.note ? <span className="text-mute"> — “{rep.note}”</span> : null}
+                        </p>
+                      ))}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <Button type="button" variant="outline" disabled={actingOn === r.id} onClick={() => handleReportDecision(r.id, "keep")}>
+                        Keep review
+                      </Button>
+                      <Button type="button" disabled={actingOn === r.id} onClick={() => handleReportDecision(r.id, "remove")}>
+                        Remove review
+                      </Button>
+                    </div>
+                  </Card>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

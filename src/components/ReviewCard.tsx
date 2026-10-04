@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { Mic } from "lucide-react";
-import type { Aspect, Review } from "../types";
+import { isAxiosError } from "axios";
+import { Flag, Mic } from "lucide-react";
+import type { Aspect, Review, ReviewReportReason } from "../types";
+import { reportReview } from "../services/review.service";
+import { useAuthStore } from "../store/auth.store";
 import { VerificationTierBadge } from "./VerificationTierBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
+import { Textarea } from "./ui/TextInput";
 
 const RATING_BY_ASPECT: Record<Aspect, keyof Review> = {
   power: "ratingPower",
@@ -13,6 +17,77 @@ const RATING_BY_ASPECT: Record<Aspect, keyof Review> = {
   roads_flooding: "ratingRoadsFlooding",
   accessibility: "ratingAccessibility",
 };
+
+export const REPORT_REASON_LABEL: Record<ReviewReportReason, string> = {
+  false_information: "False information",
+  offensive: "Offensive",
+  spam: "Spam",
+  other: "Other",
+};
+
+// A report never hides the review — it only puts it in front of an
+// administrator (see admin.controller.ts's listReportedReviews).
+function ReportReview({ reviewId }: { reviewId: string }) {
+  const [open, setOpen] = useState(false);
+  const [reason, setReason] = useState<ReviewReportReason | null>(null);
+  const [note, setNote] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  if (state === "sent") {
+    return <p className="mt-3 text-caption text-mute">Thanks — an administrator will review this report.</p>;
+  }
+  if (!open) {
+    return (
+      <Button type="button" variant="link" className="mt-3 inline-flex items-center gap-1 text-caption text-mute" onClick={() => setOpen(true)}>
+        <Flag size={12} />
+        Report this review
+      </Button>
+    );
+  }
+
+  async function submit() {
+    if (!reason) return;
+    setState("sending");
+    setError(null);
+    try {
+      await reportReview(reviewId, reason, note);
+      setState("sent");
+    } catch (err) {
+      setState("idle");
+      setError(isAxiosError(err) && typeof err.response?.data?.error === "string" ? err.response.data.error : "Couldn't send your report — please try again.");
+    }
+  }
+
+  return (
+    <div className="mt-3 flex flex-col gap-2 border-t border-line pt-3">
+      <p className="text-caption text-ink">Why are you reporting this review?</p>
+      <div className="flex flex-wrap gap-2">
+        {(Object.keys(REPORT_REASON_LABEL) as ReviewReportReason[]).map((r) => (
+          <Button key={r} type="button" variant="outline" active={reason === r} className="text-caption" onClick={() => setReason(r)}>
+            {REPORT_REASON_LABEL[r]}
+          </Button>
+        ))}
+      </div>
+      <Textarea
+        placeholder="Optional: what is wrong with this review?"
+        value={note}
+        maxLength={500}
+        onChange={(e) => setNote(e.target.value)}
+        aria-label="Report note"
+      />
+      {error && <p className="text-caption text-band-poor">{error}</p>}
+      <div className="flex gap-2">
+        <Button type="button" variant="outline" active disabled={!reason || state === "sending"} onClick={submit}>
+          {state === "sending" ? "Sending..." : "Send report"}
+        </Button>
+        <Button type="button" variant="link" className="text-caption" onClick={() => setOpen(false)}>
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
@@ -31,6 +106,8 @@ function formatDate(iso: string) {
 // just never the recording itself.
 export function ReviewCard({ review }: { review: Review }) {
   const [showOriginal, setShowOriginal] = useState(false);
+  const user = useAuthStore((s) => s.user);
+  const canReport = Boolean(user && user.id !== review.userId);
   const ratedAspects = ASPECT_ORDER.filter((a) => review[RATING_BY_ASPECT[a]] !== null);
   const hasTranslation = Boolean(review.translatedText && review.translatedText !== review.originalText);
   const bodyText = review.translatedText ?? review.originalText;
@@ -78,6 +155,8 @@ export function ReviewCard({ review }: { review: Review }) {
             )}
           </div>
         )}
+
+        {canReport && <ReportReview reviewId={review.id} />}
       </Card>
     </li>
   );

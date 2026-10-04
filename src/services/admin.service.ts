@@ -1,5 +1,5 @@
 import api from "./api";
-import type { Area, GovernmentAccount, Review } from "../types";
+import type { Area, GovernmentAccount, Review, ReviewReportReason } from "../types";
 
 export async function listGovernmentAccounts() {
   const { data } = await api.get<{ accounts: GovernmentAccount[] }>("/admin/government-accounts");
@@ -22,6 +22,20 @@ export async function listPendingReviews() {
 
 export async function moderateReview(reviewId: string, decision: "approved" | "rejected") {
   const { data } = await api.post<{ review: PendingReview }>(`/admin/reviews/${reviewId}/moderate`, { decision });
+  return data.review;
+}
+
+export type ReportedReview = PendingReview & {
+  reports: { id: string; reason: ReviewReportReason; note: string | null; createdAt: string }[];
+};
+
+export async function listReportedReviews() {
+  const { data } = await api.get<{ reviews: ReportedReview[] }>("/admin/reviews/reported");
+  return data.reviews;
+}
+
+export async function resolveReportedReview(reviewId: string, decision: "keep" | "remove") {
+  const { data } = await api.post<{ review: PendingReview }>(`/admin/reviews/${reviewId}/reports/resolve`, { decision });
   return data.review;
 }
 
