@@ -271,6 +271,13 @@ export function ModerationQueue() {
                   </div>
                   <p className="text-caption text-mute">Submitted by {r.user?.fullName ?? "Unknown resident"}</p>
 
+                  {r.holdReason && (
+                    <div className="flex items-start gap-2 rounded-md bg-paper-2 p-3">
+                      <TriangleAlert size={16} className="mt-0.5 shrink-0 text-amber" />
+                      <p className="text-caption text-ink">{r.holdReason}</p>
+                    </div>
+                  )}
+
                   {r.originalAudioRef && <audio controls src={r.originalAudioRef} className="w-full" />}
 
                   {r.originalText && (
