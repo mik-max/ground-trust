@@ -24,6 +24,8 @@ export interface AspectScore {
   band: Band | null;
   N: number;
   confidence: ConfidenceLevel;
+  /** Residents giving each rating 1-5 (area profile only). */
+  distribution?: number[];
 }
 
 export interface AreaEvidenceStack {
