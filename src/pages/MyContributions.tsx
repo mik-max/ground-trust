@@ -14,12 +14,12 @@ import { text } from "../styles/typography";
 function formatProgress(progress: TierProgress): string | null {
   if (!progress) return null;
   if (progress.toward === "tier1") {
-    return `${progress.nightSamples} of ${progress.nightSamplesNeeded} confirmed night visits toward Location-confirmed`;
+    return `${progress.nightSamples} of ${progress.nightSamplesNeeded} confirmed night visits toward Verified resident`;
   }
   const daysLeft = Math.max(0, progress.daysNeeded - progress.daysConfirmed);
   return daysLeft === 0
     ? "Verification pending — check back soon"
-    : `${daysLeft} more day${daysLeft === 1 ? "" : "s"} of confirmed residency to reach Verified resident`;
+    : `${daysLeft} more day${daysLeft === 1 ? "" : "s"} of confirmed residency to reach Long-term resident`;
 }
 
 // files/DESIGN_SYSTEM.md §6.6. Fires a best-effort background GPS sample

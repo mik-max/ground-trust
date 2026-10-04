@@ -9,7 +9,7 @@ export function VerificationTierBadge({ tier }: { tier: VerificationTier }) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-brand/20 px-2.5 py-1 text-caption text-brand-700">
         <ShieldCheck size={14} />
-        Verified resident
+        Long-term resident
       </span>
     );
   }
@@ -17,13 +17,13 @@ export function VerificationTierBadge({ tier }: { tier: VerificationTier }) {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-brand/10 px-2.5 py-1 text-caption text-brand">
         <Shield size={14} />
-        Location-confirmed
+        Verified resident
       </span>
     );
   }
   return (
     <span className="inline-flex items-center gap-1 rounded-full border border-line px-2.5 py-1 text-caption text-mute">
-      Registered
+      Not yet verified
     </span>
   );
 }
