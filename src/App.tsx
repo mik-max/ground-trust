@@ -15,6 +15,9 @@ import { GovDashboard } from "./pages/gov/Dashboard";
 import { ResidencyConsent } from "./pages/onboarding/ResidencyConsent";
 import { AdminGovernmentAccounts } from "./pages/admin/GovernmentAccounts";
 import { ModerationQueue } from "./pages/admin/ModerationQueue";
+import { Privacy } from "./pages/legal/Privacy";
+import { Terms } from "./pages/legal/Terms";
+import { SiteFooter } from "./components/SiteFooter";
 
 const CHROMELESS_PATHS = new Set(["/login", "/register"]);
 
@@ -40,6 +43,8 @@ function AppShell() {
       <main className="mx-auto max-w-6xl px-6 py-8">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route
             path="/onboarding/consent"
             element={
@@ -116,6 +121,7 @@ function AppShell() {
           />
         </Routes>
       </main>
+      <SiteFooter />
     </>
   );
 }

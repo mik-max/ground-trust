@@ -99,6 +99,17 @@ export function Register() {
           onCredential={handleGoogle}
           onError={() => setError("Google sign-in failed.")}
         />
+        <p className="text-caption text-mute">
+          By creating an account you agree to the{" "}
+          <Link to="/terms" className="text-brand underline">
+            Terms of use
+          </Link>{" "}
+          and{" "}
+          <Link to="/privacy" className="text-brand underline">
+            Privacy policy
+          </Link>
+          .
+        </p>
         <p className={`${text.body} text-mute`}>
           Already have an account?{" "}
           <Link to="/login" className="font-medium text-brand">
