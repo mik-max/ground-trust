@@ -19,7 +19,7 @@ export function GovDashboard() {
   return (
     <div className="flex flex-col gap-6">
       <BackLink to="/" label="All areas" />
-      <h1 className={text.displayMd}>Flagged Areas</h1>
+      <h1 className={text.displayMd}>Flagged areas</h1>
 
       {flags === null ? (
         <div className="flex flex-col gap-4">

@@ -79,7 +79,7 @@ export function CompareAreas() {
   return (
     <div className="flex flex-col gap-6">
       <BackLink to="/" label="All areas" />
-      <h1 className={text.displayMd}>Compare Areas</h1>
+      <h1 className={text.displayMd}>Compare areas</h1>
 
       {areas.length < MAX_AREAS && (
         <div className="relative max-w-sm">

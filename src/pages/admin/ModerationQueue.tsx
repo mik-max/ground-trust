@@ -88,7 +88,7 @@ export function ModerationQueue() {
   return (
     <div className="flex flex-col gap-6">
       <BackLink to="/" label="All areas" />
-      <h1 className={text.displayMd}>Moderation Queue</h1>
+      <h1 className={text.displayMd}>Moderation queue</h1>
 
       <div>
         <h2 className={text.heading}>Proposed areas</h2>
@@ -99,7 +99,7 @@ export function ModerationQueue() {
             ))}
           </div>
         ) : areas.length === 0 ? (
-          <EmptyState illustration="allClear" title="All clear" description="No area proposals pending." />
+          <EmptyState size="inline" illustration="allClear" title="All clear" description="No area proposals pending." />
         ) : (
           <ul className="mt-3 flex flex-col gap-4">
             {areas.map((a) => (
@@ -176,7 +176,7 @@ export function ModerationQueue() {
             <Skeleton className="h-32 rounded-lg" />
           </div>
         ) : reported.length === 0 ? (
-          <EmptyState illustration="allClear" title="All clear" description="No reviews have been reported." />
+          <EmptyState size="inline" illustration="allClear" title="All clear" description="No reviews have been reported." />
         ) : (
           <ul className="mt-3 flex flex-col gap-4">
             {reported.map((r) => {
@@ -253,7 +253,7 @@ export function ModerationQueue() {
           ))}
         </div>
       ) : reviews.length === 0 ? (
-        <EmptyState illustration="allClear" title="All clear" description="Nothing pending review." />
+        <EmptyState size="inline" illustration="allClear" title="All clear" description="Nothing pending review." />
       ) : (
         <ul className="flex flex-col gap-4">
           {reviews.map((r) => {

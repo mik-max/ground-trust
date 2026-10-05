@@ -136,7 +136,7 @@ export function ReviewComposer({ onSubmit, onSubmitted, submitLabel }: ReviewCom
                 >
                   <Star
                     size={22}
-                    className={(ratings[aspect] ?? 0) >= value ? "fill-amber text-amber" : "text-line"}
+                    className={(ratings[aspect] ?? 0) >= value ? "fill-ink text-ink" : "text-[#c9d0cb]"}
                   />
                 </button>
               ))}

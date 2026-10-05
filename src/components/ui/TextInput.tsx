@@ -1,6 +1,7 @@
 import type { InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
-const FIELD_CLASS = "rounded-md border border-line px-4 py-3 text-body-lg";
+const FIELD_CLASS =
+  "rounded-md border border-line bg-white px-4 py-3 text-body-lg text-ink outline-none placeholder:text-mute focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/20";
 
 export function TextInput({ className = "", ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={`${FIELD_CLASS} ${className}`.trim()} {...props} />;

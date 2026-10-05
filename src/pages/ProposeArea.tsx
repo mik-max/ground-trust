@@ -45,7 +45,7 @@ export function ProposeArea() {
             {fields.name} and your review have been submitted together. An admin — the same team that
             reviews new comments — checks new areas before they go public, to keep out spam and
             duplicates. Once approved, both go live at once, and you can check the status any time under{" "}
-            <span className="text-ink">My Contributions</span>.
+            <span className="text-ink">My contributions</span>.
           </p>
         </Card>
       </div>

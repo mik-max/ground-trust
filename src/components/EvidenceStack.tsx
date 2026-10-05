@@ -6,6 +6,7 @@ import { AspectRow } from "./AspectRow";
 import { ConfidenceStrip } from "./ConfidenceStrip";
 import { ASPECT_ORDER } from "./aspectMeta";
 import { Card } from "./ui/Card";
+import { EmptyState } from "./ui/EmptyState";
 
 interface EvidenceStackProps {
   overall: AreaEvidenceStack["overall"];
@@ -25,23 +26,22 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
 
   if (overall.score === null || overall.band === null) {
     return (
-      <Card padding="lg">
-        <p className="text-body-lg text-ink">Be the first to review this area</p>
-        <p className="text-caption text-mute">No reviews yet — share your experience to get started.</p>
-      </Card>
+      <EmptyState
+        size="inline"
+        illustration="neighbourhood"
+        title="No ratings yet"
+        description="Live here? Be the first to say what it's like. Scores appear as soon as residents rate the area."
+      />
     );
   }
 
-  // Full size (Area Profile only) gets a genuine two-tone hero — a dark
-  // brand-700 zone for the band/score/N, a white zone for everything that
-  // supports it. ConfidenceStrip deliberately stays in the white zone, not
-  // the dark one: its "high confidence" color IS brand-700 (same token
-  // reused), so on a brand-700 background the filled segments would
-  // literally vanish into it.
+  // Full size (Area Profile only) gets a two-tone header: a dark zone for
+  // the band, score and N, a white zone for everything that supports it.
+  // ConfidenceStrip stays in the white zone, where its accent fill reads.
   if (size === "full") {
     return (
       <Card padding="none" elevation="hero" className="overflow-hidden">
-        <div className="bg-brand-700 px-8 py-8">
+        <div className="bg-night px-8 py-8">
           <ScoreBandBadge band={overall.band} onDark />
           <p className="mt-2 text-data-xl tabular-nums text-white">{overall.score.toFixed(1)}</p>
           <p className="text-caption text-white/80">

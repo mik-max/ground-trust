@@ -4,6 +4,7 @@ import { UserCheck, Scale, ShieldCheck, Shield, User, Clock } from "lucide-react
 import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
+import { areaPhoto } from "../components/areaPhotos";
 import { ReviewCard } from "../components/ReviewCard";
 import { AreaLocationMap } from "../components/map/AreaLocationMap";
 import { useAuthStore } from "../store/auth.store";
@@ -82,15 +83,26 @@ export function AreaProfile() {
     );
   }
 
+  const photo = areaPhoto(data.area.name);
+
   return (
     <div className="flex flex-col gap-8">
       <BackLink to="/" label="All areas" />
 
+      {photo && (
+        <div
+          className="aspect-[3/1] w-full rounded-xl bg-paper-2 bg-cover bg-center sm:aspect-[4/1]"
+          style={{ backgroundImage: `url(${photo})` }}
+          role="img"
+          aria-label={`A view of ${data.area.name}`}
+        />
+      )}
+
       <div>
-        <Eyebrow>Area Profile</Eyebrow>
-        <h1 className={text.displayLg}>{data.area.name}</h1>
+        <Eyebrow>Area profile</Eyebrow>
+        <h1 className={`${text.displayLg} mt-2`}>{data.area.name}</h1>
         <p className={`${text.bodyLg} text-mute`}>
-          {data.area.city}, {data.area.state}
+          {data.area.lga ?? data.area.city} · {data.area.state} State
         </p>
       </div>
 

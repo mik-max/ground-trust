@@ -39,7 +39,7 @@ export function GovernmentFlagCard({ flag: initialFlag }: { flag: Flag }) {
     <Card border="accent">
       <p className={text.heading}>{flag.area?.name ?? "Unknown area"}</p>
       <p className="text-body text-mute">
-        {flag.area?.city}, {flag.area?.state}
+        {flag.area?.lga ?? flag.area?.city} · {flag.area?.state} State
       </p>
       <div className="mt-3 flex items-center gap-3">
         <AspectIconChip aspect={flag.aspect} />

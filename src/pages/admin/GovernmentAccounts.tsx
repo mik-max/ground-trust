@@ -51,7 +51,7 @@ export function AdminGovernmentAccounts() {
   return (
     <div className="flex flex-col gap-8">
       <BackLink to="/" label="All areas" />
-      <h1 className={text.displayMd}>Government Accounts</h1>
+      <h1 className={text.displayMd}>Government accounts</h1>
 
       <Card className="max-w-sm">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

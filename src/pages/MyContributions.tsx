@@ -45,7 +45,7 @@ export function MyContributions() {
   return (
     <div className="flex flex-col gap-6">
       <BackLink to="/" label="All areas" />
-      <h1 className={text.displayMd}>My Contributions</h1>
+      <h1 className={text.displayMd}>My contributions</h1>
 
       {residencies === null ? (
         <ul className="flex flex-col gap-3">
