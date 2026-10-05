@@ -60,7 +60,7 @@ export function Register() {
           <p className={`mt-1 ${text.body} text-mute`}>Create your account for free</p>
         </div>
 
-        <Field label="Your name">
+        <Field label="Name">
           <TextInput
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
@@ -69,7 +69,7 @@ export function Register() {
             required
           />
         </Field>
-        <Field label="Your e-mail">
+        <Field label="Email">
           <TextInput
             type="email"
             value={email}

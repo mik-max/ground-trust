@@ -49,7 +49,7 @@ export function Login() {
           <p className={`mt-1 ${text.body} text-mute`}>Welcome back to GroundTrust</p>
         </div>
 
-        <Field label="Your e-mail">
+        <Field label="Email">
           <TextInput
             type="email"
             value={email}

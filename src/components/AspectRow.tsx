@@ -7,7 +7,7 @@ interface AspectRowProps {
   score: number | null;
   n: number;
   confidence: ConfidenceLevel;
-  /** Residents giving each rating 1-5; when given, a small spread chart is shown. */
+  /** Residents giving each rating 1-5; used to show "Mixed views" when residents are split. */
   distribution?: number[];
   trend?: "improving" | "declining" | null;
 }
@@ -20,17 +20,6 @@ function isMixed(d: number[]) {
   return (d[0] + d[1]) / total >= 0.3 && (d[3] + d[4]) / total >= 0.3;
 }
 
-function SpreadChart({ distribution }: { distribution: number[] }) {
-  const max = Math.max(1, ...distribution);
-  const title = distribution.map((c, i) => `${i + 1}★: ${c}`).join(", ");
-  return (
-    <span className="flex h-5 w-9 shrink-0 items-end gap-[2px]" title={`Ratings given — ${title}`} aria-label={`Ratings given — ${title}`}>
-      {distribution.map((c, i) => (
-        <span key={i} className="w-[5px] rounded-sm bg-mute/60" style={{ height: `${Math.max(2, (c / max) * 20)}px` }} />
-      ))}
-    </span>
-  );
-}
 
 // files/DESIGN_SYSTEM.md §5.3. The bar color alone carries the
 // low-confidence signal (bg-confidence-low vs. -high) — a separate info
@@ -66,7 +55,6 @@ export function AspectRow({ aspect, score, n, confidence, distribution, trend }:
       <span className="w-10 shrink-0 text-right text-data-md tabular-nums text-ink">
         {score !== null ? score.toFixed(1) : "—"}
       </span>
-      {distribution && <SpreadChart distribution={distribution} />}
       <span className="hidden w-24 shrink-0 text-caption text-mute sm:block">
         {n} {n === 1 ? "resident" : "residents"}
       </span>

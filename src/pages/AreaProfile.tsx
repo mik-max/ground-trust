@@ -108,15 +108,23 @@ export function AreaProfile() {
         <div className="flex flex-col gap-4">
           <EvidenceStack overall={data.overall} aspects={data.aspects} size="full" />
 
-          <Link to={`/compare?areas=${id}`} className={buttonClassName({ variant: "outline" }, "w-fit")}>
-            Compare with another area
-          </Link>
-
-          {user?.role === "resident" && (
-            <Link to={`/areas/${id}/review`} className={buttonClassName({ variant: "primary" }, "w-fit")}>
-              Share your experience
+          <div className={`grid gap-3 sm:flex sm:w-fit ${user?.role === "resident" ? "grid-cols-2" : "grid-cols-1"}`}>
+            <Link
+              to={`/compare?areas=${id}`}
+              className={buttonClassName({ variant: "outline" }, "inline-flex items-center justify-center text-center")}
+            >
+              Compare with another area
             </Link>
-          )}
+
+            {user?.role === "resident" && (
+              <Link
+                to={`/areas/${id}/review`}
+                className={buttonClassName({ variant: "primary" }, "inline-flex items-center justify-center text-center")}
+              >
+                Share your experience
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="flex flex-col gap-4">
