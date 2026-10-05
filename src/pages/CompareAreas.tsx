@@ -125,7 +125,7 @@ export function CompareAreas() {
             className="w-full"
           />
           {results.length > 0 && (
-            <ul className="absolute z-10 mt-1 w-full rounded-lg border border-line bg-white shadow-raised">
+            <ul className="absolute z-10 mt-1 max-h-[min(60vh,20rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-line bg-white shadow-raised">
               {results.map((a) => (
                 <li key={a.id}>
                   <button
