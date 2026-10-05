@@ -25,6 +25,9 @@ export function Home() {
   const [query, setQuery] = useState("");
   const [areas, setAreas] = useState<AreaEvidenceStack[]>([]);
   const [loading, setLoading] = useState(true);
+  // The hero's most-rated list comes from the unfiltered list and stays put
+  // while someone searches.
+  const [featured, setFeatured] = useState<AreaEvidenceStack[]>([]);
 
   // Wait for typing to pause, and ignore answers to searches that have
   // since been replaced, so clearing the field quickly can't leave older
@@ -35,7 +38,9 @@ export function Home() {
     const handle = setTimeout(() => {
       listAreas(query.trim() || undefined)
         .then((result) => {
-          if (current) setAreas(result);
+          if (!current) return;
+          setAreas(result);
+          if (!query.trim()) setFeatured(result);
         })
         .finally(() => {
           if (current) setLoading(false);
@@ -54,7 +59,7 @@ export function Home() {
 
   return (
     <div className="flex flex-col">
-      <Hero query={query} onQueryChange={setQuery} areas={orderedAreas} searching={searching} loading={loading} />
+      <Hero query={query} onQueryChange={setQuery} featured={featured} />
 
       <section className={`${WRAP} pt-24`} aria-labelledby="rate-heading">
         <SectionHead eyebrow="What residents rate" id="rate-heading" title="Five things that shape daily life in an area." />
@@ -280,18 +285,17 @@ export function Home() {
 function Hero({
   query,
   onQueryChange,
-  areas,
-  searching,
-  loading,
+  featured,
 }: {
   query: string;
   onQueryChange: (q: string) => void;
-  areas: AreaEvidenceStack[];
-  searching: boolean;
-  loading: boolean;
+  featured: AreaEvidenceStack[];
 }) {
   // The side panel shows the best-evidenced rated areas — real data only.
-  const top = searching ? [] : areas.filter((a) => a.overall.score !== null).slice(0, 3);
+  const top = [...featured]
+    .filter((a) => a.overall.score !== null)
+    .sort((a, b) => b.overall.N - a.overall.N)
+    .slice(0, 3);
 
   return (
     // Not overflow-hidden: the search dropdown has to be able to hang below
@@ -307,8 +311,12 @@ function Hero({
           <p className="text-eyebrow font-medium uppercase tracking-[0.14em] text-white/70">
             Rated by the people who live there
           </p>
-          <h1 className="mt-4 text-balance text-[clamp(42px,6.4vw,80px)] font-medium leading-[1.02] tracking-[-0.035em]">
-            Know a neighbourhood <span className="text-white/55">before you move in.</span>
+          {/* Always three lines: "Know a" / "neighbourhood" / "before you move in." —
+              sized so the longest line fits its column at every width. */}
+          <h1 className="mt-4 text-[clamp(34px,8.6vw,72px)] font-medium leading-[1.02] tracking-[-0.035em] lg:text-[clamp(52px,5.6vw,72px)]">
+            <span className="block">Know a</span>
+            <span className="block">neighbourhood</span>
+            <span className="block text-white/55">before you move in.</span>
           </h1>
           <p className="mb-8 mt-5 max-w-[40ch] text-[18px] font-light leading-relaxed text-white/80">
             Power, water, security, flooding and access, scored by residents and weighted by how well each one is
@@ -320,7 +328,7 @@ function Hero({
           <p className="mt-4 text-body text-white/60">Currently covering Lagos State, with more states to follow.</p>
         </div>
 
-        {!loading && top.length > 0 && (
+        {top.length > 0 && (
           <aside className="flex flex-col gap-2" aria-label="Most-rated areas">
             <p className="mb-1 text-eyebrow font-medium uppercase tracking-[0.14em] text-white/70">Most-rated areas</p>
             {top.map(({ area, overall }) => (

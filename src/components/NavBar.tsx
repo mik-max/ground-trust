@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuthStore } from "../store/auth.store";
 import { buttonClassName } from "./ui/Button";
@@ -8,20 +8,13 @@ import { Logo } from "./Logo";
 // A floating white pill. On Home (`overlay`) it sits over the photo hero;
 // everywhere else it sits at the top of the page on the canvas. Below md,
 // the links collapse into a menu inside the same pill rather than being
-// crammed into one row.
+// crammed into one row. Logging out lives on the Profile page.
 export function NavBar({ overlay = false }: { overlay?: boolean }) {
-  const { user, logout } = useAuthStore();
-  const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const [menuOpen, setMenuOpen] = useState(false);
 
   function close() {
     setMenuOpen(false);
-  }
-
-  function handleLogout() {
-    logout();
-    close();
-    navigate("/login");
   }
 
   const linkClass = "text-mute transition-colors hover:text-ink";
@@ -57,14 +50,9 @@ export function NavBar({ overlay = false }: { overlay?: boolean }) {
   const actions = (
     <>
       {user ? (
-        <>
-          <Link to="/profile" onClick={close} className={linkClass}>
-            Profile
-          </Link>
-          <button type="button" onClick={handleLogout} className={`text-left ${linkClass}`}>
-            Log out
-          </button>
-        </>
+        <Link to="/profile" onClick={close} className={linkClass}>
+          Profile
+        </Link>
       ) : (
         <Link to="/login" onClick={close} className={buttonClassName({ variant: "outline" })}>
           Log in
