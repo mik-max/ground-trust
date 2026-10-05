@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 
-const BAR_COUNT = 48;
 
-// Live voice visualiser while recording: the mic's frequency spectrum,
+// Voice visualiser (recording and playback): an analyser's frequency spectrum,
 // drawn on a canvas every frame. Thin bars grow up and down from a midline
 // and are mirrored around the centre, with the strongest speech frequencies
 // (roughly 300 Hz to 1.5 kHz) in the middle and higher/lower ones towards
@@ -14,23 +13,85 @@ const BAR_W = 3;
 const BAR_GAP = 4;
 const MAX_VIS_BARS = 121;
 
+function getAudioContextClass() {
+  return window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+}
+
+function makeAnalyser(ctx: AudioContext) {
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize = 2048;
+  analyser.smoothingTimeConstant = 0.8;
+  analyser.minDecibels = -85;
+  analyser.maxDecibels = -25;
+  return analyser;
+}
+
+// While recording: the mic stream feeds an analyser (not the speakers).
 export function LiveWaveform({ stream }: { stream: MediaStream | null }) {
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+
+  useEffect(() => {
+    if (!stream) return;
+    const ctx = new (getAudioContextClass())();
+    const node = makeAnalyser(ctx);
+    ctx.createMediaStreamSource(stream).connect(node);
+    setAnalyser(node);
+    return () => {
+      setAnalyser(null);
+      void ctx.close();
+    };
+  }, [stream]);
+
+  return <FrequencyBars analyser={analyser} />;
+}
+
+// While playing back: the <audio> element is routed through an analyser and
+// on to the speakers. A media element can only be attached to one audio
+// graph, so the graph is created once (on first play, inside the tap, which
+// browsers require before audio can start) and kept for the element's life.
+export function usePlaybackAnalyser(audioRef: RefObject<HTMLAudioElement | null>) {
+  const graphRef = useRef<{ ctx: AudioContext; analyser: AnalyserNode; el: HTMLAudioElement } | null>(null);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+
+  useEffect(() => {
+    return () => {
+      void graphRef.current?.ctx.close();
+      graphRef.current = null;
+    };
+  }, []);
+
+  function connect() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!graphRef.current || graphRef.current.el !== audio) {
+      try {
+        const ctx = new (getAudioContextClass())();
+        const node = makeAnalyser(ctx);
+        ctx.createMediaElementSource(audio).connect(node);
+        node.connect(ctx.destination);
+        graphRef.current = { ctx, analyser: node, el: audio };
+        setAnalyser(node);
+      } catch {
+        // No Web Audio: playback still works, just without the visualiser.
+        return;
+      }
+    }
+    void graphRef.current.ctx.resume();
+  }
+
+  return { analyser, connect };
+}
+
+export function FrequencyBars({ analyser, className = "h-20" }: { analyser: AnalyserNode | null; className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!stream || !canvas) return;
-    const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new AudioCtx();
-    const analyser = ctx.createAnalyser();
-    analyser.fftSize = 2048;
-    analyser.smoothingTimeConstant = 0.8;
-    analyser.minDecibels = -85;
-    analyser.maxDecibels = -25;
-    ctx.createMediaStreamSource(stream).connect(analyser);
-
-    const freq = new Uint8Array(analyser.frequencyBinCount);
-    const binHz = ctx.sampleRate / analyser.fftSize;
+    if (!analyser || !canvas) return;
+    const node = analyser;
+    const ctx = node.context;
+    const freq = new Uint8Array(node.frequencyBinCount);
+    const binHz = ctx.sampleRate / node.fftSize;
     const heights = new Float32Array(MAX_VIS_BARS);
     const targets = new Float32Array(MAX_VIS_BARS);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -79,7 +140,7 @@ export function LiveWaveform({ stream }: { stream: MediaStream | null }) {
       const offset = (w - (count * BAR_W + (count - 1) * BAR_GAP)) / 2;
       const mid = h / 2;
 
-      analyser.getByteFrequencyData(freq);
+      node.getByteFrequencyData(freq);
       // Per-bar targets first, then blend each with its neighbours so the
       // outline flows as one shape instead of a picket fence.
       for (let i = 0; i < count; i++) {
@@ -107,17 +168,14 @@ export function LiveWaveform({ stream }: { stream: MediaStream | null }) {
       g.globalAlpha = 1;
     }
     frame = requestAnimationFrame(draw);
-    return () => {
-      cancelAnimationFrame(frame);
-      void ctx.close();
-    };
-  }, [stream]);
+    return () => cancelAnimationFrame(frame);
+  }, [analyser]);
 
-  return <canvas ref={canvasRef} className="block h-20 w-full text-ink" aria-hidden="true" />;
+  return <canvas ref={canvasRef} className={`block w-full text-ink ${className}`} aria-hidden="true" />;
 }
 
 // A recorded take's shape: decode the blob once and reduce it to peaks.
-export function useWaveformPeaks(blob: Blob | null, count = BAR_COUNT) {
+export function useWaveformPeaks(blob: Blob | null, count = 72) {
   const [peaks, setPeaks] = useState<number[] | null>(null);
   const [duration, setDuration] = useState<number | null>(null);
 
@@ -126,8 +184,7 @@ export function useWaveformPeaks(blob: Blob | null, count = BAR_COUNT) {
     setDuration(null);
     if (!blob) return;
     let current = true;
-    const AudioCtx = window.AudioContext ?? (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    const ctx = new AudioCtx();
+    const ctx = new (getAudioContextClass())();
     blob
       .arrayBuffer()
       .then((buf) => ctx.decodeAudioData(buf))
@@ -161,13 +218,13 @@ export function useWaveformPeaks(blob: Blob | null, count = BAR_COUNT) {
 
 export function Bars({ values, progress, active = false }: { values: number[]; progress: number; active?: boolean }) {
   return (
-    <div className="flex h-12 w-full items-center gap-[3px]" aria-hidden="true">
+    <div className="flex h-12 w-full items-center justify-between gap-px" aria-hidden="true">
       {values.map((v, i) => {
         const played = (i + 0.5) / values.length <= progress;
         return (
           <span
             key={i}
-            className={`flex-1 rounded-full transition-[height] duration-100 ${
+            className={`min-w-px max-w-[3px] flex-1 rounded-full transition-[height] duration-100 ${
               active ? "bg-ink" : played ? "bg-ink" : "bg-[#c9d0cb]"
             }`}
             style={{ height: `${Math.max(8, Math.round(v * 100))}%` }}

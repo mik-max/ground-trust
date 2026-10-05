@@ -67,9 +67,8 @@ export function Home() {
           {ASPECT_ORDER.map((a, i) => (
             <div
               key={a}
-              className={`flex flex-col gap-4 rounded-md border border-line bg-white p-5 ${
-                i === ASPECT_ORDER.length - 1 ? "col-span-2 lg:col-span-1" : ""
-              }`}
+              className={`flex flex-col gap-4 rounded-md border border-line bg-white p-5 ${i === ASPECT_ORDER.length - 1 ? "col-span-2 lg:col-span-1" : ""
+                }`}
             >
               <AspectIcon aspect={a} size={48} />
               <div>
@@ -316,8 +315,7 @@ function Hero({
               at every width. */}
           <h1 className="mt-4 text-[clamp(30px,8.6vw,76px)] font-medium leading-[1.02] tracking-[-0.035em] lg:text-[clamp(56px,5.6vw,72px)]">
             <span className="block whitespace-nowrap">Know a neighbourhood</span>
-            <span className="block text-white/55">before you</span>
-            <span className="block text-white/55">move in.</span>
+            <span className="block text-white/55">before you move in.</span>
           </h1>
           <p className="mb-8 mt-5 max-w-[40ch] text-[18px] font-light leading-relaxed text-white/80">
             Power, water, security, flooding and access, scored by residents and weighted by how well each one is

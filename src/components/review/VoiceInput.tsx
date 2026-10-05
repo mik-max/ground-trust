@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Mic, Pause, Play, RotateCcw, Square, Trash2 } from "lucide-react";
 import { MAX_RECORDING_SECONDS, type useAudioRecorder } from "../../hooks/useAudioRecorder";
-import { Bars, LiveWaveform, formatSeconds, useWaveformPeaks } from "./Waveform";
+import { Bars, FrequencyBars, LiveWaveform, formatSeconds, usePlaybackAnalyser, useWaveformPeaks } from "./Waveform";
 
 type Recorder = ReturnType<typeof useAudioRecorder>;
 
@@ -105,6 +105,7 @@ function Player({ recorder }: { recorder: Recorder }) {
   const [time, setTime] = useState(0);
   const { peaks, duration } = useWaveformPeaks(recorder.audioBlob);
   const total = duration ?? recorder.elapsed;
+  const playback = usePlaybackAnalyser(audioRef);
 
   useEffect(() => {
     const el = audioRef.current;
@@ -126,6 +127,7 @@ function Player({ recorder }: { recorder: Recorder }) {
     const el = audioRef.current;
     if (!el) return;
     if (el.paused) {
+      playback.connect();
       void el.play();
       setPlaying(true);
     } else {
@@ -154,8 +156,19 @@ function Player({ recorder }: { recorder: Recorder }) {
         >
           {playing ? <Pause size={18} fill="currentColor" /> : <Play size={18} fill="currentColor" className="ml-0.5" />}
         </button>
-        <div className="min-w-0 flex-1 cursor-pointer" onClick={seek}>
-          <Bars values={peaks ?? Array(48).fill(0.3)} progress={total ? time / total : 0} />
+        {/* Playing: the same live frequency visualiser as recording. Paused:
+            the take's waveform, which you can tap to jump to a point. */}
+        <div className="relative min-w-0 flex-1 cursor-pointer" onClick={seek}>
+          {playing && playback.analyser ? (
+            <>
+              <FrequencyBars analyser={playback.analyser} className="h-12" />
+              <div className="absolute inset-x-0 -bottom-2 h-0.5 overflow-hidden rounded-full bg-line" aria-hidden="true">
+                <div className="h-full bg-ink" style={{ width: `${total ? Math.min(100, (time / total) * 100) : 0}%` }} />
+              </div>
+            </>
+          ) : (
+            <Bars values={peaks ?? Array(72).fill(0.3)} progress={total ? time / total : 0} />
+          )}
         </div>
         <span className="shrink-0 text-body tabular-nums text-mute">
           {formatSeconds(playing || time > 0 ? time : total)}
