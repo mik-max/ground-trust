@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { PageLink } from "./ui/PageLink";
 import { Logo } from "./Logo";
 
 export function SiteFooter() {
@@ -8,15 +8,15 @@ export function SiteFooter() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Logo />
           <nav className="flex flex-wrap gap-6" aria-label="Footer">
-            <Link to="/compare" className="hover:text-ink">
+            <PageLink to="/compare" className="hover:text-ink">
               Compare areas
-            </Link>
-            <Link to="/privacy" className="hover:text-ink">
+            </PageLink>
+            <PageLink to="/privacy" className="hover:text-ink">
               Privacy policy
-            </Link>
-            <Link to="/terms" className="hover:text-ink">
+            </PageLink>
+            <PageLink to="/terms" className="hover:text-ink">
               Terms of use
-            </Link>
+            </PageLink>
           </nav>
         </div>
         <p className="text-caption">GroundTrust · A final-year project, Miva Open University</p>

@@ -23,6 +23,28 @@ const MIN_COLUMN_WIDTH = 300;
 
 const MAX_AREAS = 3;
 
+// The selection lives in the URL (?areas=a,b,c) so a comparison can be
+// shared, and is also remembered for the browser session, so the plain
+// "Compare areas" links (nav, footer, Home) bring back what you were
+// comparing instead of an empty page.
+const STORAGE_KEY = "groundtrust.compare";
+
+function readSaved(): string {
+  try {
+    return sessionStorage.getItem(STORAGE_KEY) ?? "";
+  } catch {
+    return "";
+  }
+}
+
+function save(value: string) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, value);
+  } catch {
+    // Storage blocked (e.g. private mode): the URL still carries the selection.
+  }
+}
+
 // files/DESIGN_SYSTEM.md §6.4 / GroundTruth §7.4 — "aspect rows aligned in a
 // shared grid (same vertical position per aspect across all columns)" is a
 // specific alignment requirement, not just placing cards side by side. A
@@ -40,6 +62,19 @@ export function CompareAreas() {
   const [areas, setAreas] = useState<AreaEvidenceStack[]>([]);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<Area[]>([]);
+  const hasParam = searchParams.has("areas");
+
+  // Arriving at plain /compare: restore the remembered selection. Otherwise
+  // remember whatever the URL now holds (an emptied comparison included).
+  useEffect(() => {
+    if (!hasParam) {
+      const saved = readSaved();
+      if (saved) setSearchParams({ areas: saved }, { replace: true });
+      return;
+    }
+    save(ids.join(","));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasParam, ids.join(",")]);
 
   useEffect(() => {
     if (ids.length === 0) {

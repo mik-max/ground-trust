@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { PageLink } from "./ui/PageLink";
 import { text } from "../styles/typography";
 
 // The mark: a rounded square with a horizon line and a dot — "ground" and a
@@ -17,9 +17,9 @@ export function LogoMark({ size = 26 }: { size?: number }) {
 // Shared between NavBar and the auth pages so the wordmark doesn't drift.
 export function Logo({ className = "", markSize = 26 }: { className?: string; markSize?: number }) {
   return (
-    <Link to="/" className={`inline-flex items-center gap-2.5 text-ink ${className}`}>
+    <PageLink to="/" className={`inline-flex items-center gap-2.5 text-ink ${className}`}>
       <LogoMark size={markSize} />
       <span className={`${text.heading} font-semibold text-inherit`}>GroundTrust</span>
-    </Link>
+    </PageLink>
   );
 }

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuthStore } from "../store/auth.store";
 import { buttonClassName } from "./ui/Button";
+import { PageLink } from "./ui/PageLink";
 import { Logo } from "./Logo";
 
 // A floating white pill. On Home (`overlay`) it sits over the photo hero;
@@ -21,27 +21,27 @@ export function NavBar({ overlay = false }: { overlay?: boolean }) {
 
   const links = (
     <>
-      <Link to="/compare" onClick={close} className={linkClass}>
+      <PageLink to="/compare" onClick={close} className={linkClass}>
         Compare areas
-      </Link>
+      </PageLink>
       {user?.role === "resident" && (
-        <Link to="/my-contributions" onClick={close} className={linkClass}>
+        <PageLink to="/my-contributions" onClick={close} className={linkClass}>
           My contributions
-        </Link>
+        </PageLink>
       )}
       {user?.role === "government" && (
-        <Link to="/gov" onClick={close} className={linkClass}>
+        <PageLink to="/gov" onClick={close} className={linkClass}>
           Flagged areas
-        </Link>
+        </PageLink>
       )}
       {user?.role === "admin" && (
         <>
-          <Link to="/admin/government-accounts" onClick={close} className={linkClass}>
+          <PageLink to="/admin/government-accounts" onClick={close} className={linkClass}>
             Government accounts
-          </Link>
-          <Link to="/admin/moderation" onClick={close} className={linkClass}>
+          </PageLink>
+          <PageLink to="/admin/moderation" onClick={close} className={linkClass}>
             Moderation
-          </Link>
+          </PageLink>
         </>
       )}
     </>
@@ -50,22 +50,22 @@ export function NavBar({ overlay = false }: { overlay?: boolean }) {
   const actions = (
     <>
       {user ? (
-        <Link to="/profile" onClick={close} className={linkClass}>
+        <PageLink to="/profile" onClick={close} className={linkClass}>
           Profile
-        </Link>
+        </PageLink>
       ) : (
-        <Link to="/login" onClick={close} className={buttonClassName({ variant: "outline" })}>
+        <PageLink to="/login" onClick={close} className={buttonClassName({ variant: "outline" })}>
           Log in
-        </Link>
+        </PageLink>
       )}
       {(!user || user.role === "resident") && (
-        <Link
+        <PageLink
           to={user ? "/share" : "/login"}
           onClick={close}
           className={buttonClassName({ variant: "primary" }, "px-5! py-2.5! text-body!")}
         >
           Share your experience
-        </Link>
+        </PageLink>
       )}
     </>
   );
