@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Columns3, X } from "lucide-react";
+import { X } from "lucide-react";
 import type { Area, AreaEvidenceStack } from "../types";
 import { getArea, listAreas } from "../services/area.service";
 import { ScoreBandBadge } from "../components/ScoreBandBadge";
@@ -109,9 +109,9 @@ export function CompareAreas() {
 
       {areas.length === 0 ? (
         <EmptyState
-          icon={Columns3}
-          title="Start comparing areas"
-          description="Search above to add up to 3 areas side by side."
+          illustration="search"
+          title="Add two or three areas"
+          description="Search above and their scores will line up side by side."
         />
       ) : (
         <Card padding="lg" className="overflow-x-auto">

@@ -8,22 +8,25 @@ export function Skeleton({ className = "" }: { className?: string }) {
   return <div className={`animate-pulse rounded-md bg-paper-2 ${className}`} />;
 }
 
-// Mirrors AreaCard's shape (name, city, score, band pill, aspect icon row).
+// Mirrors AreaCard's shape (photo, name and score, aspect tiles, evidence line).
 export function AreaCardSkeleton() {
   return (
-    <div className="flex flex-col gap-3 rounded-lg bg-white p-6 shadow-card">
-      <div className="flex flex-col gap-2">
-        <Skeleton className="h-5 w-2/3" />
-        <Skeleton className="h-3.5 w-1/3" />
-      </div>
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-9 w-16" />
-        <Skeleton className="h-6 w-16 rounded-full" />
-      </div>
-      <div className="flex gap-2 pt-1">
-        {Array.from({ length: 5 }, (_, i) => (
-          <Skeleton key={i} className="h-8 w-8 rounded-sm" />
-        ))}
+    <div className="flex flex-col overflow-hidden rounded-lg border border-line bg-white">
+      <Skeleton className="aspect-[16/10] rounded-none" />
+      <div className="flex flex-col gap-4 p-5">
+        <div className="flex items-center justify-between">
+          <div className="flex w-1/2 flex-col gap-2">
+            <Skeleton className="h-5 w-full" />
+            <Skeleton className="h-3.5 w-1/2" />
+          </div>
+          <Skeleton className="h-8 w-16" />
+        </div>
+        <div className="grid grid-cols-5 gap-1.5">
+          {Array.from({ length: 5 }, (_, i) => (
+            <Skeleton key={i} className="h-16 rounded-sm" />
+          ))}
+        </div>
+        <Skeleton className="h-3.5 w-2/3" />
       </div>
     </div>
   );
@@ -33,7 +36,7 @@ export function AreaCardSkeleton() {
 // then one row per aspect).
 export function EvidenceStackSkeleton() {
   return (
-    <div className="flex flex-col gap-4 rounded-lg bg-white p-8 shadow-card">
+    <div className="flex flex-col gap-4 rounded-lg border border-line bg-white p-8">
       <Skeleton className="h-6 w-24 rounded-full" />
       <Skeleton className="h-14 w-32" />
       <Skeleton className="h-3.5 w-48" />
@@ -57,7 +60,7 @@ export function EvidenceStackSkeleton() {
 // aspect chips).
 export function ReviewCardSkeleton() {
   return (
-    <li className="flex flex-col gap-3 rounded-lg bg-white p-6 shadow-card">
+    <li className="flex flex-col gap-3 rounded-lg border border-line bg-white p-6">
       <div className="flex items-center justify-between">
         <Skeleton className="h-5 w-28 rounded-full" />
         <Skeleton className="h-3.5 w-20" />

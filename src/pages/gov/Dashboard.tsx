@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { ShieldCheck } from "lucide-react";
 import type { Flag } from "../../types";
 import { listFlags } from "../../services/gov.service";
 import { GovernmentFlagCard } from "../../components/GovernmentFlagCard";
@@ -30,9 +29,9 @@ export function GovDashboard() {
         </div>
       ) : flags.length === 0 ? (
         <EmptyState
-          icon={ShieldCheck}
-          title="No areas currently flagged"
-          description="Nothing meets the flagging threshold right now."
+          illustration="allClear"
+          title="No areas flagged right now"
+          description="An area appears here when verified residents rate a category poorly for four weeks running."
         />
       ) : (
         <div className="flex flex-col gap-4">

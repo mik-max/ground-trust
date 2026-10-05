@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Landmark } from "lucide-react";
 import type { GovernmentAccount } from "../../types";
 import { createGovernmentAccount, listGovernmentAccounts } from "../../services/admin.service";
 import { Button } from "../../components/ui/Button";
@@ -94,7 +93,7 @@ export function AdminGovernmentAccounts() {
           </div>
         ) : accounts.length === 0 ? (
           <EmptyState
-            icon={Landmark}
+            illustration="government"
             title="No government accounts yet"
             description="Provisioned accounts will show up here."
           />

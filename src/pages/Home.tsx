@@ -1,22 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { MapPinOff, MessageCircle } from "lucide-react";
 import type { AreaEvidenceStack } from "../types";
 import { listAreas } from "../services/area.service";
 import { useAuthStore } from "../store/auth.store";
 import { AreaCard } from "../components/AreaCard";
 import { AreasOverviewMap } from "../components/map/AreasOverviewMap";
 import { LocationSearchInput } from "../components/LocationSearchInput";
-import { Card } from "../components/ui/Card";
+import { AspectIcon } from "../components/AspectIconChip";
+import { ASPECT_META, ASPECT_ORDER } from "../components/aspectMeta";
+import { BAND_DOT_CLASS } from "../components/ScoreBandBadge";
 import { AreaCardSkeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
 import { buttonClassName } from "../components/ui/Button";
 import { text } from "../styles/typography";
 
-// A grid of areas is the front door now, not a map — the map is real but
-// secondary (Browse by map, below the fold), and the search bar doubles as
-// a real-world location lookup (LocationSearchInput) on top of filtering
-// this grid, per the "give me something new" structural feedback.
+const WRAP = "mx-auto w-full max-w-6xl px-5 sm:px-6";
+
+// Home, top to bottom: photo hero with search → what residents rate → areas
+// residents are talking about (the live grid, filtered by the search) →
+// map → who it's for → why the numbers can be trusted → invitation to
+// share. Lagos is mentioned once, as current coverage, not as the brand.
 export function Home() {
   const user = useAuthStore((s) => s.user);
   const [query, setQuery] = useState("");
@@ -44,75 +47,384 @@ export function Home() {
     };
   }, [query]);
 
-  // The single most-reviewed area gets the spotlight treatment — but only
-  // on the default, unfiltered view. Spotlighting one of two or three
-  // active search results doesn't mean anything; the point is surfacing
-  // the most-trusted area when someone's just browsing. Moved to the front
-  // of the grid (not just flagged in place) so its 2-column span doesn't
-  // leave a gap wherever it happened to fall alphabetically — the rest
-  // keep their original relative order.
-  const spotlightId =
-    !query && areas.length > 1
-      ? [...areas].sort((a, b) => b.overall.N - a.overall.N)[0].area.id
-      : null;
-  const orderedAreas = spotlightId
-    ? [areas.find((a) => a.area.id === spotlightId)!, ...areas.filter((a) => a.area.id !== spotlightId)]
-    : areas;
+  const searching = query.trim().length > 0;
+  // Most-rated first on the default view, so the best-evidenced areas lead.
+  const orderedAreas = searching ? areas : [...areas].sort((a, b) => b.overall.N - a.overall.N);
+  const shareLink = user?.role === "resident" ? "/share" : "/login";
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="flex flex-col gap-6 rounded-xl bg-brand-700 px-6 py-16 sm:px-10 sm:py-20">
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-3 text-center">
-          <h1 className="text-display-lg font-display font-bold text-white">
-            Find out what an area is really like
-          </h1>
-          <p className="text-body-lg text-white/80">Rated by the residents who live there.</p>
+    <div className="flex flex-col">
+      <Hero query={query} onQueryChange={setQuery} areas={orderedAreas} searching={searching} loading={loading} />
+
+      <section className={`${WRAP} pt-24`} aria-labelledby="rate-heading">
+        <SectionHead eyebrow="What residents rate" id="rate-heading" title="Five things that shape daily life in an area." />
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+          {ASPECT_ORDER.map((a, i) => (
+            <div
+              key={a}
+              className={`flex flex-col gap-4 rounded-md border border-line bg-white p-5 ${
+                i === ASPECT_ORDER.length - 1 ? "col-span-2 lg:col-span-1" : ""
+              }`}
+            >
+              <AspectIcon aspect={a} size={48} />
+              <div>
+                <p className="text-body-lg font-medium text-ink">{ASPECT_META[a].label}</p>
+                <p className="text-body text-mute">{ASPECT_META[a].hint}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="mx-auto w-full max-w-xl">
-          <LocationSearchInput value={query} onChange={setQuery} />
+      </section>
+
+      <section id="areas" className={`${WRAP} scroll-mt-28 pt-24`} aria-labelledby="areas-heading">
+        <SectionHead
+          eyebrow={searching ? "Search results" : "Areas residents are talking about"}
+          id="areas-heading"
+          title={
+            searching ? (
+              <>
+                Areas matching “{query.trim()}”
+              </>
+            ) : (
+              <>
+                Real scores from real neighbours.{" "}
+                <span className="text-faint">Every number shows who stands behind it.</span>
+              </>
+            )
+          }
+          action={
+            <Link to="/compare" className={buttonClassName({ variant: "outline" })}>
+              Compare areas
+            </Link>
+          }
+        />
+
+        {loading ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }, (_, i) => (
+              <AreaCardSkeleton key={i} />
+            ))}
+          </div>
+        ) : areas.length === 0 ? (
+          searching ? (
+            <EmptyState
+              illustration="search"
+              title={`No area called “${query.trim()}” yet`}
+              description="We couldn't find it among the areas we cover. Try a nearby street or landmark, or, if you live there, add it and be the first to rate it."
+              action={
+                <Link to={shareLink} className={buttonClassName({ variant: "primary" })}>
+                  Add it and rate it
+                </Link>
+              }
+            />
+          ) : (
+            <EmptyState
+              illustration="neighbourhood"
+              title="No areas have been rated yet"
+              description="Ratings from residents will appear here as soon as the first ones come in."
+              action={
+                <Link to={shareLink} className={buttonClassName({ variant: "primary" })}>
+                  Rate your area
+                </Link>
+              }
+            />
+          )
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {orderedAreas.map((a) => (
+              <AreaCard key={a.area.id} {...a} />
+            ))}
+          </div>
+        )}
+
+        {!loading && areas.length > 0 && (
+          <div className="mt-12">
+            <h3 className={text.heading}>Browse by map</h3>
+            <div className="mt-4 overflow-hidden rounded-lg border border-line bg-white p-2">
+              <AreasOverviewMap areas={areas} />
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section id="people" className={`${WRAP} scroll-mt-28 pt-24`} aria-labelledby="people-heading">
+        <SectionHead
+          eyebrow="Who it's for"
+          id="people-heading"
+          title="Built for the people who choose, live in and look after an area."
+        />
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Persona
+            photo="/images/newcomers.jpg"
+            photoLabel="A city district seen from above"
+            title="Newcomers"
+            who="Renting, buying, opening a shop, or being posted somewhere new."
+            points={[
+              "See each area's scores with the evidence behind them",
+              "Compare two or three areas side by side",
+              "No account needed to look",
+            ]}
+            action={
+              <Link to="/compare" className={buttonClassName({ variant: "outline" })}>
+                Compare areas
+              </Link>
+            }
+          />
+          <Persona
+            photo="/images/residents.jpg"
+            photoLabel="Two residents looking at a phone together"
+            title="Residents"
+            who="The people who know what an area is really like."
+            points={[
+              "Rate only what you know, in about a minute",
+              "Speak or type, in English, Yorùbá, Igbo, Hausa or Pidgin",
+              "Your rating counts more as you're verified",
+            ]}
+            action={
+              <Link to={shareLink} className={buttonClassName({ variant: "outline" })}>
+                Share your experience
+              </Link>
+            }
+          />
+          <Persona
+            photo="/images/government.jpg"
+            photoLabel="A cable-stayed bridge over a lagoon"
+            title="Government authorities"
+            who="Officials responsible for security and infrastructure."
+            points={[
+              "See areas where a problem has persisted for weeks",
+              "Acknowledge it and say what action is planned",
+              "Listen to residents' original voice notes",
+            ]}
+            action={
+              <a href="#trust" className={buttonClassName({ variant: "outline" })}>
+                How flags work
+              </a>
+            }
+          />
         </div>
+      </section>
+
+      <section id="trust" className={`${WRAP} scroll-mt-28 pt-24`} aria-labelledby="trust-heading">
+        <SectionHead
+          eyebrow="Why the numbers can be trusted"
+          id="trust-heading"
+          title={
+            <>
+              The longer you've lived there, <span className="text-faint">the more your rating counts.</span>
+            </>
+          }
+        />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+          <Rung
+            title="Not yet verified"
+            weight={0.3}
+            body="Anyone can rate from day one. Their rating counts, just the least."
+          />
+          <Rung
+            title="Verified resident"
+            weight={0.7}
+            body="Confirmed by five night-time location checks inside the area. No location history is kept."
+          />
+          <Rung
+            title="Long-term resident"
+            weight={1}
+            body="Verified for 60 days or more. These ratings carry the most weight."
+          />
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-3">
+          <Note title="Recent ratings count more">A rating's weight halves every six months, so improvements show.</Note>
+          <Note title="Flags need real evidence">Eight or more residents, five of them verified, for four weeks running.</Note>
+          <Note title="Names are never shown">Reviews show a verification level, never who wrote them.</Note>
+        </div>
+      </section>
+
+      {user?.role !== "government" && user?.role !== "admin" && (
+        <section className={`${WRAP} pt-24`} aria-labelledby="share-heading">
+          <div className="grid grid-cols-1 overflow-hidden rounded-xl border border-line bg-white md:grid-cols-2">
+            <div
+              className="min-h-[240px] bg-cover bg-center md:order-last md:min-h-[360px]"
+              style={{ backgroundImage: "url(/images/residents.jpg)" }}
+              role="img"
+              aria-label="Two residents looking at a phone together"
+            />
+            <div className="flex flex-col justify-center gap-5 p-7 sm:p-12">
+              <p className={text.eyebrow}>For residents</p>
+              <h2 id="share-heading" className={text.displayLg}>
+                Lived there? Help the next person who's deciding.
+              </h2>
+              <p className="max-w-[40ch] text-body-lg text-mute">
+                Rate the things you know about your area and add a short comment, typed or spoken. It takes about a
+                minute.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {["English", "Yorùbá", "Igbo", "Hausa", "Pidgin"].map((l) => (
+                  <span key={l} className="rounded-full border border-line px-3 py-1 text-caption text-mute">
+                    {l}
+                  </span>
+                ))}
+              </div>
+              <div>
+                <Link to={shareLink} className={buttonClassName({ variant: "primary" })}>
+                  Share your experience
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+function Hero({
+  query,
+  onQueryChange,
+  areas,
+  searching,
+  loading,
+}: {
+  query: string;
+  onQueryChange: (q: string) => void;
+  areas: AreaEvidenceStack[];
+  searching: boolean;
+  loading: boolean;
+}) {
+  // The side panel shows the best-evidenced rated areas — real data only.
+  const top = searching ? [] : areas.filter((a) => a.overall.score !== null).slice(0, 3);
+
+  return (
+    // Not overflow-hidden: the search dropdown has to be able to hang below
+    // the hero. The photo layer clips itself instead.
+    <section className="relative z-10 bg-night pb-16 pt-40 text-white sm:pt-44">
+      <div className="absolute inset-0 overflow-hidden" aria-hidden="true">
+        <div className="absolute inset-0 bg-cover bg-[center_60%]" style={{ backgroundImage: "url(/images/hero.jpg)" }} />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,23,21,.6)_0%,rgba(17,23,21,.45)_35%,rgba(17,23,21,.92)_100%)]" />
       </div>
 
-      {user?.role === "resident" && (
-        <Card className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <MessageCircle size={20} className="shrink-0 text-brand" />
-            <p className="text-body text-ink">Lived experience is what makes GroundTrust real.</p>
-          </div>
-          <Link to="/share" className={buttonClassName({ variant: "primary" }, "w-full text-center sm:w-auto")}>
-            Talk about your environment
-          </Link>
-        </Card>
-      )}
-
-      {loading ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }, (_, i) => (
-            <AreaCardSkeleton key={i} />
-          ))}
-        </div>
-      ) : areas.length === 0 ? (
-        <EmptyState
-          icon={MapPinOff}
-          title="No areas reviewed near you yet"
-          description="Be the first to share what it's really like where you live."
-        />
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {orderedAreas.map((a) => (
-            <AreaCard key={a.area.id} {...a} spotlight={a.area.id === spotlightId} />
-          ))}
-        </div>
-      )}
-
-      {areas.length > 0 && (
+      <div className={`${WRAP} relative grid grid-cols-1 items-end gap-10 lg:grid-cols-[1.3fr_.8fr] lg:gap-12`}>
         <div>
-          <h2 className={text.heading}>Browse by map</h2>
-          <Card className="mt-3" padding="sm">
-            <AreasOverviewMap areas={areas} />
-          </Card>
+          <p className="text-eyebrow font-medium uppercase tracking-[0.14em] text-white/70">
+            Rated by the people who live there
+          </p>
+          <h1 className="mt-4 text-balance text-[clamp(42px,6.4vw,80px)] font-medium leading-[1.02] tracking-[-0.035em]">
+            Know a neighbourhood <span className="text-white/55">before you move in.</span>
+          </h1>
+          <p className="mb-8 mt-5 max-w-[40ch] text-[18px] font-light leading-relaxed text-white/80">
+            Power, water, security, flooding and access, scored by residents and weighted by how well each one is
+            verified.
+          </p>
+          <div className="max-w-xl text-ink">
+            <LocationSearchInput value={query} onChange={onQueryChange} />
+          </div>
+          <p className="mt-4 text-body text-white/60">Currently covering Lagos State, with more states to follow.</p>
         </div>
-      )}
+
+        {!loading && top.length > 0 && (
+          <aside className="flex flex-col gap-2" aria-label="Most-rated areas">
+            <p className="mb-1 text-eyebrow font-medium uppercase tracking-[0.14em] text-white/70">Most-rated areas</p>
+            {top.map(({ area, overall }) => (
+              <Link
+                key={area.id}
+                to={`/areas/${area.id}`}
+                className="flex items-center gap-3 rounded-md border border-white/12 bg-night/55 px-4 py-3.5 backdrop-blur-md transition-colors hover:bg-night/70"
+              >
+                {overall.band && <span className={`h-2 w-2 shrink-0 rounded-full ${BAND_DOT_CLASS[overall.band]}`} />}
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-body text-white/90">{area.name}</span>
+                  <span className="block text-caption text-white/55">
+                    {overall.N} resident{overall.N === 1 ? "" : "s"}
+                  </span>
+                </span>
+                <span className="text-data-md tabular-nums text-white">{overall.score!.toFixed(1)}</span>
+              </Link>
+            ))}
+          </aside>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function SectionHead({
+  eyebrow,
+  title,
+  id,
+  action,
+}: {
+  eyebrow: string;
+  title: ReactNode;
+  id: string;
+  action?: ReactNode;
+}) {
+  return (
+    <div className="mb-10 flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p className={text.eyebrow}>{eyebrow}</p>
+        <h2 id={id} className={`${text.displayLg} mt-3 max-w-[22ch]`}>
+          {title}
+        </h2>
+      </div>
+      {action}
+    </div>
+  );
+}
+
+function Persona({
+  photo,
+  photoLabel,
+  title,
+  who,
+  points,
+  action,
+}: {
+  photo: string;
+  photoLabel: string;
+  title: string;
+  who: string;
+  points: string[];
+  action: ReactNode;
+}) {
+  return (
+    <article className="flex flex-col overflow-hidden rounded-lg border border-line bg-white">
+      <div className="aspect-[4/3] bg-cover bg-center" style={{ backgroundImage: `url(${photo})` }} role="img" aria-label={photoLabel} />
+      <div className="flex flex-1 flex-col gap-3 p-6">
+        <h3 className="text-[24px] font-medium tracking-[-0.03em] text-ink">{title}</h3>
+        <p className="text-body text-mute">{who}</p>
+        <ul className="mb-3 mt-1 flex flex-col gap-2.5">
+          {points.map((p) => (
+            <li key={p} className="flex gap-2.5 text-body text-ink">
+              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" aria-hidden="true" />
+              {p}
+            </li>
+          ))}
+        </ul>
+        <div className="mt-auto">{action}</div>
+      </div>
+    </article>
+  );
+}
+
+function Rung({ title, weight, body }: { title: string; weight: number; body: string }) {
+  return (
+    <article className="flex flex-col gap-3.5 rounded-lg border border-line bg-white p-6">
+      <div className="flex items-baseline justify-between gap-3">
+        <h3 className="text-heading font-medium tracking-[-0.02em] text-ink">{title}</h3>
+        <span className="text-[30px] tracking-[-0.03em] tabular-nums text-brand">{weight.toFixed(1)}×</span>
+      </div>
+      <div className="h-1.5 overflow-hidden rounded-full bg-paper-2">
+        <div className="h-full rounded-full bg-brand" style={{ width: `${weight * 100}%` }} />
+      </div>
+      <p className="text-body text-mute">{body}</p>
+    </article>
+  );
+}
+
+function Note({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <div className="rounded-md bg-brand-soft px-5 py-5">
+      <p className="font-medium text-ink">{title}</p>
+      <p className="text-body text-[#4f5d56]">{children}</p>
     </div>
   );
 }

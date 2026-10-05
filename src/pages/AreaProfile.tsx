@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { UserCheck, Scale, ShieldCheck, Shield, User, MessageSquareOff, Clock } from "lucide-react";
+import { UserCheck, Scale, ShieldCheck, Shield, User, Clock } from "lucide-react";
 import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
@@ -161,9 +161,10 @@ export function AreaProfile() {
           </ul>
         ) : reviews.length === 0 ? (
           <EmptyState
-            icon={MessageSquareOff}
-            title="No reviews yet"
-            description="Be the first resident to share what this area is really like."
+            illustration="comments"
+            size="inline"
+            title="No comments yet"
+            description={`Ratings and comments from residents of ${data.area.name} will appear here.`}
           />
         ) : (
           <>

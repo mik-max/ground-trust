@@ -1,21 +1,25 @@
-import type { LucideIcon } from "lucide-react";
+// Empty-state art: a single 3D icon from the same Noto 3D set as the aspect
+// icons (public/icons/), sitting on a soft neutral disc. Calm and
+// consistent everywhere, instead of per-screen illustrations.
+export const ILLUSTRATIONS = {
+  location: "/icons/location.png",
+  neighbourhood: "/icons/neighbourhood.png",
+  government: "/icons/government.png",
+  voice: "/icons/voice.png",
+  comments: "/icons/comments.png",
+  search: "/icons/search.png",
+  allClear: "/icons/all-clear.png",
+  inbox: "/icons/inbox.png",
+  map: "/icons/map.png",
+  home: "/icons/home.png",
+} as const;
 
-// A restrained "spot illustration" system rather than stock photography or
-// hand-drawn scenes — layered soft-brand-tint circles behind a single
-// Lucide icon, plus two small accent dots (one brand green, one amber, the
-// warmth role amber otherwise never gets in this app — see the design
-// audit notes). Geometric and reusable rather than bespoke per screen, so
-// it stays consistent everywhere and never risks looking amateurish the
-// way freehand illustration can without a real visual iteration loop.
-export function SpotIllustration({ icon: Icon, className = "" }: { icon: LucideIcon; className?: string }) {
+export type IllustrationName = keyof typeof ILLUSTRATIONS;
+
+export function SpotIllustration({ name, className = "" }: { name: IllustrationName; className?: string }) {
   return (
-    <div className={`relative flex h-32 w-32 shrink-0 items-center justify-center ${className}`}>
-      <div className="absolute inset-0 rounded-full bg-brand/[6%]" />
-      <div className="absolute inset-3 rounded-full bg-brand/[8%]" />
-      <div className="absolute inset-7 rounded-full bg-brand/10" />
-      <div className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-amber/40" />
-      <div className="absolute bottom-5 left-2 h-2 w-2 rounded-full bg-brand/30" />
-      <Icon size={40} strokeWidth={1.5} className="relative text-brand" />
+    <div className={`flex h-24 w-24 shrink-0 items-center justify-center rounded-full bg-paper-2 ${className}`}>
+      <img src={ILLUSTRATIONS[name]} alt="" width={56} height={56} className="h-14 w-14 select-none" />
     </div>
   );
 }

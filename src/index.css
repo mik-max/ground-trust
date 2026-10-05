@@ -1,113 +1,101 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&display=swap");
 
 /*
-  Design tokens — GroundTruth Visual Design Overhaul (green/white palette).
-  Every color below was checked against WCAG 2.1 AA (4.5:1 normal text,
-  3:1 large text/UI) with a hand-written luminance/contrast script before
-  being chosen; see the self-audit notes shared with the product owner for
-  the full numbers. Tailwind v4 is CSS-first, so this @theme block IS the
-  config — changing a value here cascades to every `bg-*`/`text-*`/etc.
-  utility built from it, no component edits required.
+  Design tokens — calm redesign (concept v2, files/design-concept/).
+  A neutral off-white canvas, white surfaces, soft ink text and ONE muted
+  eucalyptus accent. No gradients or decorative textures. Every text color
+  below clears WCAG 2.1 AA (4.5:1) on both the canvas and the sunk fill;
+  `faint` is for decoration and large text only. Tailwind v4 is CSS-first,
+  so this @theme block IS the config — changing a value here cascades to
+  every utility built from it.
 */
 @theme {
-  /* Brand: the single green hue used for CTAs, links, and selected/active
-     state. Deliberately separated from the band-excellent/band-good greens
-     on three axes at once (hue, saturation, lightness) — not hue alone —
-     so the distinction survives red-green color vision deficiency, where
-     hue discrimination on nearby greens degrades first. */
-  --color-brand: #128066;
-  --color-brand-700: #0d6b54;
+  /* The single accent: links, selected state, verification, confidence. */
+  --color-brand: #2f5d4f;
+  --color-brand-700: #244a3f;
+  --color-brand-soft: #e5ede9;
 
-  --color-ink: #1a2420;
-  --color-mute: #5e6f67;
-  /* Body text color (#435049) is intentionally not a theme token: Tailwind v4
-     generates text-{name} utilities from both --color-* and --text-* under
-     the same prefix, and DESIGN_SYSTEM.md's type scale already claims the
-     name "body" for a font size. The color is set once as the <body>
-     default below; components override it explicitly via text-ink/text-mute
-     when they need a color other than the page default. */
+  /* Dark surfaces (hero, primary buttons) and heading text. */
+  --color-night: #111715;
+  --color-ink: #1b2320;
+  --color-mute: #616b66;
+  --color-faint: #9aa39e;
 
+  --color-canvas: #f5f6f4;
   --color-paper: #ffffff;
-  --color-paper-2: #f6faf9;
-  --color-line: #e3ece9;
+  --color-paper-2: #eef0ed;
+  --color-line: #e1e5e1;
 
-  --color-band-excellent: #2e7d32;
-  --color-band-good: #428045;
-  --color-band-fair: #9c6a1e;
-  --color-band-poor: #a9541f;
+  /* Muted, earthy bands — shown as a dot plus a word, never color alone. */
+  --color-band-excellent: #356f52;
+  --color-band-good: #4c7a45;
+  --color-band-fair: #86662a;
+  --color-band-poor: #9a5236;
 
-  /* Amber shares its value with band-fair on purpose (same warm accent hue
-     already did double duty in the original palette). Darkened from the
-     original #C6862F specifically so white button labels clear 4.5:1 —
-     the un-darkened value only reached 3.06:1. */
-  --color-amber: #9c6a1e;
+  /* Kept as a name for the "needs attention" role (mixed views, flags). */
+  --color-amber: #86662a;
 
-  --color-confidence-high: #0d6b54;
-  --color-confidence-low: #c3cdc8;
+  --color-confidence-high: #2f5d4f;
+  --color-confidence-low: #d5dbd6;
 
-  --font-display: "Manrope", ui-sans-serif, -apple-system, sans-serif;
-  --font-body: "Inter", ui-sans-serif, -apple-system, sans-serif;
-  --font-data: "Inter", ui-sans-serif, -apple-system, sans-serif;
+  --font-display: "Geist", "Helvetica Neue", Arial, ui-sans-serif, sans-serif;
+  --font-body: "Geist", "Helvetica Neue", Arial, ui-sans-serif, sans-serif;
+  --font-data: "Geist", "Helvetica Neue", Arial, ui-sans-serif, sans-serif;
 
   --radius-sm: 10px;
   --radius-md: 16px;
-  --radius-lg: 24px;
-  /* Formalizes the large-panel radius the auth page's map panel already
-     used ad hoc (rounded-[32px]) — one named token instead of a magic
-     number, for every "hero" surface that needs more presence than a card. */
-  --radius-xl: 32px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
 
-  /* Cards are shadow-only by default now (no border) — see Card.tsx — so
-     the resting shadow needs slightly more presence than before to still
-     read as "raised" without a border to help delineate the edge. */
-  --shadow-card: 0 2px 6px rgba(26, 36, 32, 0.08), 0 1px 3px rgba(26, 36, 32, 0.05);
-  --shadow-raised: 0 8px 24px rgba(26, 36, 32, 0.14), 0 2px 8px rgba(26, 36, 32, 0.06);
-  /* One tier up from --shadow-raised, for the single "spotlight" moment per
-     screen (e.g. Home's featured area) — not meant to be used more than
-     once or twice per page, or nothing would read as elevated anymore. */
-  --shadow-hero: 0 16px 40px rgba(26, 36, 32, 0.16), 0 4px 12px rgba(26, 36, 32, 0.08);
+  /* Surfaces are separated by a hairline border; shadows are reserved for
+     things that float (dropdowns, the nav over the hero, hover lift). */
+  --shadow-card: 0 1px 2px rgba(17, 23, 21, 0.04);
+  --shadow-raised: 0 20px 40px -24px rgba(10, 30, 22, 0.3);
+  --shadow-hero: 0 8px 30px rgba(10, 20, 16, 0.12);
 
-  --text-display-lg: 34px;
-  --text-display-lg--line-height: 1.15;
-  --text-display-md: 26px;
-  --text-display-md--line-height: 1.2;
-  --text-heading: 19px;
+  --text-display-xl: 64px;
+  --text-display-xl--line-height: 1.02;
+  --text-display-lg: 40px;
+  --text-display-lg--line-height: 1.08;
+  --text-display-md: 28px;
+  --text-display-md--line-height: 1.15;
+  --text-heading: 20px;
   --text-heading--line-height: 1.3;
   --text-body-lg: 16px;
-  --text-body-lg--line-height: 1.5;
-  --text-body: 14px;
-  --text-body--line-height: 1.5;
-  --text-caption: 12.5px;
-  --text-caption--line-height: 1.4;
-  /* One step up from --text-data-lg — reserved for the single dominant
-     score moment on Area Profile, the "hero number" everything else on the
-     page supports. Not used for compact/list contexts (AreaCard, Compare),
-     which keep --text-data-lg, or the hierarchy flattens. */
+  --text-body-lg--line-height: 1.6;
+  --text-body: 14.5px;
+  --text-body--line-height: 1.55;
+  --text-caption: 13px;
+  --text-caption--line-height: 1.45;
   --text-data-xl: 56px;
   --text-data-xl--line-height: 1;
-  --text-data-lg: 40px;
+  --text-data-lg: 34px;
   --text-data-lg--line-height: 1;
-  --text-data-md: 20px;
+  --text-data-md: 18px;
   --text-data-md--line-height: 1.1;
   --text-eyebrow: 12px;
   --text-eyebrow--line-height: 1.2;
 }
 
 body {
-  background-color: var(--color-paper);
-  color: #435049;
+  background-color: var(--color-canvas);
+  color: #2d3632;
   font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
-/* A deliberate, on-brand focus-visible ring — every interactive element in
-   the app previously fell back to the browser's raw default outline (blue
-   in Chrome), which clashed with an otherwise all-green UI. Global rather
-   than per-component so nothing has to opt in, and :focus-visible (not
-   :focus) so it only shows for keyboard/assistive-tech navigation, not
-   every mouse click. */
+/* Calm, on-brand keyboard focus ring; :focus-visible so mouse clicks don't show it. */
 :focus-visible {
   outline: 2px solid var(--color-brand);
-  outline-offset: 2px;
-  border-radius: 2px;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
 }

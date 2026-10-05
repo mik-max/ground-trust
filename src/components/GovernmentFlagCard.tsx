@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { Flag, FlagResponseStatus } from "../types";
 import { respondToFlag } from "../services/gov.service";
 import { ASPECT_META } from "./aspectMeta";
+import { AspectIconChip } from "./AspectIconChip";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
 import { Textarea } from "./ui/TextInput";
@@ -21,7 +22,6 @@ export function GovernmentFlagCard({ flag: initialFlag }: { flag: Flag }) {
   const [note, setNote] = useState(initialFlag.responseNote ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const Icon = ASPECT_META[flag.aspect].icon;
 
   async function respond(status: Exclude<FlagResponseStatus, "unacknowledged">) {
     setSaving(true);
@@ -42,11 +42,9 @@ export function GovernmentFlagCard({ flag: initialFlag }: { flag: Flag }) {
         {flag.area?.city}, {flag.area?.state}
       </p>
       <div className="mt-3 flex items-center gap-3">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-sm bg-paper-2 text-ink">
-          <Icon size={16} />
-        </div>
+        <AspectIconChip aspect={flag.aspect} />
         <p className="text-body text-ink">
-          Flagged aspect: <span className="font-bold">{ASPECT_META[flag.aspect].label}</span>
+          Flagged aspect: <span className="font-medium">{ASPECT_META[flag.aspect].label}</span>
         </p>
       </div>
       <p className="mt-2 text-caption text-mute">
@@ -56,7 +54,7 @@ export function GovernmentFlagCard({ flag: initialFlag }: { flag: Flag }) {
 
       <div className="mt-4 flex flex-col gap-3 border-t border-line pt-4">
         <p className="text-body text-ink">
-          Status: <span className="font-bold">{RESPONSE_LABEL[flag.responseStatus]}</span>
+          Status: <span className="font-medium">{RESPONSE_LABEL[flag.responseStatus]}</span>
           {flag.respondedAt && (
             <span className="text-caption text-mute">
               {" "}

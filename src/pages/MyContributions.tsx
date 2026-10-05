@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { MessageCircle, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { getVerificationStatus, type Residency, type TierProgress } from "../services/verification.service";
 import { VerificationTierBadge } from "../components/VerificationTierBadge";
 import { useGpsPresenceSample } from "../hooks/useGpsPresenceSample";
@@ -60,9 +60,9 @@ export function MyContributions() {
         </ul>
       ) : residencies.length === 0 ? (
         <EmptyState
-          icon={MessageCircle}
-          title="You haven't reviewed any areas yet"
-          description="Talk about your environment to see it show up here."
+          illustration="home"
+          title="You haven't rated an area yet"
+          description="Start with where you live now. Your ratings and verification progress will show here."
           action={
             <Link to="/share" className={buttonClassName({ variant: "primary" })}>
               Talk about your environment

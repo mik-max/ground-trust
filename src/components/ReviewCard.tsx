@@ -6,6 +6,7 @@ import { reportReview } from "../services/review.service";
 import { useAuthStore } from "../store/auth.store";
 import { VerificationTierBadge } from "./VerificationTierBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
+import { AspectIcon } from "./AspectIconChip";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
 import { Textarea } from "./ui/TextInput";
@@ -137,13 +138,12 @@ export function ReviewCard({ review }: { review: Review }) {
         {ratedAspects.length > 0 && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {ratedAspects.map((aspect) => {
-              const Icon = ASPECT_META[aspect].icon;
               return (
                 <span
                   key={aspect}
                   className="inline-flex items-center gap-1.5 rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute"
                 >
-                  <Icon size={12} />
+                  <AspectIcon aspect={aspect} size={16} />
                   {ASPECT_META[aspect].label}: {review[RATING_BY_ASPECT[aspect]] as number}/5
                 </span>
               );

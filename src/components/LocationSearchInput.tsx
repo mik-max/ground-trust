@@ -96,7 +96,7 @@ export function LocationSearchInput({ value, onChange, placeholder, mode = "brow
   return (
     <div ref={wrapperRef} className="relative">
       <div className="relative">
-        <Search size={18} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-mute" />
+        <Search size={18} className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-mute" />
         <input
           value={value}
           onChange={(e) => {
@@ -105,13 +105,13 @@ export function LocationSearchInput({ value, onChange, placeholder, mode = "brow
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}
-          placeholder={placeholder ?? "Search any area or neighbourhood in Lagos..."}
-          className="w-full rounded-lg border border-line bg-white py-4 pl-11 pr-4 text-body-lg placeholder:text-mute"
+          placeholder={placeholder ?? "Search a neighbourhood, estate or street"}
+          className="w-full rounded-full border border-line bg-white py-4 pl-12 pr-5 text-body-lg text-ink outline-none placeholder:text-mute focus-visible:border-brand focus-visible:ring-4 focus-visible:ring-brand/20"
         />
       </div>
 
       {open && (hasResults || uncovered) && (
-        <ul className="absolute z-20 mt-2 max-h-[min(60vh,20rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-line bg-white shadow-raised">
+        <ul className="absolute z-30 mt-2 max-h-[min(60vh,20rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-line bg-white shadow-raised">
           {ownMatches.length > 0 && (
             <li>
               <p className="px-4 pt-3 text-caption text-mute">Areas we cover</p>

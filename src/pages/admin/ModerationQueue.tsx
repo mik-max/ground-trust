@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CircleCheckBig, Flag, TriangleAlert } from "lucide-react";
+import { Flag, TriangleAlert } from "lucide-react";
 import type { Aspect } from "../../types";
 import {
   listPendingAreas,
@@ -14,6 +14,7 @@ import {
   type ReportedReview,
 } from "../../services/admin.service";
 import { ASPECT_META, ASPECT_ORDER } from "../../components/aspectMeta";
+import { AspectIcon } from "../../components/AspectIconChip";
 import { REPORT_REASON_LABEL } from "../../components/ReviewCard";
 import { AreaLocationMap } from "../../components/map/AreaLocationMap";
 import { Button } from "../../components/ui/Button";
@@ -98,7 +99,7 @@ export function ModerationQueue() {
             ))}
           </div>
         ) : areas.length === 0 ? (
-          <EmptyState icon={CircleCheckBig} title="All clear" description="No area proposals pending." />
+          <EmptyState illustration="allClear" title="All clear" description="No area proposals pending." />
         ) : (
           <ul className="mt-3 flex flex-col gap-4">
             {areas.map((a) => (
@@ -175,7 +176,7 @@ export function ModerationQueue() {
             <Skeleton className="h-32 rounded-lg" />
           </div>
         ) : reported.length === 0 ? (
-          <EmptyState icon={CircleCheckBig} title="All clear" description="No reviews have been reported." />
+          <EmptyState illustration="allClear" title="All clear" description="No reviews have been reported." />
         ) : (
           <ul className="mt-3 flex flex-col gap-4">
             {reported.map((r) => {
@@ -202,13 +203,12 @@ export function ModerationQueue() {
                     {ratedAspects.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {ratedAspects.map((aspect) => {
-                          const Icon = ASPECT_META[aspect].icon;
                           return (
                             <span
                               key={aspect}
                               className="inline-flex items-center gap-1.5 rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute"
                             >
-                              <Icon size={12} />
+                              <AspectIcon aspect={aspect} size={16} />
                               {ASPECT_META[aspect].label}: {r[RATING_BY_ASPECT[aspect]] as number}/5
                             </span>
                           );
@@ -253,7 +253,7 @@ export function ModerationQueue() {
           ))}
         </div>
       ) : reviews.length === 0 ? (
-        <EmptyState icon={CircleCheckBig} title="All clear" description="Nothing pending review." />
+        <EmptyState illustration="allClear" title="All clear" description="Nothing pending review." />
       ) : (
         <ul className="flex flex-col gap-4">
           {reviews.map((r) => {
@@ -292,13 +292,12 @@ export function ModerationQueue() {
                   {ratedAspects.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {ratedAspects.map((aspect) => {
-                        const Icon = ASPECT_META[aspect].icon;
                         return (
                           <span
                             key={aspect}
                             className="inline-flex items-center gap-1.5 rounded-full bg-paper-2 px-2.5 py-1 text-caption text-mute"
                           >
-                            <Icon size={12} />
+                            <AspectIcon aspect={aspect} size={16} />
                             {ASPECT_META[aspect].label}: {r[RATING_BY_ASPECT[aspect]] as number}/5
                           </span>
                         );

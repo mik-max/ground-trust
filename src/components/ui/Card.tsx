@@ -1,8 +1,8 @@
 import type { HTMLAttributes } from "react";
 
 // "none" is for a card composed of multiple internally-padded zones (e.g.
-// EvidenceStack's two-tone hero, dark top / white bottom) rather than one
-// uniform surface — the zones own their own padding instead.
+// EvidenceStack's score header and breakdown) rather than one uniform
+// surface — the zones own their own padding instead.
 const PADDING = {
   none: "",
   sm: "p-4",
@@ -12,19 +12,16 @@ const PADDING = {
 
 // Same-specificity Tailwind utilities (e.g. two border-color classes) race on
 // generation order, not className/JSX order — so border treatment is a fixed
-// variant, not something callers bolt on via className. Cards carry elevation
-// through shadow alone (default has no border — a border AND a shadow doing
-// the same "this is a distinct surface" job is redundant); "accent" adds a
-// single categorization edge, a different job from elevation, so it can
-// coexist with the shadow.
+// variant, not something callers bolt on via className. Cards are white on
+// the off-white canvas with a hairline border; "accent" adds a single
+// categorization edge on the left.
 const BORDER = {
-  default: "",
-  accent: "border-l-4 border-amber",
+  default: "border border-line",
+  accent: "border border-line border-l-4 border-l-amber",
 } as const;
 
-// "hero" is deliberately not the default — it's for the single spotlight
-// moment per screen (Home's most-reviewed area). If every card used it,
-// nothing would read as elevated anymore.
+// "hero" is for the single spotlight surface per screen; it lifts with a
+// soft shadow instead of only a border.
 const ELEVATION = {
   card: "shadow-card",
   hero: "shadow-hero",

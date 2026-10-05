@@ -37,10 +37,14 @@ function AppShell() {
     );
   }
 
+  // Home runs edge to edge (photo hero, full-width bands) and lays out its
+  // own columns; every other page sits in the standard centered column.
+  const isHome = location.pathname === "/";
+
   return (
     <>
-      <NavBar />
-      <main className="mx-auto max-w-6xl px-6 py-8">
+      <NavBar overlay={isHome} />
+      <main className={isHome ? "" : "mx-auto max-w-6xl px-5 py-10 sm:px-6"}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/privacy" element={<Privacy />} />
