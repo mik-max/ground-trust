@@ -30,7 +30,10 @@ export function AreasOverviewMap({ areas }: { areas: AreaEvidenceStack[] }) {
   return (
     <MapContainer
       bounds={bounds}
-      boundsOptions={{ padding: [40, 40] }}
+      // A single area gives zero-size bounds; without a maximum zoom Leaflet
+      // computes an infinite zoom and throws "Invalid LatLng (NaN, NaN)".
+      boundsOptions={{ padding: [40, 40], maxZoom: 14 }}
+      maxZoom={18}
       scrollWheelZoom={false}
       maxBounds={NIGERIA_BOUNDS}
       maxBoundsViscosity={1.0}

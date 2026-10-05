@@ -23,11 +23,25 @@ export function Home() {
   const [areas, setAreas] = useState<AreaEvidenceStack[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Wait for typing to pause, and ignore answers to searches that have
+  // since been replaced, so clearing the field quickly can't leave older
+  // results (or a half-updated map) on screen.
   useEffect(() => {
+    let current = true;
     setLoading(true);
-    listAreas(query || undefined)
-      .then(setAreas)
-      .finally(() => setLoading(false));
+    const handle = setTimeout(() => {
+      listAreas(query.trim() || undefined)
+        .then((result) => {
+          if (current) setAreas(result);
+        })
+        .finally(() => {
+          if (current) setLoading(false);
+        });
+    }, query ? 300 : 0);
+    return () => {
+      current = false;
+      clearTimeout(handle);
+    };
   }, [query]);
 
   // The single most-reviewed area gets the spotlight treatment — but only

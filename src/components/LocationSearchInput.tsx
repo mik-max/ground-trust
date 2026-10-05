@@ -42,11 +42,16 @@ export function LocationSearchInput({ value, onChange, placeholder, mode = "brow
       setGeoMatches([]);
       return;
     }
+    // Ignore answers to searches that have since been replaced.
+    let current = true;
     const handle = setTimeout(() => {
-      listAreas(query).then((results) => setOwnMatches(results.map((r) => r.area)));
-      searchLocations(query).then(setGeoMatches);
+      listAreas(query).then((results) => current && setOwnMatches(results.map((r) => r.area)));
+      searchLocations(query).then((results) => current && setGeoMatches(results));
     }, 300);
-    return () => clearTimeout(handle);
+    return () => {
+      current = false;
+      clearTimeout(handle);
+    };
   }, [value]);
 
   useEffect(() => {
@@ -106,7 +111,7 @@ export function LocationSearchInput({ value, onChange, placeholder, mode = "brow
       </div>
 
       {open && (hasResults || uncovered) && (
-        <ul className="absolute z-20 mt-2 w-full overflow-hidden rounded-lg border border-line bg-white shadow-raised">
+        <ul className="absolute z-20 mt-2 max-h-[min(60vh,20rem)] w-full overflow-y-auto overscroll-contain rounded-lg border border-line bg-white shadow-raised">
           {ownMatches.length > 0 && (
             <li>
               <p className="px-4 pt-3 text-caption text-mute">Areas we cover</p>
