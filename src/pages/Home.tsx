@@ -306,17 +306,18 @@ function Hero({
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(17,23,21,.6)_0%,rgba(17,23,21,.45)_35%,rgba(17,23,21,.92)_100%)]" />
       </div>
 
-      <div className={`${WRAP} relative grid grid-cols-1 items-end gap-10 lg:grid-cols-[1.3fr_.8fr] lg:gap-12`}>
+      <div className={`${WRAP} relative grid grid-cols-1 items-end gap-10 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-10 xl:grid-cols-[minmax(0,1fr)_320px]`}>
         <div>
           <p className="text-eyebrow font-medium uppercase tracking-[0.14em] text-white/70">
             Rated by the people who live there
           </p>
-          {/* Always three lines: "Know a" / "neighbourhood" / "before you move in." —
-              sized so the longest line fits its column at every width. */}
-          <h1 className="mt-4 text-[clamp(34px,8.6vw,72px)] font-medium leading-[1.02] tracking-[-0.035em] lg:text-[clamp(52px,5.6vw,72px)]">
-            <span className="block">Know a</span>
-            <span className="block">neighbourhood</span>
-            <span className="block text-white/55">before you move in.</span>
+          {/* Three lines: "Know a neighbourhood" / "before you" / "move in." — the
+              first line never wraps, and the size is set so it fits its column
+              at every width. */}
+          <h1 className="mt-4 text-[clamp(30px,8.6vw,76px)] font-medium leading-[1.02] tracking-[-0.035em] lg:text-[clamp(56px,5.6vw,72px)]">
+            <span className="block whitespace-nowrap">Know a neighbourhood</span>
+            <span className="block text-white/55">before you</span>
+            <span className="block text-white/55">move in.</span>
           </h1>
           <p className="mb-8 mt-5 max-w-[40ch] text-[18px] font-light leading-relaxed text-white/80">
             Power, water, security, flooding and access, scored by residents and weighted by how well each one is
