@@ -16,6 +16,11 @@ export interface Area {
   geoRadiusMeters: number;
   status: AreaStatus;
   createdByUserId: string | null;
+  /** Local government area, other search names, origin and kind (area directory). */
+  lga?: string | null;
+  aliases?: string | null;
+  source?: string | null;
+  kind?: string | null;
 }
 
 export interface AspectScore {

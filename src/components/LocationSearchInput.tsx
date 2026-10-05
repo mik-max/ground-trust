@@ -118,7 +118,9 @@ export function LocationSearchInput({ value, onChange, placeholder, mode = "brow
                   className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-body text-ink hover:bg-paper-2"
                 >
                   <MapPin size={16} className="shrink-0 text-brand" />
-                  {area.name} <span className="text-mute">· {area.city}</span>
+                  <span className="truncate">
+                    {area.name} <span className="text-mute">· {area.lga ?? area.city}</span>
+                  </span>
                 </button>
               ))}
             </li>
