@@ -9,8 +9,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import satori from "satori";
 import { Resvg, initWasm } from "@resvg/resvg-wasm";
-import { fetchPreviewArea, isAreaId } from "./_lib/area";
-import { CARD_HEIGHT, CARD_WIDTH, areaCard, scaleCard, siteCard, type Node } from "./_lib/card";
+import { fetchPreviewArea, isAreaId } from "./_lib/area.js";
+import { CARD_HEIGHT, CARD_WIDTH, areaCard, scaleCard, siteCard, type Node } from "./_lib/card.js";
 
 const ROOT = process.cwd();
 const MIME: Record<string, string> = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" };

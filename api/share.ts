@@ -4,8 +4,8 @@
 // <head>. vercel.json routes only crawler user agents here; people get the
 // normal static app. Serving the real index.html means a person whose
 // browser looks like a crawler still gets the working app.
-import { describe, fetchPreviewArea, imageVersion, isAreaId } from "./_lib/area";
-import { CARD_HEIGHT, CARD_WIDTH } from "./_lib/card";
+import { describe, fetchPreviewArea, imageVersion, isAreaId } from "./_lib/area.js";
+import { CARD_HEIGHT, CARD_WIDTH } from "./_lib/card.js";
 
 export const config = { runtime: "edge" };
 

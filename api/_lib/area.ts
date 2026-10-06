@@ -1,6 +1,6 @@
 // Shared by the link-preview functions (api/og.ts, api/share.ts). Files and
 // folders starting with "_" are not deployed as functions themselves.
-import { areaPhoto } from "../../src/components/areaPhotos";
+import { areaPhoto } from "../../src/components/areaPhotos.js";
 
 // Same API that vercel.json proxies /api to.
 const API_BASE = "https://groundtrust-api.onrender.com/api";

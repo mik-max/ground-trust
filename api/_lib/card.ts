@@ -1,7 +1,7 @@
 // The link-preview card layouts, kept apart from api/og.ts so they can be
 // rendered outside Vercel too. Satori takes React-element-shaped objects;
 // building them with h() keeps this free of a JSX build step.
-import { ASPECTS, BAND_COLOR, BAND_LABEL, EARLY_RATINGS_BELOW, fmt, type PreviewArea } from "./area";
+import { ASPECTS, BAND_COLOR, BAND_LABEL, EARLY_RATINGS_BELOW, fmt, type PreviewArea } from "./area.js";
 
 const INK = "#111715";
 const TEXT = "#1b2320";
