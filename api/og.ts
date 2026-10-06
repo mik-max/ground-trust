@@ -1,18 +1,24 @@
 // GET /api/og?area=<id> — the link-preview image for an area, drawn from its
 // live scores. Without ?area (or if the area can't be loaded) it draws a
 // site card. A Node function rather than Edge: the renderer (satori +
-// resvg) is far larger than Edge's ~1MB limit. Icons, photos and the font
+// resvg) is far larger than Edge's ~1MB limit. resvg runs as WebAssembly so
+// the function doesn't depend on a native binary for the CPU it lands on. Icons, photos and the font
 // ship inside the function (vercel.json includeFiles) and are read from
 // disk, so rendering never depends on fetching the site itself.
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import satori from "satori";
-import { Resvg } from "@resvg/resvg-js";
+import { Resvg, initWasm } from "@resvg/resvg-wasm";
 import { fetchPreviewArea, isAreaId } from "./_lib/area";
 import { CARD_HEIGHT, CARD_WIDTH, areaCard, scaleCard, siteCard, type Node } from "./_lib/card";
 
 const ROOT = process.cwd();
 const MIME: Record<string, string> = { ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg" };
+
+// Loaded once per warm instance.
+let wasmReady: Promise<void> | null = null;
+const ensureWasm = () =>
+  (wasmReady ??= readFile(path.join(ROOT, "node_modules/@resvg/resvg-wasm/index_bg.wasm")).then((wasm) => initWasm(wasm)));
 
 const fileCache = new Map<string, Promise<Buffer>>();
 const read = (p: string) => {
@@ -45,7 +51,8 @@ async function inlineAssets(node: unknown): Promise<unknown> {
 export async function GET(request: Request) {
   const id = new URL(request.url).searchParams.get("area");
   const area = isAreaId(id) ? await fetchPreviewArea(id) : null;
-  const [regular, medium, tree] = await Promise.all([
+  const [, regular, medium, tree] = await Promise.all([
+    ensureWasm(),
     read("api/_assets/Geist-Regular.ttf"),
     read("api/_assets/Geist-Medium.ttf"),
     inlineAssets(scaleCard(area ? areaCard(area, "") : siteCard(""))),
