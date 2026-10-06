@@ -78,3 +78,7 @@ export function describe(a: PreviewArea): string {
 // Changes whenever the numbers do, so chat apps fetch a fresh image instead
 // of reusing one they cached against the old scores.
 export const imageVersion = (a: PreviewArea) => [fmt(a.score), a.residents, ...a.aspects.map((x) => fmt(x.score))].join("-");
+
+// "Ikoyi or Mushin?", "Ikoyi, Mushin or Ajegunle?"
+export const choiceQuestion = (names: string[]) =>
+  `${names.length > 1 ? `${names.slice(0, -1).join(", ")} or ${names[names.length - 1]}` : names[0]}?`;

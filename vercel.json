@@ -20,6 +20,17 @@
       "destination": "/api/share?area=:id"
     },
     {
+      "source": "/compare",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|Slackbot|LinkedInBot|Discordbot|Applebot|SkypeUriPreview|Pinterestbot|redditbot|Googlebot|bingbot|Embedly).*"
+        }
+      ],
+      "destination": "/api/share"
+    },
+    {
       "source": "/api/:path*/",
       "destination": "https://groundtrust-api.onrender.com/api/:path*/"
     },

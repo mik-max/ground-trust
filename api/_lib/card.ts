@@ -1,7 +1,7 @@
 // The link-preview card layouts, kept apart from api/og.ts so they can be
 // rendered outside Vercel too. Satori takes React-element-shaped objects;
 // building them with h() keeps this free of a JSX build step.
-import { ASPECTS, BAND_COLOR, BAND_LABEL, EARLY_RATINGS_BELOW, fmt, type PreviewArea } from "./area.js";
+import { ASPECTS, BAND_COLOR, BAND_LABEL, EARLY_RATINGS_BELOW, choiceQuestion, fmt, type PreviewArea } from "./area.js";
 
 const INK = "#111715";
 const TEXT = "#1b2320";
@@ -109,4 +109,117 @@ export function scaleCard(node: unknown, k = CARD_SCALE): unknown {
   if (props.width !== undefined) extra.width = Math.round(props.width * k);
   if (props.height !== undefined) extra.height = Math.round(props.height * k);
   return { type, props: { ...props, ...extra, style, children: scaleCard(props.children, k) } };
+}
+
+// ---------- WhatsApp Status / Stories card (laid out at 1080×1920) ----------
+
+export const STORY = { width: 1080, height: 1920, scale: 2 / 3 };
+
+function verdictChip(a: PreviewArea, size: number) {
+  const early = a.residents < EARLY_RATINGS_BELOW || !a.band;
+  return h("div", { display: "flex", alignItems: "center", gap: size * 0.45, padding: `${size * 0.38}px ${size * 0.8}px`, border: `2px solid ${LINE}`, borderRadius: 999, fontSize: size, color: TEXT, fontWeight: 500 }, [
+    h("div", { width: size * 0.5, height: size * 0.5, borderRadius: 999, background: early ? FAINT : BAND_COLOR[a.band!] }),
+    early ? "Early ratings" : BAND_LABEL[a.band!],
+  ]);
+}
+
+export function storyCard(a: PreviewArea, origin: string) {
+  const photo = a.photo
+    ? h("div", { display: "flex", position: "absolute", top: 0, left: 0, width: 1080, height: 760, backgroundImage: `url(${origin}${a.photo})`, backgroundSize: "cover", backgroundPosition: "center 88%" })
+    : h("div", { display: "flex", position: "absolute", top: 0, left: 0, width: 1080, height: 760, background: SUNK, alignItems: "center", justifyContent: "center" }, [img(`${origin}/icons/location.png`, 220)]);
+
+  const rows = a.aspects.map((x, i) => {
+    const low = x.score !== null && x.score < 2;
+    return h("div", { display: "flex", alignItems: "center", gap: 28, height: 124 }, [
+      img(`${origin}${ASPECTS[i].icon}`, 72),
+      h("div", { display: "flex", width: 380, fontSize: 40, color: TEXT }, x.label),
+      h("div", { display: "flex", flex: 1, height: 14, borderRadius: 999, background: SUNK }, [
+        h("div", { display: "flex", width: `${x.score === null ? 0 : (x.score / 5) * 100}%`, height: 14, borderRadius: 999, background: low ? POOR : "#2f5d4f" }),
+      ]),
+      h("div", { display: "flex", width: 90, justifyContent: "flex-end", fontSize: 44, fontWeight: 500, color: x.score === null ? FAINT : low ? POOR : TEXT }, fmt(x.score)),
+    ]);
+  });
+
+  return h("div", { display: "flex", flexDirection: "column", width: 1080, height: 1920, background: "#ffffff", fontFamily: "Geist", position: "relative" }, [
+    photo,
+    h("div", { display: "flex", position: "absolute", top: 380, left: 0, width: 1080, height: 380, backgroundImage: "linear-gradient(180deg, rgba(17,23,21,0) 0%, rgba(17,23,21,0.62) 100%)" }),
+    h("div", { display: "flex", flexDirection: "column", position: "absolute", left: 72, right: 72, top: 560, color: "#ffffff" }, [
+      h("div", { fontSize: 104, fontWeight: 500, letterSpacing: -4, lineHeight: 1 }, a.name),
+      h("div", { fontSize: 36, marginTop: 14, color: "rgba(255,255,255,0.85)" }, a.place),
+    ]),
+    h("div", { display: "flex", flexDirection: "column", position: "absolute", top: 760, left: 0, width: 1080, height: 1160, padding: "64px 72px 60px" }, [
+      a.score === null
+        ? h("div", { display: "flex", flexDirection: "column", gap: 18 }, [
+            h("div", { fontSize: 64, fontWeight: 500, letterSpacing: -2, color: INK }, "No ratings yet"),
+            h("div", { fontSize: 36, color: MUTED }, "Live here? Be the first to say what it's like."),
+          ])
+        : h("div", { display: "flex", alignItems: "center", justifyContent: "space-between" }, [
+            h("div", { display: "flex", alignItems: "baseline" }, [
+              h("div", { fontSize: 168, lineHeight: 1, letterSpacing: -8, color: INK }, fmt(a.score)),
+              h("div", { fontSize: 48, color: FAINT, marginLeft: 12 }, "/ 5"),
+            ]),
+            verdictChip(a, 38),
+          ]),
+      h("div", { display: "flex", fontSize: 32, color: MUTED, marginTop: 18 }, a.score === null ? "Scores appear as residents rate it" : `Rated by ${a.residents} resident${a.residents === 1 ? "" : "s"}`),
+      h("div", { display: "flex", flexDirection: "column", marginTop: 52, gap: 8 }, rows),
+      h("div", { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: 36, borderTop: `2px solid ${LINE}` }, [
+        h("div", { display: "flex", alignItems: "center", gap: 16, fontSize: 40, fontWeight: 500, color: INK }, [mark(44, INK), "GroundTrust"]),
+        h("div", { display: "flex", flexDirection: "column", alignItems: "flex-end", fontSize: 28, color: MUTED }, [
+          h("div", {}, "See the evidence"),
+          h("div", { color: TEXT }, a.id.length <= 14 ? `ground-trust.vercel.app/areas/${a.id}` : "ground-trust.vercel.app"),
+        ]),
+      ]),
+    ]),
+  ]);
+}
+
+// ---------- Comparison card (square, laid out at 1080×1080) ----------
+
+export const SQUARE = { width: 1080, height: 1080, scale: 1 };
+
+export function compareCard(areas: PreviewArea[], origin: string) {
+  const n = areas.length;
+  const question = choiceQuestion(areas.map((a) => a.name));
+  const colW = n === 3 ? 270 : 380;
+  const header = h("div", { display: "flex", gap: 24, paddingBottom: 24, borderBottom: `2px solid ${LINE}` }, [
+    h("div", { display: "flex", width: 70 }),
+    ...areas.map((a) =>
+      h("div", { display: "flex", flexDirection: "column", width: colW }, [
+        h("div", { fontSize: n === 3 ? 38 : 46, fontWeight: 500, letterSpacing: -1.5, color: INK, lineHeight: 1.05 }, a.name),
+        h("div", { display: "flex", flexDirection: "column", fontSize: 24, color: MUTED, marginTop: 8, lineHeight: 1.3 }, [
+          h("div", {}, a.place.split(" · ")[0]),
+          h("div", {}, `${a.residents} resident${a.residents === 1 ? "" : "s"}`),
+        ]),
+        h("div", { display: "flex", alignItems: "baseline", marginTop: 14 }, [
+          h("div", { fontSize: n === 3 ? 64 : 76, letterSpacing: -3, color: a.score === null ? FAINT : INK, lineHeight: 1 }, fmt(a.score)),
+          h("div", { fontSize: 26, color: FAINT, marginLeft: 8 }, "/ 5"),
+        ]),
+      ]),
+    ),
+  ]);
+  const rows = ASPECTS.map((asp, i) =>
+    h("div", { display: "flex", gap: 24, alignItems: "center", height: 104, borderBottom: i < ASPECTS.length - 1 ? `2px solid ${SUNK}` : "none" }, [
+      h("div", { display: "flex", width: 70 }, [img(`${origin}${asp.icon}`, 54)]),
+      ...areas.map((a) => {
+        const v = a.aspects[i].score;
+        const low = v !== null && v < 2;
+        return h("div", { display: "flex", alignItems: "center", gap: 16, width: colW }, [
+          h("div", { display: "flex", width: v === null ? 0 : Math.round((v / 5) * (colW - 110)), height: 10, borderRadius: 999, background: low ? POOR : "#2f5d4f" }),
+          h("div", { fontSize: 36, fontWeight: 500, color: v === null ? FAINT : low ? POOR : TEXT }, fmt(v)),
+        ]);
+      }),
+    ]),
+  );
+  return h("div", { display: "flex", flexDirection: "column", width: 1080, height: 1080, background: "#ffffff", fontFamily: "Geist", padding: "64px 72px 56px" }, [
+    h("div", { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 44 }, [
+      h("div", { display: "flex", fontSize: 50, fontWeight: 500, letterSpacing: -2, color: INK, maxWidth: 700 }, question),
+      h("div", { display: "flex", alignItems: "center", gap: 12, fontSize: 30, fontWeight: 500, color: INK }, [mark(34, INK), "GroundTrust"]),
+    ]),
+    header,
+    h("div", { display: "flex", flexDirection: "column" }, rows),
+    h("div", { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", fontSize: 26, color: MUTED }, [
+      h("div", {}, "Scores out of 5, from residents' ratings"),
+      h("div", { color: TEXT }, "ground-trust.vercel.app/compare"),
+    ]),
+  ]);
 }
