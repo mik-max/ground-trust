@@ -1,5 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/og.ts": {
+      "includeFiles": "{api/_assets/**,public/icons/**,public/images/**}",
+      "memory": 1024,
+      "maxDuration": 15
+    }
+  },
   "rewrites": [
     {
       "source": "/areas/:id",
