@@ -5,6 +5,7 @@ import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
 import { areaPhoto } from "../components/areaPhotos";
+import { ShareButton } from "../components/share/ShareButton";
 import { ReviewCard } from "../components/ReviewCard";
 import { AreaLocationMap } from "../components/map/AreaLocationMap";
 import { useAuthStore } from "../store/auth.store";
@@ -127,6 +128,11 @@ export function AreaProfile() {
             >
               Compare with another area
             </Link>
+
+            <ShareButton
+              target={{ kind: "area", id: data.area.id, name: data.area.name }}
+              className={user?.role === "resident" ? "order-last col-span-2 sm:order-none" : ""}
+            />
 
             {user?.role === "resident" && (
               <Link

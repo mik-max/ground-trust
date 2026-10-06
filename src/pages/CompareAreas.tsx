@@ -9,6 +9,7 @@ import { ConfidenceStrip } from "../components/ConfidenceStrip";
 import { ASPECT_ORDER } from "../components/aspectMeta";
 import { TextInput } from "../components/ui/TextInput";
 import { BackLink } from "../components/ui/BackLink";
+import { ShareButton } from "../components/share/ShareButton";
 import { Card } from "../components/ui/Card";
 import { EmptyState } from "../components/ui/EmptyState";
 import { text } from "../styles/typography";
@@ -114,7 +115,14 @@ export function CompareAreas() {
   return (
     <div className="flex flex-col gap-6">
       <BackLink to="/" label="All areas" />
-      <h1 className={text.displayMd}>Compare areas</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className={text.displayMd}>Compare areas</h1>
+        {areas.length >= 2 && (
+          <ShareButton
+            target={{ kind: "compare", ids: areas.map((a) => a.area.id), names: areas.map((a) => a.area.name) }}
+          />
+        )}
+      </div>
 
       {areas.length < MAX_AREAS && (
         <div className="relative max-w-sm">
