@@ -58,3 +58,27 @@ export async function moderateArea(areaId: string, decision: "approved" | "rejec
   const { data } = await api.post<{ area: PendingArea }>(`/admin/areas/${areaId}/moderate`, { decision });
   return data.area;
 }
+
+export interface PendingPhoto {
+  id: string;
+  area: { id: string; name: string; lga: string | null; city: string };
+  url: string;
+  fullUrl: string;
+  uploadedBy: string | null;
+  createdAt: string;
+  // Whether the area already has an approved photo (if not, approving makes this its cover).
+  areaHasPhoto: boolean;
+}
+
+export async function listPendingPhotos() {
+  const { data } = await api.get<{ photos: PendingPhoto[] }>("/admin/photos/pending");
+  return data.photos;
+}
+
+export async function moderatePhoto(photoId: string, decision: "approved" | "rejected", cover = false) {
+  const { data } = await api.post<{ photo: { id: string; status: string } }>(`/admin/photos/${photoId}/moderate`, {
+    decision,
+    cover,
+  });
+  return data.photo;
+}

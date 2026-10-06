@@ -49,3 +49,13 @@ export async function submitReview(areaId: string, input: ReviewInput) {
   const { data } = await api.post<{ review: Review }>(`/areas/${areaId}/reviews`, input);
   return data.review;
 }
+
+// A resident's photo of an area. It's held for an admin to approve before
+// it shows anywhere.
+export async function uploadAreaPhoto(areaId: string, file: File) {
+  const formData = new FormData();
+  formData.append("photo", file);
+  formData.append("agree", "true");
+  const { data } = await api.post<{ photo: { id: string; status: string } }>(`/areas/${areaId}/photos`, formData);
+  return data.photo;
+}

@@ -1,6 +1,6 @@
 // Shared facts for the privacy and terms pages. Keep these in step with how
 // the system actually works — they are statements to the people who use it.
-export const LAST_UPDATED = "5 October 2026";
+export const LAST_UPDATED = "6 October 2026";
 
 // Left empty until the project owner chooses a public contact address.
 export const CONTACT_EMAIL = "";

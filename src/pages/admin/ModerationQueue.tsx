@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { PendingPhotos } from "./PendingPhotos";
 import { Link } from "react-router-dom";
 import { Flag, TriangleAlert } from "lucide-react";
 import type { Aspect } from "../../types";
@@ -89,6 +90,8 @@ export function ModerationQueue() {
     <div className="flex flex-col gap-6">
       <BackLink to="/" label="All areas" />
       <h1 className={text.displayMd}>Moderation queue</h1>
+
+      <PendingPhotos />
 
       <div>
         <h2 className={text.heading}>Proposed areas</h2>

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { UserCheck, Scale, ShieldCheck, Shield, User, Clock } from "lucide-react";
+import { UserCheck, Scale, ShieldCheck, Shield, User, Clock, ImagePlus } from "lucide-react";
 import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
 import { ShareButton } from "../components/share/ShareButton";
+import { AddPhotoSheet } from "../components/AddPhotoSheet";
+import { ILLUSTRATIONS } from "../components/ui/SpotIllustration";
 import { ReviewCard } from "../components/ReviewCard";
 import { AreaLocationMap } from "../components/map/AreaLocationMap";
 import { useAuthStore } from "../store/auth.store";
@@ -33,6 +35,7 @@ function InfoRow({ icon: Icon, children }: { icon: typeof UserCheck; children: R
 export function AreaProfile() {
   const { id } = useParams<{ id: string }>();
   const user = useAuthStore((s) => s.user);
+  const [addingPhoto, setAddingPhoto] = useState(false);
   const [data, setData] = useState<AreaEvidenceStack | null>(null);
   const [reviews, setReviews] = useState<Review[] | null>(null);
   const [page, setPage] = useState(1);
@@ -89,7 +92,7 @@ export function AreaProfile() {
     <div className="flex flex-col gap-8">
       <BackLink to="/" label="All areas" />
 
-      {photo && (
+      {photo ? (
         <figure className="flex flex-col gap-2">
           <div
             className="aspect-[3/1] w-full rounded-xl bg-paper-2 bg-cover bg-center sm:aspect-[10/3]"
@@ -97,8 +100,49 @@ export function AreaProfile() {
             role="img"
             aria-label={`A view of ${data.area.name}`}
           />
-          <PhotoCredit photo={photo} />
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+            <PhotoCredit photo={photo} />
+            {user?.role === "resident" && (
+              <button
+                type="button"
+                onClick={() => setAddingPhoto(true)}
+                className="inline-flex items-center gap-1.5 text-caption text-mute hover:text-ink"
+              >
+                <ImagePlus size={14} />
+                Add a photo
+              </button>
+            )}
+          </div>
         </figure>
+      ) : (
+        data.area.status === "approved" && (
+          <div className="flex flex-col items-start gap-4 rounded-xl border border-dashed border-[#c9d0cb] bg-white/60 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <img src={ILLUSTRATIONS.location} alt="" className="h-11 w-11 shrink-0" />
+              <div>
+                <p className="text-body-lg font-medium text-ink">No photo of {data.area.name} yet</p>
+                <p className="text-body text-mute">
+                  {user?.role === "resident"
+                    ? "Live here? A photo of a street or junction helps people picture it."
+                    : "Residents can add one, and it shows once an admin approves it."}
+                </p>
+              </div>
+            </div>
+            {user?.role === "resident" && (
+              <button
+                type="button"
+                onClick={() => setAddingPhoto(true)}
+                className={buttonClassName({ variant: "outline" }, "inline-flex shrink-0 items-center gap-2")}
+              >
+                <ImagePlus size={16} />
+                Add a photo
+              </button>
+            )}
+          </div>
+        )
+      )}
+      {addingPhoto && (
+        <AddPhotoSheet areaId={data.area.id} areaName={data.area.name} onClose={() => setAddingPhoto(false)} />
       )}
 
       <div>

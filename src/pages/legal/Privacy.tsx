@@ -40,6 +40,10 @@ export function Privacy() {
             — never your coordinates or a location history.
           </li>
           <li>
+            <b>Photos you add</b> of an area. Location and camera details stored in the photo file are removed when it's
+            uploaded.
+          </li>
+          <li>
             <b>Reports you send</b> about other reviews, and their reason.
           </li>
         </ul>
@@ -56,6 +60,7 @@ export function Privacy() {
           <li>To work out your verification level, which decides how much weight your ratings carry.</li>
           <li>To transcribe voice comments, translate comments into English, and identify what each comment is about.</li>
           <li>To screen comments for abuse, and to let administrators review content that is held or reported.</li>
+          <li>To show approved photos of an area on its page and on its share cards.</li>
           <li>To raise an area to government authorities when residents' ratings show a problem that persists.</li>
         </ul>
       </Section>
@@ -71,7 +76,12 @@ export function Privacy() {
             expire after an hour. Everyone else sees the transcribed text only.
           </li>
           <li>
-            <b>Administrators</b> can see who submitted a review or proposed an area, in order to moderate content.
+            <b>Anyone</b> can see photos of an area once an administrator approves them. They're credited to "a resident",
+            never by name.
+          </li>
+          <li>
+            <b>Administrators</b> can see who submitted a review, proposed an area or added a photo, in order to moderate
+            content. A photo that isn't approved is deleted.
           </li>
         </ul>
       </Section>
@@ -80,7 +90,7 @@ export function Privacy() {
         <p>To run the platform we use these services, some of which store or process data outside Nigeria:</p>
         <ul className="list-disc pl-5">
           <li>Neon (database) and Render (application server), in Germany; Vercel (website).</li>
-          <li>Cloudinary, which stores voice recordings privately.</li>
+          <li>Cloudinary, which stores voice recordings privately and area photos publicly.</li>
           <li>Groq (speech-to-text), Anthropic (translation and topic classification) and OpenAI (content screening), which
             receive the comment text or recording — not your name or email.</li>
           <li>OpenStreetMap, which receives the place names you search for; Google, if you choose to sign in with Google.</li>

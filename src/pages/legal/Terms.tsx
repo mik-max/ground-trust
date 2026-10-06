@@ -28,6 +28,11 @@ export function Terms() {
           <li>Don't post false information, abuse, spam, or anything that identifies or accuses a specific person.</li>
           <li>Comments are screened automatically and may be held, reviewed or removed by an administrator.</li>
           <li>Reviews that are reported are checked by an administrator, who may keep or remove them.</li>
+          <li>
+            Only add photos you took yourself, of the area: streets, roads and buildings, with no recognisable faces, number
+            plates or private interiors. By adding one, you let GroundTrust show it on the area's page and share cards,
+            credited to "a resident". An administrator approves each photo first, and may remove it later.
+          </li>
         </ul>
       </section>
 
