@@ -3,7 +3,6 @@ import type { AreaEvidenceStack, ConfidenceLevel } from "../types";
 import { ScoreBandBadge } from "./ScoreBandBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
 import { AspectIcon } from "./AspectIconChip";
-import { areaPhoto } from "./areaPhotos";
 import { ILLUSTRATIONS } from "./ui/SpotIllustration";
 import { buttonClassName } from "./ui/Button";
 
@@ -19,8 +18,8 @@ const CONFIDENCE_STEPS: Record<ConfidenceLevel, number> = { low: 1, medium: 2, h
 // numbers. Full detail lives one click away on Area Profile. An area with
 // no ratings yet says so and invites the first one, rather than showing
 // empty numbers.
-export function AreaCard({ area, overall, aspects }: AreaEvidenceStack) {
-  const photo = areaPhoto(area.name);
+export function AreaCard({ area, overall, aspects, photo: cover }: AreaEvidenceStack) {
+  const photo = cover?.card ?? null;
   const place = area.lga ?? area.city;
   const unrated = overall.score === null;
 

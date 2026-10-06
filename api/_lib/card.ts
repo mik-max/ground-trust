@@ -30,7 +30,7 @@ function mark(size: number, color: string) {
 export function areaCard(a: PreviewArea, origin: string) {
   const early = a.residents < EARLY_RATINGS_BELOW || !a.band;
   const left = a.photo
-    ? h("div", { display: "flex", width: 408, height: 630, backgroundImage: `url(${origin}${a.photo})`, backgroundSize: "cover", backgroundPosition: "center" })
+    ? h("div", { display: "flex", width: 408, height: 630, backgroundImage: `url(${a.photo})`, backgroundSize: "cover", backgroundPosition: "center" })
     : h("div", { display: "flex", width: 408, height: 630, background: SUNK, alignItems: "center", justifyContent: "center" }, [img(`${origin}/icons/location.png`, 150)]);
 
   const verdict = a.score === null
@@ -125,7 +125,7 @@ function verdictChip(a: PreviewArea, size: number) {
 
 export function storyCard(a: PreviewArea, origin: string) {
   const photo = a.photo
-    ? h("div", { display: "flex", position: "absolute", top: 0, left: 0, width: 1080, height: 760, backgroundImage: `url(${origin}${a.photo})`, backgroundSize: "cover", backgroundPosition: "center 88%" })
+    ? h("div", { display: "flex", position: "absolute", top: 0, left: 0, width: 1080, height: 760, backgroundImage: `url(${a.photo})`, backgroundSize: "cover", backgroundPosition: "center 88%" })
     : h("div", { display: "flex", position: "absolute", top: 0, left: 0, width: 1080, height: 760, background: SUNK, alignItems: "center", justifyContent: "center" }, [img(`${origin}/icons/location.png`, 220)]);
 
   const rows = a.aspects.map((x, i) => {

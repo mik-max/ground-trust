@@ -18,8 +18,13 @@ const MIME: Record<string, string> = { ".png": "image/png", ".jpg": "image/jpeg"
 
 // Loaded once per warm instance.
 let wasmReady: Promise<void> | null = null;
+// (A reload of this module in the Vite dev server finds resvg already set up, which is fine.)
 const ensureWasm = () =>
-  (wasmReady ??= readFile(path.join(ROOT, "node_modules/@resvg/resvg-wasm/index_bg.wasm")).then((wasm) => initWasm(wasm)));
+  (wasmReady ??= readFile(path.join(ROOT, "node_modules/@resvg/resvg-wasm/index_bg.wasm"))
+    .then((wasm) => initWasm(wasm))
+    .catch((err: unknown) => {
+      if (!String(err).includes("Already initialized")) throw err;
+    }));
 
 const fileCache = new Map<string, Promise<Buffer>>();
 const read = (p: string) => {
@@ -33,8 +38,21 @@ async function dataUri(publicPath: string) {
   return `data:${MIME[path.extname(file)] ?? "application/octet-stream"};base64,${data.toString("base64")}`;
 }
 
-// Swap the card's site paths ("/icons/power.png", url(/images/...)) for
-// inline data, which is what satori renders from.
+// Area photos live on Cloudinary. If one can't be fetched in time, the card
+// still renders, just without the photo.
+async function remoteDataUri(url: string) {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    if (!res.ok) throw new Error(String(res.status));
+    const type = res.headers.get("content-type") ?? "image/jpeg";
+    return `data:${type};base64,${Buffer.from(await res.arrayBuffer()).toString("base64")}`;
+  } catch {
+    return "data:image/gif;base64,R0lGODlhAQABAAAAACw=";
+  }
+}
+
+// Swap the card's image references (site paths like "/icons/power.png" and
+// the Cloudinary photo URL) for inline data, which is what satori renders from.
 async function inlineAssets(node: unknown): Promise<unknown> {
   if (Array.isArray(node)) return Promise.all(node.map(inlineAssets));
   if (!node || typeof node !== "object") return node;
@@ -44,6 +62,8 @@ async function inlineAssets(node: unknown): Promise<unknown> {
   const bg = props.style?.backgroundImage;
   if (typeof bg === "string" && bg.startsWith("url(/")) {
     next.style = { ...props.style, backgroundImage: `url(${await dataUri(bg.slice(4, -1))})` };
+  } else if (typeof bg === "string" && bg.startsWith("url(https://")) {
+    next.style = { ...props.style, backgroundImage: `url(${await remoteDataUri(bg.slice(4, -1))})` };
   }
   next.children = await inlineAssets(props.children);
   return { type, props: next };

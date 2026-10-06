@@ -1,9 +1,11 @@
 // Shared by the link-preview functions (api/og.ts, api/share.ts). Files and
 // folders starting with "_" are not deployed as functions themselves.
-import { areaPhoto } from "../../src/components/areaPhotos.js";
 
-// Same API that vercel.json proxies /api to.
-const API_BASE = "https://groundtrust-api.onrender.com/api";
+// Same API that vercel.json proxies /api to. The Vite dev server points it at
+// the local backend instead (see vite.config.ts).
+const API_BASE =
+  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.PREVIEW_API_BASE ??
+  "https://groundtrust-api.onrender.com/api";
 
 export type Band = "poor" | "fair" | "good" | "excellent";
 type AspectKey = "power" | "water" | "security" | "roads_flooding" | "accessibility";
@@ -16,6 +18,7 @@ export interface PreviewArea {
   band: Band | null;
   residents: number;
   aspects: { key: AspectKey; label: string; score: number | null }[];
+  /** Absolute URL of the area's cover photo (a JPEG sized for share cards), if it has one. */
   photo: string | null;
 }
 
@@ -55,7 +58,7 @@ export async function fetchPreviewArea(id: string, timeoutMs = 7000): Promise<Pr
         const row = data.aspects.find((a: { aspect: string }) => a.aspect === key);
         return { key, label, score: row && row.N > 0 ? row.score : null };
       }),
-      photo: areaPhoto(data.area.name),
+      photo: data.photo?.share ?? null,
     };
   } catch {
     return null;

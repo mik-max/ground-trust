@@ -23,8 +23,7 @@ export function SiteFooter() {
         <p className="max-w-[90ch] text-[12px] leading-relaxed text-mute/80">
           Area list: INEC wards from Nigeria Operational Ward Boundaries (eHealth Africa &amp; Proxy Logics, GRID3, CC BY
           4.0) and places © OpenStreetMap contributors (ODbL). Photos from Unsplash by Obinna Okerekeocha, Nupo Deyon
-          Daniel, Francis Odeyemi, Tunde Buremo, Muhammad-Taha Ibrahim, Stephen Olatunde, Joshua Oluwagbemiga and Namnso
-          Ukpanah. Icons: Noto Emoji by Google (Apache License 2.0).
+          Daniel, Francis Odeyemi and Tunde Buremo; area photos are credited on each area's page. Icons: Noto Emoji by Google (Apache License 2.0).
         </p>
       </div>
     </footer>

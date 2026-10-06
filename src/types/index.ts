@@ -35,8 +35,23 @@ export interface AspectScore {
   trend?: "improving" | "declining" | null;
 }
 
+// An area's cover photo (only approved photos are ever returned). Curated
+// photos carry the credit and licence their terms require; residents'
+// photos are credited to "a resident", never by name.
+export interface AreaPhoto {
+  card: string;
+  banner: string;
+  share: string;
+  source: "curated" | "resident";
+  credit: string | null;
+  creditUrl: string | null;
+  license: string | null;
+  licenseUrl: string | null;
+}
+
 export interface AreaEvidenceStack {
   area: Area;
+  photo?: AreaPhoto | null;
   overall: {
     score: number | null;
     band: Band | null;

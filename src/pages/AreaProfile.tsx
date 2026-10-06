@@ -4,7 +4,6 @@ import { UserCheck, Scale, ShieldCheck, Shield, User, Clock } from "lucide-react
 import type { AreaEvidenceStack, Review } from "../types";
 import { getArea, getAreaReviews } from "../services/area.service";
 import { EvidenceStack } from "../components/EvidenceStack";
-import { areaPhoto } from "../components/areaPhotos";
 import { ShareButton } from "../components/share/ShareButton";
 import { ReviewCard } from "../components/ReviewCard";
 import { AreaLocationMap } from "../components/map/AreaLocationMap";
@@ -84,19 +83,22 @@ export function AreaProfile() {
     );
   }
 
-  const photo = areaPhoto(data.area.name);
+  const photo = data.photo ?? null;
 
   return (
     <div className="flex flex-col gap-8">
       <BackLink to="/" label="All areas" />
 
       {photo && (
-        <div
-          className="aspect-[3/1] w-full rounded-xl bg-paper-2 bg-cover bg-center sm:aspect-[4/1]"
-          style={{ backgroundImage: `url(${photo})` }}
-          role="img"
-          aria-label={`A view of ${data.area.name}`}
-        />
+        <figure className="flex flex-col gap-2">
+          <div
+            className="aspect-[3/1] w-full rounded-xl bg-paper-2 bg-cover bg-center sm:aspect-[10/3]"
+            style={{ backgroundImage: `url(${photo.banner})` }}
+            role="img"
+            aria-label={`A view of ${data.area.name}`}
+          />
+          <PhotoCredit photo={photo} />
+        </figure>
       )}
 
       <div>
@@ -206,5 +208,33 @@ export function AreaProfile() {
         )}
       </div>
     </div>
+  );
+}
+
+// The attribution open licences require, beneath the photo.
+function PhotoCredit({ photo }: { photo: NonNullable<AreaEvidenceStack["photo"]> }) {
+  if (!photo.credit && !photo.license) return null;
+  return (
+    <figcaption className="text-[12px] text-mute">
+      {photo.creditUrl ? (
+        <a href={photo.creditUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ink hover:underline">
+          {photo.credit}
+        </a>
+      ) : (
+        photo.credit
+      )}
+      {photo.license && (
+        <>
+          {photo.credit ? " · " : ""}
+          {photo.licenseUrl ? (
+            <a href={photo.licenseUrl} target="_blank" rel="noopener noreferrer" className="hover:text-ink hover:underline">
+              {photo.license}
+            </a>
+          ) : (
+            photo.license
+          )}
+        </>
+      )}
+    </figcaption>
   );
 }

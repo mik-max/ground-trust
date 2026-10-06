@@ -10,6 +10,7 @@ function shareImagesInDev(): Plugin {
     name: "share-images-in-dev",
     apply: "serve",
     configureServer(server) {
+      process.env.PREVIEW_API_BASE ??= "http://localhost:8000/api";
       server.middlewares.use("/api/og", async (req, res) => {
         try {
           const { GET } = await server.ssrLoadModule("/api/og.ts");
