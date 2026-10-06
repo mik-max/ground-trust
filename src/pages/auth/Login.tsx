@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { googleAuth, login as loginRequest } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
 import { AuthLayout } from "../../components/auth/AuthLayout";
@@ -8,9 +8,12 @@ import { Field } from "../../components/ui/Field";
 import { TextInput } from "../../components/ui/TextInput";
 import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { text } from "../../styles/typography";
+import { nextPath, withNext } from "../../utils/nextPath";
 
 export function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const next = nextPath(location.search);
   const setAuth = useAuthStore((s) => s.setAuth);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,7 +25,7 @@ export function Login() {
     try {
       const { token, user } = await loginRequest({ email, password });
       setAuth(token, user);
-      navigate("/");
+      navigate(next, { replace: true });
     } catch {
       setError("Invalid email or password.");
     }
@@ -35,7 +38,7 @@ export function Login() {
     try {
       const { token, user } = await googleAuth(credential);
       setAuth(token, user);
-      navigate("/");
+      navigate(next, { replace: true });
     } catch {
       setError("No account found for this Google email — register first.");
     }
@@ -77,7 +80,7 @@ export function Login() {
         <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
         <p className={`${text.body} text-mute`}>
           No account?{" "}
-          <Link to="/register" className="font-medium text-brand">
+          <Link to={next === "/" ? "/register" : withNext("/register", next)} className="font-medium text-brand">
             Register
           </Link>
         </p>

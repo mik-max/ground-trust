@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { nextPath } from "../../utils/nextPath";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Eyebrow } from "../../components/ui/Eyebrow";
@@ -18,6 +19,7 @@ import { text } from "../../styles/typography";
 // Submit Review and My Contributions pages.
 export function ResidencyConsent() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [acknowledged, setAcknowledged] = useState(false);
 
   return (
@@ -65,7 +67,7 @@ export function ResidencyConsent() {
         history.
       </label>
 
-      <Button type="button" disabled={!acknowledged} onClick={() => navigate("/share")} className="w-fit">
+      <Button type="button" disabled={!acknowledged} onClick={() => navigate(nextPath(location.search, "/share"), { replace: true })} className="w-fit">
         Continue
       </Button>
     </div>

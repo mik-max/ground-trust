@@ -55,7 +55,8 @@ export function Home() {
   const searching = query.trim().length > 0;
   // Most-rated first on the default view, so the best-evidenced areas lead.
   const orderedAreas = searching ? areas : [...areas].sort((a, b) => b.overall.N - a.overall.N);
-  const shareLink = user?.role === "resident" ? "/share" : "/login";
+  // Signed out: sign up first, then straight into sharing.
+  const shareLink = user?.role === "resident" ? "/share" : "/register?next=%2Fshare";
 
   return (
     <div className="flex flex-col">

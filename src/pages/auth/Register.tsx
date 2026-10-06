@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { googleAuth, signup } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
 import { AuthLayout } from "../../components/auth/AuthLayout";
@@ -8,6 +8,7 @@ import { Field } from "../../components/ui/Field";
 import { TextInput } from "../../components/ui/TextInput";
 import { GoogleAuthButton } from "../../components/auth/GoogleAuthButton";
 import { text } from "../../styles/typography";
+import { nextPath, withNext } from "../../utils/nextPath";
 
 // Self-service signup always creates a resident — Government is
 // invite-only (files/DESIGN_SYSTEM.md §6.1), and there's no other
@@ -16,6 +17,8 @@ import { text } from "../../styles/typography";
 // resident/newcomer role picker is gone).
 export function Register() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const next = nextPath(location.search);
   const setAuth = useAuthStore((s) => s.setAuth);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -26,7 +29,7 @@ export function Register() {
   // residency-sampling consent screen once, right after — not on every
   // subsequent login.
   function afterAuth(isNewSignup: boolean) {
-    navigate(isNewSignup ? "/onboarding/consent" : "/");
+    navigate(isNewSignup ? withNext("/onboarding/consent", next === "/" ? "/share" : next) : next, { replace: true });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -112,7 +115,7 @@ export function Register() {
         </p>
         <p className={`${text.body} text-mute`}>
           Already have an account?{" "}
-          <Link to="/login" className="font-medium text-brand">
+          <Link to={next === "/" ? "/login" : withNext("/login", next)} className="font-medium text-brand">
             Log in
           </Link>
         </p>

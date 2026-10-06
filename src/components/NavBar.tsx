@@ -60,7 +60,7 @@ export function NavBar({ overlay = false }: { overlay?: boolean }) {
       )}
       {(!user || user.role === "resident") && (
         <PageLink
-          to={user ? "/share" : "/login"}
+          to={user ? "/share" : "/register?next=%2Fshare"}
           onClick={close}
           className={buttonClassName({ variant: "primary" }, "px-5! py-2.5! text-body!")}
         >
