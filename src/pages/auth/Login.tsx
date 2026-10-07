@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { isAxiosError } from "axios";
+import { Loader2 } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { googleAuth, login as loginRequest } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
@@ -19,10 +20,14 @@ export function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  // Which sign-in is in progress, so the button can show it and not be pressed twice.
+  const [pending, setPending] = useState<"form" | "google" | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (pending) return;
     setError(null);
+    setPending("form");
     try {
       const { token, user } = await loginRequest({ email, password });
       setAuth(token, user);
@@ -33,6 +38,8 @@ export function Login() {
           ? "Too many attempts. Please wait a few minutes and try again."
           : "Invalid email or password."
       );
+    } finally {
+      setPending(null);
     }
   }
 
@@ -40,12 +47,15 @@ export function Login() {
   // not "create one now." Logging in shouldn't silently sign someone up.
   async function handleGoogle(credential: string) {
     setError(null);
+    setPending("google");
     try {
       const { token, user } = await googleAuth(credential);
       setAuth(token, user);
       navigate(next, { replace: true });
     } catch {
       setError("No account found for this Google email — register first.");
+    } finally {
+      setPending(null);
     }
   }
 
@@ -84,10 +94,29 @@ export function Login() {
         </div>
 
         {error && <p className="text-caption text-band-poor">{error}</p>}
-        <Button type="submit" className="w-full">
-          Log in
+        <Button
+          type="submit"
+          // Loading reads as "working on it", not greyed out like a disabled button.
+          className={`w-full ${pending === "form" ? "disabled:cursor-progress disabled:opacity-90" : ""}`}
+          disabled={pending !== null}
+          aria-busy={pending === "form"}
+        >
+          {pending === "form" ? (
+            <>
+              <Loader2 size={18} className="animate-spin" aria-hidden="true" />
+              Logging in…
+            </>
+          ) : (
+            "Log in"
+          )}
         </Button>
         <GoogleAuthButton onCredential={handleGoogle} onError={() => setError("Google sign-in failed.")} />
+        {pending === "google" && (
+          <p className="-mt-2 flex items-center justify-center gap-2 text-caption text-mute" role="status">
+            <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+            Signing in with Google…
+          </p>
+        )}
         <p className={`${text.body} text-mute`}>
           No account?{" "}
           <Link to={next === "/" ? "/register" : withNext("/register", next)} className="font-medium text-brand">
