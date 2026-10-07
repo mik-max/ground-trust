@@ -30,3 +30,14 @@ export async function googleAuth(credential: string, isSignup?: boolean) {
   const { data } = await api.post<AuthResponse & { isNewUser: boolean }>("/auth/google", { credential, isSignup });
   return data;
 }
+
+// Always resolves with the same message whether or not the account exists.
+export async function requestPasswordReset(email: string) {
+  const { data } = await api.post<{ message: string }>("/auth/forgot-password", { email });
+  return data.message;
+}
+
+export async function resetPassword(token: string, password: string) {
+  const { data } = await api.post<{ message: string }>("/auth/reset-password", { token, password });
+  return data.message;
+}

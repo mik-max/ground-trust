@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { isAxiosError } from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { googleAuth, login as loginRequest } from "../../services/auth.service";
 import { useAuthStore } from "../../store/auth.store";
@@ -26,8 +27,12 @@ export function Login() {
       const { token, user } = await loginRequest({ email, password });
       setAuth(token, user);
       navigate(next, { replace: true });
-    } catch {
-      setError("Invalid email or password.");
+    } catch (err) {
+      setError(
+        isAxiosError(err) && err.response?.status === 429
+          ? "Too many attempts. Please wait a few minutes and try again."
+          : "Invalid email or password."
+      );
     }
   }
 
@@ -62,16 +67,21 @@ export function Login() {
             required
           />
         </Field>
-        <Field label="Password">
-          <TextInput
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••••••"
-            className="w-full"
-            required
-          />
-        </Field>
+        <div className="flex flex-col gap-2">
+          <Field label="Password">
+            <TextInput
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••••••"
+              className="w-full"
+              required
+            />
+          </Field>
+          <Link to="/forgot-password" className="w-fit self-end text-caption text-brand underline-offset-4 hover:underline">
+            Forgot password?
+          </Link>
+        </div>
 
         {error && <p className="text-caption text-band-poor">{error}</p>}
         <Button type="submit" className="w-full">

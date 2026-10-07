@@ -11,4 +11,14 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// A session that's ended (for example, the password was reset on another
+// device) gets a 401 even though a token was sent: sign out here so the
+// app stops acting signed in. Protected pages then ask to log in again.
+api.interceptors.response.use(undefined, (error) => {
+  if (error?.response?.status === 401 && error.config?.headers?.Authorization) {
+    useAuthStore.getState().logout();
+  }
+  return Promise.reject(error);
+});
+
 export default api;

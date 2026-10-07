@@ -91,6 +91,7 @@ export function Privacy() {
         <ul className="list-disc pl-5">
           <li>Neon (database) and Render (application server), in Germany; Vercel (website).</li>
           <li>Cloudinary, which stores voice recordings privately and area photos publicly.</li>
+          <li>Brevo, which sends account emails such as password reset links, and receives your name and email address to do so.</li>
           <li>Groq (speech-to-text), Anthropic (translation and topic classification) and OpenAI (content screening), which
             receive the comment text or recording — not your name or email.</li>
           <li>OpenStreetMap, which receives the place names you search for; Google, if you choose to sign in with Google.</li>

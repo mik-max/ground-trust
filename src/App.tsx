@@ -11,6 +11,8 @@ import { SubmitReview } from "./pages/SubmitReview";
 import { MyContributions } from "./pages/MyContributions";
 import { Login } from "./pages/auth/Login";
 import { Register } from "./pages/auth/Register";
+import { ForgotPassword } from "./pages/auth/ForgotPassword";
+import { ResetPassword } from "./pages/auth/ResetPassword";
 import { GovDashboard } from "./pages/gov/Dashboard";
 import { ResidencyConsent } from "./pages/onboarding/ResidencyConsent";
 import { AdminGovernmentAccounts } from "./pages/admin/GovernmentAccounts";
@@ -19,7 +21,7 @@ import { Privacy } from "./pages/legal/Privacy";
 import { Terms } from "./pages/legal/Terms";
 import { SiteFooter } from "./components/SiteFooter";
 
-const CHROMELESS_PATHS = new Set(["/login", "/register"]);
+const CHROMELESS_PATHS = new Set(["/login", "/register", "/forgot-password", "/reset-password"]);
 
 // Login/Register render full-viewport (see AuthLayout) with no NavBar and
 // none of the centered max-w-6xl column every other page sits inside — a
@@ -33,6 +35,8 @@ function AppShell() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     );
   }
