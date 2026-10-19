@@ -46,6 +46,11 @@ export function Privacy() {
           <li>
             <b>Reports you send</b> about other reviews, and their reason.
           </li>
+          <li>
+            <b>Usage information:</b> which pages are viewed, what is searched for, and when Share is used, linked to a random
+            ID stored in your browser rather than your name or IP address, plus sign-ins and contributions linked to your
+            account. We use it only to understand how GroundTrust is used and to keep it secure, and delete it after 180 days.
+          </li>
         </ul>
         <p>
           Browsing area profiles does not require an account, and visitors are not asked for any personal information. Place

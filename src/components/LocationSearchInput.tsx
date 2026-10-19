@@ -6,6 +6,7 @@ import { findNearestArea, listAreas } from "../services/area.service";
 import { searchLocations, type GeocodeSuggestion } from "../services/geocode.service";
 import { useAuthStore } from "../store/auth.store";
 import { Button } from "./ui/Button";
+import { trackEvent } from "../services/activity";
 
 interface LocationSearchInputProps {
   value: string;
@@ -48,9 +49,12 @@ export function LocationSearchInput({ value, onChange, placeholder, mode = "brow
       listAreas(query).then((results) => current && setOwnMatches(results.map((r) => r.area)));
       searchLocations(query).then((results) => current && setGeoMatches(results));
     }, 300);
+    // Once typing has settled, note what was searched for (the Activity page's top searches).
+    const record = setTimeout(() => trackEvent("search", { query }), 1500);
     return () => {
       current = false;
       clearTimeout(handle);
+      clearTimeout(record);
     };
   }, [value]);
 

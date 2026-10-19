@@ -42,6 +42,9 @@ export function NavBar({ overlay = false }: { overlay?: boolean }) {
           <PageLink to="/admin/moderation" onClick={close} className={linkClass}>
             Moderation
           </PageLink>
+          <PageLink to="/admin/activity" onClick={close} className={linkClass}>
+            Activity
+          </PageLink>
         </>
       )}
     </>

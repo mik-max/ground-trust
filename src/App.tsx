@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { BrowserRouter, Route, Routes, useLocation } from "react-router-dom";
+import { areaIdFromPath, trackEvent } from "./services/activity";
 import { NavBar } from "./components/NavBar";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { Home } from "./pages/Home";
@@ -17,6 +19,7 @@ import { GovDashboard } from "./pages/gov/Dashboard";
 import { ResidencyConsent } from "./pages/onboarding/ResidencyConsent";
 import { AdminGovernmentAccounts } from "./pages/admin/GovernmentAccounts";
 import { ModerationQueue } from "./pages/admin/ModerationQueue";
+import { Activity } from "./pages/admin/Activity";
 import { Privacy } from "./pages/legal/Privacy";
 import { Terms } from "./pages/legal/Terms";
 import { SiteFooter } from "./components/SiteFooter";
@@ -29,6 +32,11 @@ const CHROMELESS_PATHS = new Set(["/login", "/register", "/forgot-password", "/r
 // the routing itself unambiguous.
 function AppShell() {
   const location = useLocation();
+
+  // One page view per navigation, for the admin Activity page.
+  useEffect(() => {
+    trackEvent("page_view", { path: location.pathname + location.search, areaId: areaIdFromPath(location.pathname) });
+  }, [location.pathname, location.search]);
 
   if (CHROMELESS_PATHS.has(location.pathname)) {
     return (
@@ -116,6 +124,14 @@ function AppShell() {
             element={
               <ProtectedRoute allow={["admin"]}>
                 <AdminGovernmentAccounts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/activity"
+            element={
+              <ProtectedRoute allow={["admin"]}>
+                <Activity />
               </ProtectedRoute>
             }
           />

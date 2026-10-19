@@ -82,3 +82,23 @@ export async function moderatePhoto(photoId: string, decision: "approved" | "rej
   });
   return data.photo;
 }
+
+export interface ActivitySummary {
+  days: number;
+  totals: Record<
+    | "visitors" | "pageViews" | "signups" | "logins" | "failedLogins" | "reviews" | "photos" | "reports" | "shares"
+    | "shareActions" | "searches" | "passwordResets" | "apiRequests" | "apiServerErrors" | "apiAvgMs",
+    number
+  >;
+  daily: { day: string; visitors: number; pageViews: number; signups: number; reviews: number }[];
+  topAreas: { areaId: string; name: string; views: number; visitors: number }[];
+  topPages: { page: string; views: number }[];
+  topSearches: { query: string; times: number }[];
+  api: { method: string; route: string; requests: number; clientErrors: number; serverErrors: number; avgMs: number; maxMs: number }[];
+  recent: { id: string; type: string; at: string; role: string | null; user: string | null; area: string | null; meta: Record<string, unknown> | null }[];
+}
+
+export async function getActivity(days: number) {
+  const { data } = await api.get<ActivitySummary>("/admin/activity", { params: { days } });
+  return data;
+}

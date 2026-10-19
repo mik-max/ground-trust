@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Download, Link2, X } from "lucide-react";
 import { text } from "../../styles/typography";
+import { trackEvent } from "../../services/activity";
 
 // What's being shared: one area, or a comparison of two or three.
 export type ShareTarget =
@@ -51,6 +52,12 @@ export function ShareSheet({ target, onClose }: { target: ShareTarget; onClose: 
   const info = details(target, format);
   const title = target.kind === "area" ? `Share ${target.name}` : "Share this comparison";
 
+  const areaId = target.kind === "area" ? target.id : undefined;
+  useEffect(() => {
+    trackEvent("share_opened", { areaId });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Esc closes, the page behind doesn't scroll, focus starts inside.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -80,6 +87,7 @@ export function ShareSheet({ target, onClose }: { target: ShareTarget; onClose: 
 
   async function shareToWhatsApp() {
     setNotice(null);
+    trackEvent("share_whatsapp", { areaId });
     // Phones: hand the card image to the system share sheet, so it can go
     // straight to a WhatsApp chat or Status.
     if (target.kind === "compare" || format === "status") {
@@ -102,6 +110,7 @@ export function ShareSheet({ target, onClose }: { target: ShareTarget; onClose: 
 
   async function saveImage() {
     setNotice(null);
+    trackEvent("share_save_image", { areaId });
     try {
       setBusy(true);
       const href = URL.createObjectURL(await imageBlob());
@@ -120,6 +129,7 @@ export function ShareSheet({ target, onClose }: { target: ShareTarget; onClose: 
   }
 
   async function copyLink() {
+    trackEvent("share_copy_link", { areaId });
     try {
       await navigator.clipboard.writeText(info.url);
       setCopied(true);
