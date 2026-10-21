@@ -14,12 +14,20 @@ import { text } from "../styles/typography";
 function formatProgress(progress: TierProgress): string | null {
   if (!progress) return null;
   if (progress.toward === "tier1") {
-    return `${progress.nightSamples} of ${progress.nightSamplesNeeded} confirmed night visits toward Verified resident`;
+    return `${progress.nights} of ${progress.nightsNeeded} nights at home confirmed in the last ${progress.windowDays} days, toward Verified resident`;
   }
   const daysLeft = Math.max(0, progress.daysNeeded - progress.daysConfirmed);
   return daysLeft === 0
     ? "Verification pending — check back soon"
     : `${daysLeft} more day${daysLeft === 1 ? "" : "s"} of confirmed residency to reach Long-term resident`;
+}
+
+// A confirmed status lasts only while the resident is still seen at home at
+// night, so it says by when to open the app there again.
+function formatKeepBy(keepBy: string | null): string | null {
+  if (!keepBy) return null;
+  const date = new Date(keepBy).toLocaleDateString("en-GB", { day: "numeric", month: "long" });
+  return `Open GroundTrust at home at night before ${date} to keep this status`;
 }
 
 // files/DESIGN_SYSTEM.md §6.6. Fires a best-effort background GPS sample
@@ -92,9 +100,14 @@ export function MyContributions() {
                         You proposed this area — it'll appear publicly once approved.
                       </p>
                     ) : (
-                      formatProgress(r.progress) && (
-                        <p className="text-caption text-mute">{formatProgress(r.progress)}</p>
-                      )
+                      <>
+                        {formatProgress(r.progress) && (
+                          <p className="text-caption text-mute">{formatProgress(r.progress)}</p>
+                        )}
+                        {formatKeepBy(r.keepBy) && (
+                          <p className="text-caption text-mute">{formatKeepBy(r.keepBy)}</p>
+                        )}
+                      </>
                     )}
                   </Card>
                 </Link>

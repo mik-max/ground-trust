@@ -32,8 +32,9 @@ export function ResidencyConsent() {
       <p className="text-body-lg text-ink">
         Reviews count for more when they come from people who live in an area. When you open the
         review or contributions pages, the app may check whether your device is inside the area.
-        Checks made at night count towards verification, since being in an area at night suggests
-        you live there. Your exact location is never stored.
+        Being there at night on three different nights within two weeks confirms you live there,
+        and the status stays while you're still seen there at night from time to time. Your exact
+        location is never stored.
       </p>
 
       <Card>

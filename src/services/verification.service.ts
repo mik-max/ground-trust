@@ -2,7 +2,7 @@ import api from "./api";
 import type { Area, VerificationTier } from "../types";
 
 export type TierProgress =
-  | { toward: "tier1"; nightSamples: number; nightSamplesNeeded: number }
+  | { toward: "tier1"; nights: number; nightsNeeded: number; windowDays: number }
   | { toward: "tier2"; daysConfirmed: number; daysNeeded: number }
   | null;
 
@@ -14,6 +14,8 @@ export interface Residency {
   trustWeight: number;
   area: Pick<Area, "id" | "name" | "city" | "state" | "status">;
   progress: TierProgress;
+  // When a fresh night-time check is needed to keep this status.
+  keepBy: string | null;
   lastReviewedAt: string | null;
 }
 
@@ -22,7 +24,7 @@ export async function getVerificationStatus() {
   return data.residencies;
 }
 
-export async function postGpsSample(areaId: string, lat: number, lng: number) {
-  const { data } = await api.post<{ residency: Residency }>("/verification/gps-sample", { areaId, lat, lng });
+export async function postGpsSample(areaId: string, lat: number, lng: number, accuracy: number) {
+  const { data } = await api.post<{ residency: Residency }>("/verification/gps-sample", { areaId, lat, lng, accuracy });
   return data.residency;
 }

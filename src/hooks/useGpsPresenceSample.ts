@@ -23,11 +23,13 @@ export function useGpsPresenceSample(areaIds: string[]) {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         for (const areaId of key.split(",")) {
-          postGpsSample(areaId, position.coords.latitude, position.coords.longitude).catch(() => {});
+          postGpsSample(areaId, position.coords.latitude, position.coords.longitude, position.coords.accuracy).catch(() => {});
         }
       },
       () => {},
-      { maximumAge: 5 * 60 * 1000, timeout: 10000 }
+      // A precise, fresh fix: the server refuses readings too coarse to
+      // place someone inside an area (e.g. a laptop's network-based guess).
+      { enableHighAccuracy: true, maximumAge: 60 * 1000, timeout: 15000 }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, user?.role]);

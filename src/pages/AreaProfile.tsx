@@ -201,8 +201,8 @@ export function AreaProfile() {
           <Card className="flex flex-col gap-3">
             <h2 className={text.heading}>Verification tiers</h2>
             <InfoRow icon={User}>Not yet verified — counts least</InfoRow>
-            <InfoRow icon={Shield}>Verified resident — counts more</InfoRow>
-            <InfoRow icon={ShieldCheck}>Long-term resident (verified 60+ days) — counts most</InfoRow>
+            <InfoRow icon={Shield}>Verified resident (home on 3 different nights) — counts more</InfoRow>
+            <InfoRow icon={ShieldCheck}>Long-term resident (verified 60+ days, still living there) — counts most</InfoRow>
           </Card>
           <Card>
             <h2 className={text.heading}>Location</h2>

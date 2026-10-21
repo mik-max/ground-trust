@@ -36,8 +36,9 @@ export function Privacy() {
           </li>
           <li>
             <b>Residency checks:</b> while the review or My Contributions page is open, your device's location is checked
-            against the area's approximate boundary. We keep only the fact that a check took place and whether it was at night
-            — never your coordinates or a location history.
+            against the area's approximate boundary. We keep only the fact that a check took place and whether it was at night,
+            or the reason a check couldn't be used (for example, a location that wasn't precise enough) — never your
+            coordinates or a location history.
           </li>
           <li>
             <b>Photos you add</b> of an area. Location and camera details stored in the photo file are removed when it's
