@@ -1,7 +1,7 @@
 // The link-preview card layouts, kept apart from api/og.ts so they can be
 // rendered outside Vercel too. Satori takes React-element-shaped objects;
 // building them with h() keeps this free of a JSX build step.
-import { ASPECTS, BAND_COLOR, BAND_LABEL, EARLY_RATINGS_BELOW, choiceQuestion, fmt, ratedBy, residentsLabel, type PreviewArea } from "./area.js";
+import { ASPECTS, BAND_COLOR, BAND_LABEL, EARLY_RATINGS_BELOW, choiceQuestion, fmt, type PreviewArea } from "./area.js";
 
 const INK = "#111715";
 const TEXT = "#1b2320";
@@ -61,7 +61,7 @@ export function areaCard(a: PreviewArea, origin: string) {
       h("div", { display: "flex", marginTop: 26 }, [verdict]),
       h("div", { display: "flex", marginTop: 34 }, [tiles]),
       h("div", { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto" }, [
-        h("div", { fontSize: 24, color: MUTED }, a.score === null ? "Be the first to rate it" : ratedBy(a)),
+        h("div", { fontSize: 24, color: MUTED }, a.score === null ? "Be the first to rate it" : `Rated by ${a.residents} resident${a.residents === 1 ? "" : "s"}`),
         h("div", { display: "flex", alignItems: "center", gap: 12, fontSize: 26, fontWeight: 500, color: INK }, [mark(30, INK), "GroundTrust"]),
       ]),
     ]),
@@ -160,7 +160,7 @@ export function storyCard(a: PreviewArea, origin: string) {
             ]),
             verdictChip(a, 38),
           ]),
-      h("div", { display: "flex", fontSize: 32, color: MUTED, marginTop: 18 }, a.score === null ? "Scores appear as residents rate it" : ratedBy(a)),
+      h("div", { display: "flex", fontSize: 32, color: MUTED, marginTop: 18 }, a.score === null ? "Scores appear as residents rate it" : `Rated by ${a.residents} resident${a.residents === 1 ? "" : "s"}`),
       h("div", { display: "flex", flexDirection: "column", marginTop: 52, gap: 8 }, rows),
       h("div", { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: 36, borderTop: `2px solid ${LINE}` }, [
         h("div", { display: "flex", alignItems: "center", gap: 16, fontSize: 40, fontWeight: 500, color: INK }, [mark(44, INK), "GroundTrust"]),
@@ -188,7 +188,7 @@ export function compareCard(areas: PreviewArea[], origin: string) {
         h("div", { fontSize: n === 3 ? 38 : 46, fontWeight: 500, letterSpacing: -1.5, color: INK, lineHeight: 1.05 }, a.name),
         h("div", { display: "flex", flexDirection: "column", fontSize: 24, color: MUTED, marginTop: 8, lineHeight: 1.3 }, [
           h("div", {}, a.place.split(" · ")[0]),
-          h("div", {}, residentsLabel(a)),
+          h("div", {}, `${a.residents} resident${a.residents === 1 ? "" : "s"}`),
         ]),
         h("div", { display: "flex", alignItems: "baseline", marginTop: 14 }, [
           h("div", { fontSize: n === 3 ? 64 : 76, letterSpacing: -3, color: a.score === null ? FAINT : INK, lineHeight: 1 }, fmt(a.score)),
@@ -218,7 +218,7 @@ export function compareCard(areas: PreviewArea[], origin: string) {
     header,
     h("div", { display: "flex", flexDirection: "column" }, rows),
     h("div", { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", fontSize: 26, color: MUTED }, [
-      h("div", {}, areas.some((a) => a.demo) ? "Scores out of 5 · demo data" : "Scores out of 5, from residents' ratings"),
+      h("div", {}, "Scores out of 5, from residents' ratings"),
       h("div", { color: TEXT }, "ground-trust.vercel.app/compare"),
     ]),
   ]);

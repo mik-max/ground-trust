@@ -5,7 +5,6 @@ import type { Aspect, Review, ReviewReportReason } from "../types";
 import { reportReview } from "../services/review.service";
 import { useAuthStore } from "../store/auth.store";
 import { VerificationTierBadge } from "./VerificationTierBadge";
-import { DemoBadge } from "./DemoBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
 import { AspectIcon } from "./AspectIconChip";
 import { Card } from "./ui/Card";
@@ -118,10 +117,7 @@ export function ReviewCard({ review }: { review: Review }) {
     <li>
       <Card>
         <div className="flex items-center justify-between">
-          <span className="flex flex-wrap items-center gap-2">
-            <VerificationTierBadge tier={review.tierAtSubmission} />
-            {review.isDemo && <DemoBadge size="xs" />}
-          </span>
+          <VerificationTierBadge tier={review.tierAtSubmission} />
           <span className="text-caption text-mute">{formatDate(review.submittedAt)}</span>
         </div>
 

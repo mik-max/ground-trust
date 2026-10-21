@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import type { AreaEvidenceStack } from "../types";
 import { ScoreBandBadge } from "./ScoreBandBadge";
-import { DemoBadge } from "./DemoBadge";
 import { AspectRow } from "./AspectRow";
 import { ConfidenceStrip } from "./ConfidenceStrip";
 import { ASPECT_ORDER } from "./aspectMeta";
@@ -43,10 +42,7 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
     return (
       <Card padding="none" elevation="hero" className="overflow-hidden">
         <div className="bg-night px-8 py-8">
-          <div className="flex flex-wrap items-center gap-2">
-            <ScoreBandBadge band={overall.band} onDark />
-            {overall.demo && <DemoBadge onDark />}
-          </div>
+          <ScoreBandBadge band={overall.band} onDark />
           <p className="mt-2 text-data-xl tabular-nums text-white">{overall.score.toFixed(1)}</p>
           <p className="text-caption text-white/80">
             Based on {overall.N} resident{overall.N === 1 ? "" : "s"}
@@ -76,10 +72,7 @@ export function EvidenceStack({ overall, aspects, size = "full" }: EvidenceStack
 
   return (
     <Card padding="lg">
-      <div className="flex flex-wrap items-center gap-2">
-        <ScoreBandBadge band={overall.band} />
-        {overall.demo && <DemoBadge />}
-      </div>
+      <ScoreBandBadge band={overall.band} />
       <p className="mt-2 text-data-lg tabular-nums text-ink">{overall.score.toFixed(1)}</p>
       <p className="text-caption text-mute">
         Based on {overall.N} resident{overall.N === 1 ? "" : "s"}

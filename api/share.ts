@@ -4,7 +4,7 @@
 // preview image in the <head>. vercel.json routes only crawler user agents here; people get the
 // normal static app. Serving the real index.html means a person whose
 // browser looks like a crawler still gets the working app.
-import { choiceQuestion, describe, fetchPreviewArea, imageVersion, isAreaId, residentsLabel } from "./_lib/area.js";
+import { choiceQuestion, describe, fetchPreviewArea, imageVersion, isAreaId } from "./_lib/area.js";
 import { CARD_HEIGHT, CARD_WIDTH, SQUARE } from "./_lib/card.js";
 
 export const config = { runtime: "edge" };
@@ -38,14 +38,13 @@ async function compareMeta(origin: string, ids: string[]): Promise<Meta> {
   const names = found.map((a) => a.name);
   const title = `${choiceQuestion(names)} · ${SITE}`;
   const description = found
-    .map((a) => `${a.name} ${a.score === null ? "not rated yet" : `${a.score.toFixed(1)}/5 from ${residentsLabel(a)}`}`)
+    .map((a) => `${a.name} ${a.score === null ? "not rated yet" : `${a.score.toFixed(1)}/5 from ${a.residents} resident${a.residents === 1 ? "" : "s"}`}`)
     .join(" · ");
-  const demoNote = found.some((a) => a.demo) ? "Demo data. " : "";
   const version = found.map(imageVersion).join("_");
   return {
     pageUrl,
     title,
-    description: `${demoNote}${description}. Compare power, water, security, flooding and access side by side.`,
+    description: `${description}. Compare power, water, security, flooding and access side by side.`,
     image: `${origin}/api/og?compare=${found.map((a) => encodeURIComponent(a.id)).join(",")}&v=${encodeURIComponent(version)}`,
     width: SQUARE.width * SQUARE.scale,
     height: SQUARE.height * SQUARE.scale,

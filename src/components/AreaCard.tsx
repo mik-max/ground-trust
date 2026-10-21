@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import type { AreaEvidenceStack, ConfidenceLevel } from "../types";
 import { ScoreBandBadge } from "./ScoreBandBadge";
-import { DemoBadge } from "./DemoBadge";
 import { ASPECT_META, ASPECT_ORDER } from "./aspectMeta";
 import { AspectIcon } from "./AspectIconChip";
 import { ILLUSTRATIONS } from "./ui/SpotIllustration";
@@ -35,9 +34,8 @@ export function AreaCard({ area, overall, aspects, photo: cover }: AreaEvidenceS
       >
         {!photo && <img src={ILLUSTRATIONS.location} alt="" className="h-14 w-14 opacity-80" />}
         {overall.band && (
-          <span className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          <span className="absolute left-3 top-3">
             <ScoreBandBadge band={overall.band} size="sm" />
-            {overall.demo && <DemoBadge />}
           </span>
         )}
       </div>
