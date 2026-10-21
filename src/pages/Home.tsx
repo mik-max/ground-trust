@@ -9,6 +9,7 @@ import { LocationSearchInput } from "../components/LocationSearchInput";
 import { AspectIcon } from "../components/AspectIconChip";
 import { ASPECT_META, ASPECT_ORDER } from "../components/aspectMeta";
 import { BAND_DOT_CLASS } from "../components/ScoreBandBadge";
+import { DemoBadge } from "../components/DemoBadge";
 import { AreaCardSkeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
 import { buttonClassName } from "../components/ui/Button";
@@ -340,8 +341,9 @@ function Hero({
                 {overall.band && <span className={`h-2 w-2 shrink-0 rounded-full ${BAND_DOT_CLASS[overall.band]}`} />}
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-body text-white/90">{area.name}</span>
-                  <span className="block text-caption text-white/55">
+                  <span className="flex items-center gap-2 text-caption text-white/55">
                     {overall.N} resident{overall.N === 1 ? "" : "s"}
+                    {overall.demo && <DemoBadge size="xs" onDark />}
                   </span>
                 </span>
                 <span className="text-data-md tabular-nums text-white">{overall.score!.toFixed(1)}</span>

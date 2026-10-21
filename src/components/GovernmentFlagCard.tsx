@@ -3,6 +3,7 @@ import type { Flag, FlagResponseStatus } from "../types";
 import { respondToFlag } from "../services/gov.service";
 import { ASPECT_META } from "./aspectMeta";
 import { AspectIconChip } from "./AspectIconChip";
+import { DemoBadge } from "./DemoBadge";
 import { Card } from "./ui/Card";
 import { Button } from "./ui/Button";
 import { Textarea } from "./ui/TextInput";
@@ -37,7 +38,10 @@ export function GovernmentFlagCard({ flag: initialFlag }: { flag: Flag }) {
 
   return (
     <Card border="accent">
-      <p className={text.heading}>{flag.area?.name ?? "Unknown area"}</p>
+      <div className="flex flex-wrap items-center gap-2">
+        <p className={text.heading}>{flag.area?.name ?? "Unknown area"}</p>
+        {flag.isDemo && <DemoBadge />}
+      </div>
       <p className="text-body text-mute">
         {flag.area?.lga ?? flag.area?.city} · {flag.area?.state} State
       </p>

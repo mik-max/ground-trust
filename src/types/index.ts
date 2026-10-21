@@ -57,6 +57,8 @@ export interface AreaEvidenceStack {
     band: Band | null;
     N: number;
     confidence: ConfidenceLevel;
+    // Set when the score rests on seeded demo accounts — see DemoBadge.
+    demo?: "all" | "some" | null;
   };
   aspects: AspectScore[];
 }
@@ -69,6 +71,7 @@ export interface Review {
   user?: { id: string; fullName: string };
   /** Public review lists: whether the signed-in viewer wrote this review. */
   isOwn?: boolean;
+  isDemo?: boolean;
   originalText: string | null;
   originalLanguage: string | null;
   originalAudioRef: string | null;
@@ -98,6 +101,7 @@ export interface Flag {
   responseNote: string | null;
   respondedAt: string | null;
   respondedBy?: { id: string; fullName: string } | null;
+  isDemo?: boolean;
 }
 
 export type FlagResponseStatus = "unacknowledged" | "acknowledged" | "in_progress";

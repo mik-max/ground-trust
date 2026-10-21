@@ -3,6 +3,7 @@ import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import type { AreaEvidenceStack } from "../../types";
 import { listAreas } from "../../services/area.service";
 import { areaMarkerIcon } from "../map/areaMarkerIcon";
+import { DemoBadge } from "../DemoBadge";
 
 const OSM_TILE_URL = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
@@ -61,7 +62,10 @@ export function AuthVisualPanel() {
       <div className="pointer-events-none absolute inset-0 z-1100 bg-linear-to-t from-ink/85 via-ink/10 to-transparent" />
 
       <div className="absolute inset-x-6 bottom-6 z-1100 rounded-2xl bg-ink/80 p-5 text-white backdrop-blur-sm sm:inset-x-8 sm:bottom-8">
-        <p className="text-eyebrow font-bold uppercase tracking-[2px] text-white/60">Live on GroundTrust</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-eyebrow font-bold uppercase tracking-[2px] text-white/60">Live on GroundTrust</p>
+          {areas?.some((a) => a.overall.demo) && <DemoBadge size="xs" onDark />}
+        </div>
         <p className="mt-1.5 text-heading font-display font-bold text-white">
           {areas === null ? "Loading..." : `${areas.length} areas · ${totalResidents} residents`}
         </p>

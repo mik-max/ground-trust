@@ -17,6 +17,8 @@ export interface PreviewArea {
   score: number | null;
   band: Band | null;
   residents: number;
+  /** The score rests on seeded demo accounts, so cards say "Demo data". */
+  demo: boolean;
   aspects: { key: AspectKey; label: string; score: number | null }[];
   /** Absolute URL of the area's cover photo (a JPEG sized for share cards), if it has one. */
   photo: string | null;
@@ -54,6 +56,7 @@ export async function fetchPreviewArea(id: string, timeoutMs = 7000): Promise<Pr
       score: data.overall.score,
       band: data.overall.band,
       residents: data.overall.N,
+      demo: Boolean(data.overall.demo),
       aspects: ASPECTS.map(({ key, label }) => {
         const row = data.aspects.find((a: { aspect: string }) => a.aspect === key);
         return { key, label, score: row && row.N > 0 ? row.score : null };
@@ -75,12 +78,21 @@ export function describe(a: PreviewArea): string {
     .join(" · ");
   const verdict =
     a.residents < EARLY_RATINGS_BELOW || !a.band ? "early ratings" : BAND_LABEL[a.band];
+  if (a.demo) return `Demo data: rated ${fmt(a.score)}/5 by ${ratedByCount(a)}. ${rated}.`;
   return `Rated ${fmt(a.score)}/5 (${verdict}) by ${a.residents} resident${a.residents === 1 ? "" : "s"}. ${rated}.`;
 }
 
+const ratedByCount = (a: PreviewArea) =>
+  `${a.residents} ${a.demo ? "demo account" : "resident"}${a.residents === 1 ? "" : "s"}`;
+
+// "Rated by 15 residents", or for seeded demo ratings "Demo data · rated by 15 demo accounts".
+export const ratedBy = (a: PreviewArea) => (a.demo ? `Demo data · rated by ${ratedByCount(a)}` : `Rated by ${ratedByCount(a)}`);
+export const residentsLabel = ratedByCount;
+
 // Changes whenever the numbers do, so chat apps fetch a fresh image instead
 // of reusing one they cached against the old scores.
-export const imageVersion = (a: PreviewArea) => [fmt(a.score), a.residents, ...a.aspects.map((x) => fmt(x.score))].join("-");
+export const imageVersion = (a: PreviewArea) =>
+  [fmt(a.score), a.residents, ...a.aspects.map((x) => fmt(x.score)), ...(a.demo ? ["demo"] : [])].join("-");
 
 // "Ikoyi or Mushin?", "Ikoyi, Mushin or Ajegunle?"
 export const choiceQuestion = (names: string[]) =>

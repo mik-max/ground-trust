@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import type { Area, AreaEvidenceStack } from "../types";
 import { getArea, listAreas } from "../services/area.service";
 import { ScoreBandBadge } from "../components/ScoreBandBadge";
+import { DemoBadge } from "../components/DemoBadge";
 import { AspectRow } from "../components/AspectRow";
 import { ConfidenceStrip } from "../components/ConfidenceStrip";
 import { ASPECT_ORDER } from "../components/aspectMeta";
@@ -183,7 +184,10 @@ export function CompareAreas() {
             {areas.map((a) => (
               <div key={a.area.id} className="pt-4">
                 {a.overall.band ? (
-                  <ScoreBandBadge band={a.overall.band} size="sm" />
+                  <span className="flex flex-wrap gap-1.5">
+                    <ScoreBandBadge band={a.overall.band} size="sm" />
+                    {a.overall.demo && <DemoBadge />}
+                  </span>
                 ) : (
                   <span className="text-caption text-mute">No reviews yet</span>
                 )}
