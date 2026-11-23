@@ -1,9 +1,12 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { RefreshCw } from "lucide-react";
 import { getVerificationStatus, type Residency, type TierProgress } from "../services/verification.service";
 import { VerificationTierBadge } from "../components/VerificationTierBadge";
 import { useGpsPresenceSample } from "../hooks/useGpsPresenceSample";
+import { useCheckIn } from "../hooks/useCheckIn";
+import { CheckInStatus } from "../components/CheckInStatus";
+import { NightRemindersCard } from "../components/NightRemindersCard";
 import { Card } from "../components/ui/Card";
 import { Skeleton } from "../components/ui/Skeleton";
 import { EmptyState } from "../components/ui/EmptyState";
@@ -44,16 +47,28 @@ function isOld(iso: string | null) {
 
 export function MyContributions() {
   const [residencies, setResidencies] = useState<Residency[] | null>(null);
-  useGpsPresenceSample(residencies?.map((r) => r.areaId) ?? []);
+  // ?checkin=1 comes from a night reminder or the app's "Check in" shortcut:
+  // check location straight away and say what happened, instead of the
+  // usual silent background check.
+  const [searchParams] = useSearchParams();
+  const checkingIn = searchParams.get("checkin") === "1";
+  const approved = residencies?.filter((r) => r.area.status !== "pending") ?? null;
 
-  useEffect(() => {
+  useGpsPresenceSample(checkingIn ? [] : (residencies?.map((r) => r.areaId) ?? []));
+  const refresh = useCallback(() => {
     getVerificationStatus().then(setResidencies);
   }, []);
+  const checkIn = useCheckIn(approved?.map((r) => ({ id: r.areaId, name: r.area.name })) ?? null, checkingIn, refresh);
+
+  useEffect(refresh, [refresh]);
 
   return (
     <div className="flex flex-col gap-6">
       <BackLink to="/" label="All areas" />
       <h1 className={text.displayMd}>My contributions</h1>
+
+      {checkingIn && <CheckInStatus result={checkIn.result} onRetry={checkIn.retry} />}
+      {approved !== null && approved.length > 0 && <NightRemindersCard />}
 
       {residencies === null ? (
         <ul className="flex flex-col gap-3">

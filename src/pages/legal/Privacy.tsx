@@ -41,6 +41,12 @@ export function Privacy() {
             coordinates or a location history.
           </li>
           <li>
+            <b>Night check-in reminders,</b> only if you turn them on: your browser gives us a delivery address at its
+            notification service (Google, Apple or Mozilla, depending on the browser) and the keys to encrypt messages to it.
+            We use them only to send the reminder, and delete them when you turn reminders off, log out, or the browser
+            tells us they've stopped working. A reminder never contains or collects your location.
+          </li>
+          <li>
             <b>Photos you add</b> of an area. Location and camera details stored in the photo file are removed when it's
             uploaded.
           </li>
@@ -101,6 +107,7 @@ export function Privacy() {
           <li>Groq (speech-to-text), Anthropic (translation and topic classification) and OpenAI (content screening), which
             receive the comment text or recording — not your name or email.</li>
           <li>OpenStreetMap, which receives the place names you search for; Google, if you choose to sign in with Google.</li>
+          <li>Your browser's notification service (Google, Apple or Mozilla), which delivers reminders if you turn them on.</li>
         </ul>
       </Section>
 

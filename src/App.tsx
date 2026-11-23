@@ -23,6 +23,7 @@ import { Activity } from "./pages/admin/Activity";
 import { Privacy } from "./pages/legal/Privacy";
 import { Terms } from "./pages/legal/Terms";
 import { SiteFooter } from "./components/SiteFooter";
+import { InstallBanner } from "./components/InstallBanner";
 
 const CHROMELESS_PATHS = new Set(["/login", "/register", "/forgot-password", "/reset-password"]);
 
@@ -56,6 +57,7 @@ function AppShell() {
   return (
     <>
       <NavBar overlay={isHome} />
+      <InstallBanner />
       <main className={isHome ? "" : "mx-auto max-w-6xl px-5 py-10 sm:px-6"}>
         <Routes>
           <Route path="/" element={<Home />} />

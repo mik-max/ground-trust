@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Mail } from "lucide-react";
 import { useAuthStore } from "../store/auth.store";
+import { endReminders } from "../services/push.service";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { BackLink } from "../components/ui/BackLink";
@@ -59,7 +60,9 @@ export function Profile() {
         <Button
           type="button"
           variant="outline"
-          onClick={() => {
+          onClick={async () => {
+            // Stop this device's reminders first, while still signed in to tell the server.
+            await endReminders().catch(() => {});
             logout();
             navigate("/login");
           }}

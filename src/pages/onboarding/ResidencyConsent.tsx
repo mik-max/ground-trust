@@ -34,7 +34,8 @@ export function ResidencyConsent() {
         review or contributions pages, the app may check whether your device is inside the area.
         Being there at night on three different nights within two weeks confirms you live there,
         and the status stays while you're still seen there at night from time to time. Your exact
-        location is never stored.
+        location is never stored. If you like, My Contributions can remind you at 9:30pm on nights a
+        check would help.
       </p>
 
       <Card>

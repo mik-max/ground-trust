@@ -4,6 +4,9 @@ import "./index.css";
 import "leaflet/dist/leaflet.css";
 import "./components/map/leafletIconFix";
 import App from "./App";
+import { listenForInstallPrompt } from "./pwa/install";
+
+listenForInstallPrompt();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
