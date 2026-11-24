@@ -44,7 +44,14 @@ export function AuthVisualPanel() {
       >
         <TileLayer url={OSM_TILE_URL} attribution={OSM_ATTRIBUTION} />
         {areas?.map(({ area }) => (
-          <Marker key={area.id} position={[area.geoCentroidLat, area.geoCentroidLng]} icon={areaMarkerIcon} />
+          // Decoration only: not clickable, so kept out of the tab order.
+          <Marker
+            key={area.id}
+            position={[area.geoCentroidLat, area.geoCentroidLng]}
+            icon={areaMarkerIcon}
+            interactive={false}
+            keyboard={false}
+          />
         ))}
       </MapContainer>
 
