@@ -37,7 +37,7 @@ export function AreaLocationMap({ area }: AreaLocationMapProps) {
         radius={area.geoRadiusMeters}
         pathOptions={{ color: "#128066", fillColor: "#128066", fillOpacity: 0.15 }}
       />
-      <Marker position={center} icon={areaMarkerIcon}>
+      <Marker position={center} icon={areaMarkerIcon} title={area.name}>
         <Popup>{area.name}</Popup>
       </Marker>
     </MapContainer>

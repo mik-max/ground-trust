@@ -16,3 +16,18 @@ export const areaMarkerIcon = L.divIcon({
   iconAnchor: [13, 34],
   popupAnchor: [0, -32],
 });
+
+// Several areas whose pins would overlap, shown as one numbered circle
+// centered where a pin's head would be, so the two shapes line up.
+export function areaGroupIcon(count: number) {
+  return L.divIcon({
+    html: `
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <circle cx="16" cy="16" r="15" fill="#128066" stroke="#ffffff" stroke-width="2"/>
+  <text x="16" y="20.5" text-anchor="middle" font-family="Geist, Arial, sans-serif" font-size="13" font-weight="600" fill="#ffffff">${count}</text>
+</svg>`,
+    className: "",
+    iconSize: [32, 32],
+    iconAnchor: [16, 37],
+  });
+}
