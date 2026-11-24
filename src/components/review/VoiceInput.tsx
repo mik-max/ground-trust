@@ -71,7 +71,7 @@ function Recording({ recorder }: { recorder: Recorder }) {
         </span>
         <span className="tabular-nums text-mute" aria-live="off">
           {formatSeconds(recorder.elapsed)}
-          <span className="text-faint"> / {formatSeconds(MAX_RECORDING_SECONDS)}</span>
+          <span className="text-mute"> / {formatSeconds(MAX_RECORDING_SECONDS)}</span>
         </span>
       </div>
 

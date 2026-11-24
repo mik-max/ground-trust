@@ -5,8 +5,11 @@
   Design tokens — calm redesign (concept v2, files/design-concept/).
   A neutral off-white canvas, white surfaces, soft ink text and ONE muted
   eucalyptus accent. No gradients or decorative textures. Every text color
-  below clears WCAG 2.1 AA (4.5:1) on both the canvas and the sunk fill;
-  `faint` is for decoration and large text only. Tailwind v4 is CSS-first,
+  below clears WCAG 2.1 AA (4.5:1) on both the canvas and the sunk fill,
+  except `faint`, which is for decoration and large text only (24px and up,
+  or about 18.7px bold) and clears the 3:1 that large text needs (3.2:1 on the
+  sunk fill, 3.4:1 on the canvas). Small secondary text uses `mute`.
+  Tailwind v4 is CSS-first,
   so this @theme block IS the config — changing a value here cascades to
   every utility built from it.
 */
@@ -20,7 +23,7 @@
   --color-night: #111715;
   --color-ink: #1b2320;
   --color-mute: #616b66;
-  --color-faint: #9aa39e;
+  --color-faint: #7d8882;
 
   --color-canvas: #f5f6f4;
   --color-paper: #ffffff;

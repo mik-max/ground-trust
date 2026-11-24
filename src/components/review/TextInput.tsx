@@ -48,7 +48,7 @@ export function ReviewTextInput({ value, onChange }: { value: string; onChange: 
         />
         <div className="flex items-center justify-between gap-3 px-4 pb-3 text-caption">
           <span className="text-mute">Optional. Don't include names or phone numbers.</span>
-          <span className={`tabular-nums ${nearLimit ? "text-ink" : "text-faint"}`}>
+          <span className={`tabular-nums ${nearLimit ? "text-ink" : "text-mute"}`}>
             {value.length}/{MAX_REVIEW_TEXT}
           </span>
         </div>

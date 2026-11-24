@@ -48,7 +48,7 @@ export function AreaCard({ area, overall, aspects, photo: cover }: AreaEvidenceS
           </div>
           <p className="shrink-0 text-data-lg font-normal tracking-[-0.04em] tabular-nums text-ink">
             {unrated ? <span className="text-faint">–</span> : overall.score!.toFixed(1)}
-            {!unrated && <span className="text-body tracking-normal text-faint"> / 5</span>}
+            {!unrated && <span className="text-body tracking-normal text-mute"> / 5</span>}
           </p>
         </div>
 
@@ -74,7 +74,7 @@ export function AreaCard({ area, overall, aspects, photo: cover }: AreaEvidenceS
                     <AspectIcon aspect={a} size={26} />
                     <span
                       className={`text-body font-medium tabular-nums ${
-                        score === null ? "text-faint" : score < 2 ? "text-band-poor" : "text-ink"
+                        score === null ? "text-mute" : score < 2 ? "text-band-poor" : "text-ink"
                       }`}
                     >
                       {score === null ? "–" : score.toFixed(1)}
